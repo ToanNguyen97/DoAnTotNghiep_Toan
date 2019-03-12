@@ -34,11 +34,13 @@ export const loader = async function (server) {
       }
      /* Load models */
      require('../models/Phong/model')
+     require('../models/KhuPhong/model')
 
      /* Load Modules */
      let modules = []
      modules.push(require('../modules/phong'))
-
+     modules.push(require('../modules/khuphong'))
+     
      if (modules.length) {
        let options = {}
        options.routes = { prefix: '/api' }

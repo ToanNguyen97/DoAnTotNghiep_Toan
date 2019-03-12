@@ -187,11 +187,14 @@ const loader = exports.loader = async function (server) {
 
 
     __webpack_require__(/*! ../models/Phong/model */ "./app/models/Phong/model.js");
+
+    __webpack_require__(/*! ../models/KhuPhong/model */ "./app/models/KhuPhong/model.js");
     /* Load Modules */
 
 
     let modules = [];
     modules.push(__webpack_require__(/*! ../modules/phong */ "./app/modules/phong/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/khuphong */ "./app/modules/khuphong/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -273,6 +276,65 @@ exports.register = async function (server, options) {
 
 exports.name = 'app-redis';
 exports.dependencies = 'app-mongo';
+
+/***/ }),
+
+/***/ "./app/models/KhuPhong/model.js":
+/*!**************************************!*\
+  !*** ./app/models/KhuPhong/model.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/KhuPhong/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const KhuPhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('KhuPhong', KhuPhongSchema);
+
+/***/ }),
+
+/***/ "./app/models/KhuPhong/schema.js":
+/*!***************************************!*\
+  !*** ./app/models/KhuPhong/schema.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const schema = {
+  tenKhuPhong: {
+    type: String,
+    required: true,
+    max: 20
+  },
+  anhKhuPhong: {
+    type: String
+  }
+};
+const options = {
+  collection: 'khuphongs',
+  timestamps: true
+};
+exports.schema = schema;
+exports.options = options;
 
 /***/ }),
 
@@ -384,6 +446,279 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/modules/khuphong/controller/index.js":
+/*!**************************************************!*\
+  !*** ./app/modules/khuphong/controller/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const Mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const Boom = __webpack_require__(/*! boom */ "boom");
+
+const KhuPhong = Mongoose.model('KhuPhong');
+
+exports.getAll = async (request, h) => {
+  try {
+    return await KhuPhong.find();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+exports.getById = async (request, h) => {
+  try {
+    return (await KhuPhong.findById({
+      _id: request.params.id
+    })) || Boom.notFound();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+exports.create = async (request, h) => {
+  try {
+    return await KhuPhong.create(request.payload);
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+exports.update = async (request, h) => {
+  try {
+    let {
+      tenKhuPhong,
+      anhKhuPhong,
+      moTa
+    } = request.payload;
+    const item = await KhuPhong.findOneAndUpdate({
+      _id: request.params.id
+    }, {
+      tenKhuPhong,
+      anhKhuPhong,
+      moTa
+    });
+    return item || Boom.notFound();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+exports.delete = async (request, h) => {
+  try {
+    return (await KhuPhong.findOneAndRemove({
+      _id: request.params.id
+    })) || Boom.notFound();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+/***/ }),
+
+/***/ "./app/modules/khuphong/index.js":
+/*!***************************************!*\
+  !*** ./app/modules/khuphong/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index.js */ "./app/modules/khuphong/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = async (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'admin-khuphong';
+
+/***/ }),
+
+/***/ "./app/modules/khuphong/routes/index.js":
+/*!**********************************************!*\
+  !*** ./app/modules/khuphong/routes/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/khuphong/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/khuphong/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+var _https = __webpack_require__(/*! https */ "https");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/khuphong',
+  handler: _index2.default.getAll,
+  config: {
+    description: 'danh sach khu phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/khuphong/{id}',
+  handler: _index2.default.getById,
+  config: {
+    validate: _index4.default.get,
+    description: 'xem thong tin phong by id',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/khuphong',
+  handler: _index2.default.create,
+  config: {
+    validate: _index4.default.create,
+    description: 'tao moi khu phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'PUT',
+  path: '/khuphong/{id}',
+  handler: _index2.default.update,
+  config: {
+    validate: _index4.default.update,
+    description: 'cap nhat khu phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'DELETE',
+  path: '/khuphong/{id}',
+  handler: _index2.default.delete,
+  config: {
+    validate: _index4.default.delete,
+    description: 'xoa khu phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/khuphong/validate/index.js":
+/*!************************************************!*\
+  !*** ./app/modules/khuphong/validate/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Joi = __webpack_require__(/*! joi */ "joi");
+
+Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
+const khuPhongVal = {
+  create: {
+    payload: {
+      tenKhuPhong: Joi.string().required().max(20),
+      anhKhuPhong: Joi.string(),
+      moTa: Joi.string()
+    }
+  },
+  update: {
+    params: {
+      id: Joi.ObjectId()
+    },
+    payload: {
+      tenKhuPhong: Joi.string().required().max(20),
+      anhKhuPhong: Joi.string(),
+      moTa: Joi.string()
+    }
+  },
+  delete: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  },
+  get: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  }
+};
+exports.default = { ...khuPhongVal
+};
+
+/***/ }),
+
 /***/ "./app/modules/phong/controller/index.js":
 /*!***********************************************!*\
   !*** ./app/modules/phong/controller/index.js ***!
@@ -402,6 +737,10 @@ var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const Phong = _mongoose2.default.model('Phong');
@@ -410,7 +749,7 @@ const create = async (request, h) => {
   try {
     return await Phong.create(request.payload);
   } catch (err) {
-    throw err;
+    return _boom2.default.forbidden(err);
   }
 };
 
@@ -418,7 +757,7 @@ const getAll = async (request, h) => {
   try {
     return await Phong.find().populate('LoaiPhong').populate('KhuPhong').populate('TinhTrangPhong');
   } catch (err) {
-    throw err;
+    return _boom2.default.forbidden(err);
   }
 };
 
@@ -602,7 +941,7 @@ exports.default = { ...phongVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","config":"^3.0.1","hapi":"^17.5.3","hapi-swagger":"^9.3.1","hapi-auth-jwt2":"^8.3.0","jsonwebtoken":"^8.5.0","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","lodash":"^4.17.11","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","redis":"^2.8.0","vision":"^5.4.4"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-swagger":"^9.3.1","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.0","lodash":"^4.17.11","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","redis":"^2.8.0","vision":"^5.4.4"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 
@@ -626,6 +965,17 @@ module.exports = __webpack_require__(/*! F:\DoAnTotNghiep\DoAnTotNghiep_Toan\api
 /***/ (function(module, exports) {
 
 module.exports = require("bluebird");
+
+/***/ }),
+
+/***/ "boom":
+/*!***********************!*\
+  !*** external "boom" ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("boom");
 
 /***/ }),
 
@@ -670,6 +1020,17 @@ module.exports = require("hapi-auth-jwt2");
 /***/ (function(module, exports) {
 
 module.exports = require("hapi-swagger");
+
+/***/ }),
+
+/***/ "https":
+/*!************************!*\
+  !*** external "https" ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("https");
 
 /***/ }),
 

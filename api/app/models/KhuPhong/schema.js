@@ -6,7 +6,8 @@ const schema = {
   },
   anhKhuPhong: {
     type: String
-  }
+  },
+  moTa: String
 }
 
 const options = {
