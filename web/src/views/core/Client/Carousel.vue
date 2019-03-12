@@ -1,0 +1,47 @@
+<template>
+  <v-carousel  hide-delimiters >
+    <v-carousel-item
+      v-for="(item,i) in items"
+      :key="i"
+      :src="item.src"
+      reverse-transition="fade"
+      
+    ></v-carousel-item>
+  </v-carousel>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      items: [
+        {
+          src: require('@/assets/slide/banner6.png')          
+        },
+        {
+          src:require('@/assets/slide/banner5.png')    
+        },
+        {
+          src:require('@/assets/slide/banner7.png')     
+        },
+        {
+          src:require('@/assets/slide/bannerr.png')       
+        }
+      ]
+    }
+  }
+}
+</script>
+
+<style lang="stylus">
+  #example-custom-transition
+    .fade
+      &-enter-active, &-leave-active, &-leave-to
+        transition: .3s ease-out
+        position: absolute
+        top: 0
+        left: 0
+
+      &-enter, &-leave, &-leave-to
+        opacity: 0
+</style>
