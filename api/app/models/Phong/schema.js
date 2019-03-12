@@ -1,3 +1,4 @@
+import Mongoose, {Schema} from 'mongoose'
 const schema = {
   tenPhong: {
     type: String,
@@ -17,11 +18,13 @@ const schema = {
   },
   soDien: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   soNuoc: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   giaPhong: {
     type: Number,

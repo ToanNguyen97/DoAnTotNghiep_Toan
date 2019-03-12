@@ -33,15 +33,15 @@ export const loader = async function (server) {
         console.log(err)
       }
      /* Load models */
-     require('@models/')
+     require('../models/Phong/model')
 
      /* Load Modules */
      let modules = []
-     modules.push(require('@modules/admin/test'))
+     modules.push(require('../modules/phong'))
 
      if (modules.length) {
        let options = {}
-       options.routes = { prefix: '/api/v1' }
+       options.routes = { prefix: '/api' }
        await server.register(modules, options, (err) => {
          if (err) {
            console.log(err)

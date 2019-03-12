@@ -183,10 +183,27 @@ const loader = exports.loader = async function (server) {
     if (err) {
       console.log(err);
     }
-    /* Plugin modules */
+    /* Load models */
 
 
-    await server.register(__webpack_require__(/*! ../src/index */ "./app/src/index.js"));
+    __webpack_require__(/*! ../models/Phong/model */ "./app/models/Phong/model.js");
+    /* Load Modules */
+
+
+    let modules = [];
+    modules.push(__webpack_require__(/*! ../modules/phong */ "./app/modules/phong/index.js"));
+
+    if (modules.length) {
+      let options = {};
+      options.routes = {
+        prefix: '/api'
+      };
+      await server.register(modules, options, err => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
   });
 };
 
@@ -259,15 +276,322 @@ exports.dependencies = 'app-mongo';
 
 /***/ }),
 
-/***/ "./app/src/index.js":
-/*!**************************!*\
-  !*** ./app/src/index.js ***!
-  \**************************/
+/***/ "./app/models/Phong/model.js":
+/*!***********************************!*\
+  !*** ./app/models/Phong/model.js ***!
+  \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/Phong/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const PhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('Phong', PhongSchema);
+
+/***/ }),
+
+/***/ "./app/models/Phong/schema.js":
+/*!************************************!*\
+  !*** ./app/models/Phong/schema.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const schema = {
+  tenPhong: {
+    type: String,
+    trim: true,
+    max: 20,
+    required: true
+  },
+  anhChinh: {
+    type: String,
+    required: true
+  },
+  anhChiTiet: {
+    type: Array
+  },
+  moTa: {
+    type: String
+  },
+  soDien: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  soNuoc: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  giaPhong: {
+    type: Number,
+    required: true
+  },
+  dKMang: {
+    type: Boolean,
+    default: false
+  },
+  status: Boolean,
+  homeFlag: Boolean,
+  hotFlag: Boolean,
+  tinhTrangPhongID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'TinhTrangPhong'
+  },
+  khuPhongID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'KhuPhong'
+  },
+  loaiPhongID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'LoaiPhong'
+  }
+};
+const options = {
+  collection: 'phongs',
+  timestamps: true
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/modules/phong/controller/index.js":
+/*!***********************************************!*\
+  !*** ./app/modules/phong/controller/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const Phong = _mongoose2.default.model('Phong');
+
+const create = async (request, h) => {
+  try {
+    return await Phong.create(request.payload);
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getAll = async (request, h) => {
+  try {
+    return await Phong.find().populate('LoaiPhong').populate('KhuPhong').populate('TinhTrangPhong');
+  } catch (err) {
+    throw err;
+  }
+};
+
+exports.default = {
+  create,
+  getAll
+};
+
+/***/ }),
+
+/***/ "./app/modules/phong/index.js":
+/*!************************************!*\
+  !*** ./app/modules/phong/index.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index.js */ "./app/modules/phong/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = async (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'admin-phong';
+
+/***/ }),
+
+/***/ "./app/modules/phong/routes/index.js":
+/*!*******************************************!*\
+  !*** ./app/modules/phong/routes/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index.js */ "./app/modules/phong/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index.js */ "./app/modules/phong/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/phong',
+  handler: _index2.default.getAll,
+  config: {
+    description: 'lay danh sach phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/phong',
+  handler: _index2.default.create,
+  config: {
+    validate: _index4.default.create,
+    description: 'tao phong moi',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/phong/validate/index.js":
+/*!*********************************************!*\
+  !*** ./app/modules/phong/validate/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const phongVal = {
+  create: {
+    payload: {
+      tenPhong: _joi2.default.string().required().max(20).trim(),
+      anhChinh: _joi2.default.string().required(),
+      anhChiTiet: _joi2.default.array(),
+      moTa: _joi2.default.string(),
+      soDien: _joi2.default.number().required(),
+      soNuoc: _joi2.default.number().required(),
+      giaPhong: _joi2.default.number().required(),
+      dKMang: _joi2.default.boolean(),
+      status: _joi2.default.boolean(),
+      homeFlag: _joi2.default.boolean(),
+      hotFlag: _joi2.default.boolean(),
+      tinhTrangPhongID: _joi2.default.ObjectId(),
+      khuPhongID: _joi2.default.ObjectId(),
+      loaiPhongID: _joi2.default.ObjectId()
+    }
+  },
+  update: {
+    params: {
+      id: _joi2.default.ObjectId()
+    },
+    payload: {
+      tenPhong: _joi2.default.string().required().max(20).trim(),
+      anhChinh: _joi2.default.string().required(),
+      anhChiTiet: _joi2.default.array(),
+      moTa: _joi2.default.string(),
+      soDien: _joi2.default.number().required(),
+      soNuoc: _joi2.default.number().required(),
+      giaPhong: _joi2.default.number().required(),
+      dKMang: _joi2.default.boolean(),
+      status: _joi2.default.boolean(),
+      homeFlag: _joi2.default.boolean(),
+      hotFlag: _joi2.default.boolean(),
+      tinhTrangPhongID: _joi2.default.ObjectId(),
+      khuPhongID: _joi2.default.ObjectId(),
+      loaiPhongID: _joi2.default.ObjectId()
+    }
+  },
+  delete: {
+    params: {
+      id: _joi2.default.ObjectId()
+    }
+  },
+  get: {
+    params: {
+      id: _joi2.default.ObjectId()
+    }
+  }
+};
+exports.default = { ...phongVal
+};
 
 /***/ }),
 
@@ -289,7 +613,7 @@ module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! F:\DoAnTotNghiep\QuanLyPhongTro\BackEnd-HapiJS\app.js */"./app.js");
+module.exports = __webpack_require__(/*! F:\DoAnTotNghiep\DoAnTotNghiep_Toan\api\app.js */"./app.js");
 
 
 /***/ }),
@@ -357,6 +681,28 @@ module.exports = require("hapi-swagger");
 /***/ (function(module, exports) {
 
 module.exports = require("inert");
+
+/***/ }),
+
+/***/ "joi":
+/*!**********************!*\
+  !*** external "joi" ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("joi");
+
+/***/ }),
+
+/***/ "joi-objectid":
+/*!*******************************!*\
+  !*** external "joi-objectid" ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("joi-objectid");
 
 /***/ }),
 
