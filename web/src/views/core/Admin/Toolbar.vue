@@ -1,6 +1,6 @@
 <template>
 <nav>
-  <v-toolbar flat app style="padding-left: 0px;">
+  <v-toolbar flat app style="padding-left: 0px;" >
     <v-icon @click="changeMini">{{icon}}</v-icon>
     <v-toolbar-title>  
         <img :src="require('@/assets/logoAdmin.png')" alt="avatar">
@@ -113,32 +113,6 @@ export default {
 </script>
 
 <style>
-.search-txt {
-  border-radius: 5px solid #e84118;
-  margin-top: 10px;
-  background: none;
-  outline: none;
-  float: left;
-  color: black;
-  font-size: 16px;
-  transition: 0.4s;
-  line-height: 30px;
-  width: 240px;
-}
-.search-btn {
-  color: #e84118 !important;
-  float: left;
-  border-radius: 50%;
-  background: #2f3640;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 0.4s;
-}
-
-.search-btn:hover >.search-txt {
-  width: 240px !important;
-}
 #btnList {
   min-width: 50px;
 }

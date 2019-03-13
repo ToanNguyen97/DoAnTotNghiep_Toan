@@ -1,5 +1,5 @@
 <template>
-  <div class="admin">
+  <div class="admin" >
     <Toolbar @input="input"/>
     <v-content class="ml-4" style="padding: 70px 0px 0px 70px;" :class="!mini ? 'padding-left-300' : ''">
       <router-view></router-view>

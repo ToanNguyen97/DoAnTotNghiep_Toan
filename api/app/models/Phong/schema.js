@@ -18,21 +18,18 @@ const schema = {
   },
   soDien: {
     type: Number,
-    required: true,
-    default: 0
+    required: true
   },
   soNuoc: {
     type: Number,
-    required: true,
-    default: 0
+    required: true
   },
   giaPhong: {
     type: Number,
     required: true
   },
   dKMang: {
-    type: Boolean,
-    default: false
+    type: Boolean
   },
   status: Boolean,
   homeFlag: Boolean,

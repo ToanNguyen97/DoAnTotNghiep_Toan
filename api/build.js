@@ -165,6 +165,8 @@ const HapiSwagger = __webpack_require__(/*! hapi-swagger */ "hapi-swagger");
 
 const HapiAuth2 = __webpack_require__(/*! hapi-auth-jwt2 */ "hapi-auth-jwt2");
 
+const RouteImage = __webpack_require__(/*! ../lib/routeimage */ "./app/lib/routeimage.js");
+
 const loader = exports.loader = async function (server) {
   const Pack = __webpack_require__(/*! ./../../package */ "./package.json");
 
@@ -179,7 +181,7 @@ const loader = exports.loader = async function (server) {
   mongo, redis, Inert, Vision, {
     plugin: HapiSwagger,
     options: swaggerOptions
-  }, HapiAuth2]).then(async err => {
+  }, HapiAuth2, RouteImage]).then(async err => {
     if (err) {
       console.log(err);
     }
@@ -282,6 +284,34 @@ exports.register = async function (server, options) {
 
 exports.name = 'app-redis';
 exports.dependencies = 'app-mongo';
+
+/***/ }),
+
+/***/ "./app/lib/routeimage.js":
+/*!*******************************!*\
+  !*** ./app/lib/routeimage.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.register = async (server, options) => {
+  server.route({
+    method: 'GET',
+    path: '/image/{file*}',
+    handler: (request, h) => {
+      try {
+        return h.file('app/lib/images/' + request.params.file);
+      } catch (err) {
+        return err;
+      }
+    }
+  });
+};
+
+exports.name = 'route-image';
 
 /***/ }),
 
@@ -471,21 +501,18 @@ const schema = {
   },
   soDien: {
     type: Number,
-    required: true,
-    default: 0
+    required: true
   },
   soNuoc: {
     type: Number,
-    required: true,
-    default: 0
+    required: true
   },
   giaPhong: {
     type: Number,
     required: true
   },
   dKMang: {
-    type: Boolean,
-    default: false
+    type: Boolean
   },
   status: Boolean,
   homeFlag: Boolean,
@@ -1145,10 +1172,37 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const Phong = _mongoose2.default.model('Phong');
 
+const fs = __webpack_require__(/*! fs */ "fs");
+
 const create = async (request, h) => {
   try {
-    return await Phong.create(request.payload);
+    let anhChinh = request.payload.anhChinh;
+    let anhChinhName = anhChinh.name;
+    let anhChinh64 = anhChinh.file64.replace(/^data(.*?)base64,/, "");
+    fs.writeFile(`app/lib/images/${anhChinhName}`, anhChinh64, 'base64', function (err) {
+      return err;
+    });
+    let anhChiTiet = request.payload.anhChiTiet;
+    let anhChiTiet64 = [];
+
+    for (let item of anhChiTiet.file64) {
+      let anh = item.replace(/^data(.*?)base64,/, "");
+      anhChiTiet64.push(anh);
+    }
+
+    console.log(anhChiTiet.name);
+
+    for (let i = 0; i < anhChiTiet.name.length; i++) {
+      fs.writeFile(`app/lib/images/${anhChiTiet.name[i]}`, anhChinh64[i], 'base64', function (err) {
+        return err;
+      });
+    }
+
+    console.log(request.payload); // return await Phong.create(request.payload)
+
+    return true;
   } catch (err) {
+    console.log(err);
     return _boom2.default.forbidden(err);
   }
 };
@@ -1282,8 +1336,8 @@ const phongVal = {
   create: {
     payload: {
       tenPhong: _joi2.default.string().required().max(20).trim(),
-      anhChinh: _joi2.default.string().required(),
-      anhChiTiet: _joi2.default.array(),
+      anhChinh: _joi2.default.object(),
+      anhChiTiet: _joi2.default.object(),
       moTa: _joi2.default.string(),
       soDien: _joi2.default.number().required(),
       soNuoc: _joi2.default.number().required(),
@@ -1674,6 +1728,17 @@ module.exports = require("boom");
 /***/ (function(module, exports) {
 
 module.exports = require("config");
+
+/***/ }),
+
+/***/ "fs":
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
 
 /***/ }),
 

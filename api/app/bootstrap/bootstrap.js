@@ -8,6 +8,7 @@ const Inert = require('inert')
 const Vision = require('vision')
 const HapiSwagger = require('hapi-swagger')
 const HapiAuth2 = require ('hapi-auth-jwt2')
+const RouteImage = require('../lib/routeimage')
 export const loader = async function (server) {
   const Pack = require('./../../package')
   const swaggerOptions = {
@@ -26,7 +27,8 @@ export const loader = async function (server) {
       plugin: HapiSwagger,
       options: swaggerOptions
     },
-    HapiAuth2
+    HapiAuth2,
+    RouteImage
   ])
     .then(async (err) => {
       if (err) {

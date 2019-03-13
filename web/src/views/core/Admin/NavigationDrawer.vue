@@ -147,18 +147,6 @@
           }],   
         drawer: true,
         isOpenMini: true,
-        giaoviens: [
-        { name:'Xem Danh Sách', icon: 'visibility', path:'/danh-sach-phong.html'},
-        { name:'Thêm', icon: 'add', path:'/danh-sach-phong.html'},
-        { name:'Sửa', icon: 'update', path:'/danh-sach-phong.html'},
-        { name:'Xóa', icon: 'delete', path:'/danh-sach-phong.html'}
-        ],
-        sinhviens: [
-        { name:'Xem Danh Sách', icon: 'visibility', path:'/danh-sach-sinh-vien.html'},
-        { name:'Thêm', icon: 'add', path:'/them-sinh-vien.html'},
-        { name:'Sửa', icon: 'update', path:'/sua-sinh-vien'},
-        { name:'Xóa', icon: 'delete', path:'/xoa-sinh-vien'}
-        ],
         right: null
       }
     },  
