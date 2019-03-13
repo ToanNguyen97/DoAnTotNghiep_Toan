@@ -14,4 +14,4 @@ const options = {
   collections: 'loaiphongs'
 }
 
-export default {schema, options}
+export  {schema, options}

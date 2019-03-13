@@ -189,12 +189,18 @@ const loader = exports.loader = async function (server) {
     __webpack_require__(/*! ../models/Phong/model */ "./app/models/Phong/model.js");
 
     __webpack_require__(/*! ../models/KhuPhong/model */ "./app/models/KhuPhong/model.js");
+
+    __webpack_require__(/*! ../models/LoaiPhong/model */ "./app/models/LoaiPhong/model.js");
+
+    __webpack_require__(/*! ../models/TinhTrangPhong/model */ "./app/models/TinhTrangPhong/model.js");
     /* Load Modules */
 
 
     let modules = [];
     modules.push(__webpack_require__(/*! ../modules/phong */ "./app/modules/phong/index.js"));
     modules.push(__webpack_require__(/*! ../modules/khuphong */ "./app/modules/khuphong/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/loaiphong */ "./app/modules/loaiphong/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/tinhtrangphong */ "./app/modules/tinhtrangphong/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -327,11 +333,71 @@ const schema = {
   },
   anhKhuPhong: {
     type: String
-  }
+  },
+  moTa: String
 };
 const options = {
   collection: 'khuphongs',
   timestamps: true
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/models/LoaiPhong/model.js":
+/*!***************************************!*\
+  !*** ./app/models/LoaiPhong/model.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/LoaiPhong/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const LoaiPhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('LoaiPhong', LoaiPhongSchema);
+
+/***/ }),
+
+/***/ "./app/models/LoaiPhong/schema.js":
+/*!****************************************!*\
+  !*** ./app/models/LoaiPhong/schema.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const schema = {
+  tenLoaiPhong: {
+    type: String,
+    required: true,
+    max: 30
+  },
+  giaPhong: {
+    type: Number,
+    required: true
+  }
+};
+const options = {
+  collections: 'loaiphongs'
 };
 exports.schema = schema;
 exports.options = options;
@@ -440,6 +506,61 @@ const schema = {
 const options = {
   collection: 'phongs',
   timestamps: true
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/models/TinhTrangPhong/model.js":
+/*!********************************************!*\
+  !*** ./app/models/TinhTrangPhong/model.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/TinhTrangPhong/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const TinhTrangPhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('TinhTrangPhong', TinhTrangPhongSchema);
+
+/***/ }),
+
+/***/ "./app/models/TinhTrangPhong/schema.js":
+/*!*********************************************!*\
+  !*** ./app/models/TinhTrangPhong/schema.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const schema = {
+  tenTinhTrangPhong: {
+    type: String,
+    required: true,
+    max: 20
+  }
+};
+const options = {
+  collection: 'tinhtrangphongs'
 };
 exports.schema = schema;
 exports.options = options;
@@ -719,6 +840,285 @@ exports.default = { ...khuPhongVal
 
 /***/ }),
 
+/***/ "./app/modules/loaiphong/controller/index.js":
+/*!***************************************************!*\
+  !*** ./app/modules/loaiphong/controller/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const LoaiPhong = Mongoose.model('LoaiPhong');
+
+const Boom = __webpack_require__(/*! boom */ "boom");
+
+const getAll = async (request, h) => {
+  try {
+    return await LoaiPhong.find();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+const getById = async (request, h) => {
+  try {
+    return (await LoaiPhong.findById({
+      _id: request.params.id
+    })) || Boom.notFound();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+const create = async (request, h) => {
+  try {
+    return await LoaiPhong.create(request.payload);
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+const update = async (request, h) => {
+  try {
+    let {
+      tenLoaiPhong,
+      giaPhong
+    } = request.payload;
+    const item = await LoaiPhong.findOneAndUpdate({
+      _id: request.params.id
+    }, {
+      tenLoaiPhong,
+      giaPhong
+    });
+    return item || Boom.notFound();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+const deleteLoaiPhong = async (request, h) => {
+  try {
+    return (await LoaiPhong.findOneAndRemove({
+      _id: request.params.id
+    })) || Boom.notFound();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+exports.default = {
+  getAll,
+  getById,
+  create,
+  update,
+  deleteLoaiPhong
+};
+
+/***/ }),
+
+/***/ "./app/modules/loaiphong/index.js":
+/*!****************************************!*\
+  !*** ./app/modules/loaiphong/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index */ "./app/modules/loaiphong/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = async (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'admin-loaiphong';
+
+/***/ }),
+
+/***/ "./app/modules/loaiphong/routes/index.js":
+/*!***********************************************!*\
+  !*** ./app/modules/loaiphong/routes/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/loaiphong/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/loaiphong/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/loaiphong',
+  handler: _index2.default.getAll,
+  config: {
+    description: 'xem danh sach loai phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/loaiphong/{id}',
+  handler: _index2.default.getById,
+  config: {
+    validate: _index4.default.get,
+    description: 'xem thong tin loai phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/loaiphong',
+  handler: _index2.default.create,
+  config: {
+    validate: _index4.default.create,
+    description: 'them loai phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'PUT',
+  path: '/loaiphong/{id}',
+  handler: _index2.default.update,
+  config: {
+    validate: _index4.default.update,
+    description: 'cap nhat thong tin loai phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'DELETE',
+  path: '/loaiphong/{id}',
+  handler: _index2.default.deleteLoaiPhong,
+  config: {
+    validate: _index4.default.delete,
+    description: 'xoa loai phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/loaiphong/validate/index.js":
+/*!*************************************************!*\
+  !*** ./app/modules/loaiphong/validate/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Joi = __webpack_require__(/*! joi */ "joi");
+
+Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
+const LoaiPhongVal = {
+  create: {
+    payload: {
+      tenLoaiPhong: Joi.string().required().max(30),
+      giaPhong: Joi.number().required()
+    }
+  },
+  update: {
+    params: {
+      id: Joi.ObjectId()
+    },
+    payload: {
+      tenLoaiPhong: Joi.string().required().max(30),
+      giaPhong: Joi.number().required()
+    }
+  },
+  get: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  },
+  delete: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  }
+};
+exports.default = { ...LoaiPhongVal
+};
+
+/***/ }),
+
 /***/ "./app/modules/phong/controller/index.js":
 /*!***********************************************!*\
   !*** ./app/modules/phong/controller/index.js ***!
@@ -930,6 +1330,293 @@ const phongVal = {
   }
 };
 exports.default = { ...phongVal
+};
+
+/***/ }),
+
+/***/ "./app/modules/tinhtrangphong/controller/index.js":
+/*!********************************************************!*\
+  !*** ./app/modules/tinhtrangphong/controller/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+var _https = __webpack_require__(/*! https */ "https");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const TinhTrangPhong = _mongoose2.default.model('TinhTrangPhong');
+
+const getAll = async (request, h) => {
+  try {
+    return await TinhTrangPhong.find();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const getById = async (request, h) => {
+  try {
+    return (await TinhTrangPhong.findById({
+      _id: request.params.id
+    })) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const create = async (request, h) => {
+  try {
+    return await TinhTrangPhong.create(request.payload);
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const update = async (request, h) => {
+  try {
+    let {
+      tenTinhTrangPhong
+    } = request.payload;
+    const item = await TinhTrangPhong.findOneAndUpdate({
+      _id: request.params.id
+    }, {
+      tenTinhTrangPhong
+    });
+    return item || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const deleteTinhTrangPhong = async (request, h) => {
+  try {
+    return (await TinhTrangPhong.findOneAndRemove({
+      _id: request.params.id
+    })) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  getAll,
+  getById,
+  create,
+  update,
+  deleteTinhTrangPhong
+};
+
+/***/ }),
+
+/***/ "./app/modules/tinhtrangphong/index.js":
+/*!*********************************************!*\
+  !*** ./app/modules/tinhtrangphong/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index */ "./app/modules/tinhtrangphong/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = async (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'admin-tinhtrangphong';
+
+/***/ }),
+
+/***/ "./app/modules/tinhtrangphong/routes/index.js":
+/*!****************************************************!*\
+  !*** ./app/modules/tinhtrangphong/routes/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/tinhtrangphong/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/tinhtrangphong/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/tinhtrangphong',
+  handler: _index2.default.getAll,
+  config: {
+    description: 'xem danh sach tinh trang phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/tinhtrangphong/{id}',
+  handler: _index2.default.getById,
+  config: {
+    validate: _index4.default.get,
+    description: 'xem thong tin tinh trang phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/tinhtrangphong',
+  handler: _index2.default.create,
+  config: {
+    validate: _index4.default.create,
+    description: 'tao moi tinh trang phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'PUT',
+  path: '/tinhtrangphong/{id}',
+  handler: _index2.default.update,
+  config: {
+    validate: _index4.default.update,
+    description: 'cap nhat thong tin tinh trang phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'DELETE',
+  path: '/tinhtrangphong/{id}',
+  handler: _index2.default.deleteTinhTrangPhong,
+  config: {
+    validate: _index4.default.delete,
+    description: 'xoa tinh trang phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/tinhtrangphong/validate/index.js":
+/*!******************************************************!*\
+  !*** ./app/modules/tinhtrangphong/validate/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const tinhTrangPhongVal = {
+  create: {
+    payload: {
+      tenTinhTrangPhong: _joi2.default.string().required().max(20)
+    }
+  },
+  get: {
+    params: {
+      id: _joi2.default.ObjectId()
+    }
+  },
+  update: {
+    params: {
+      id: _joi2.default.ObjectId()
+    },
+    payload: {
+      tenTinhTrangPhong: _joi2.default.string().required().max(20)
+    }
+  },
+  delete: {
+    params: {
+      id: _joi2.default.ObjectId()
+    }
+  }
+};
+exports.default = { ...tinhTrangPhongVal
 };
 
 /***/ }),

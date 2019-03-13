@@ -35,11 +35,15 @@ export const loader = async function (server) {
      /* Load models */
      require('../models/Phong/model')
      require('../models/KhuPhong/model')
+     require('../models/LoaiPhong/model')
+     require('../models/TinhTrangPhong/model')
 
      /* Load Modules */
      let modules = []
      modules.push(require('../modules/phong'))
      modules.push(require('../modules/khuphong'))
+     modules.push(require('../modules/loaiphong'))
+     modules.push(require('../modules/tinhtrangphong'))
      
      if (modules.length) {
        let options = {}
