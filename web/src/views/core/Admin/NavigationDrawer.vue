@@ -1,5 +1,5 @@
 <template>
-  <div @mouseover="check?isOpenMini = false:''" @mouseleave="check?isOpenMini = true:''" >
+  <div  @mouseover="check?isOpenMini = false:''" @mouseleave="check?isOpenMini = true:''" >
   <!--thuộc tính temporary: giúp làm bóng-->
     <v-navigation-drawer
       v-model="drawer"

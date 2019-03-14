@@ -1,5 +1,5 @@
 <template>
-<nav>
+<nav style="display:flex; flex: 0 0 auto;">
   <v-toolbar flat app style="padding-left: 0px;" >
     <v-icon @click="changeMini">{{icon}}</v-icon>
     <v-toolbar-title>  
