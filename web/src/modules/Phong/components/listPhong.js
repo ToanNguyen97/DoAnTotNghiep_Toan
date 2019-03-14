@@ -1,6 +1,21 @@
 export default {
   data() {
     return {
+      pagination: {},
+      selected: [],
+      headers: [
+        {
+          text: 'Tên Phòng',
+          value: 'tenPhong'
+        },
+        { text: 'Ảnh Chính', value: 'anhChinh' },
+        { text: 'Số Điện (kwh)', value: 'soDien' },
+        { text: 'Số Nước (khối)', value: 'soNuoc' },
+        { text: 'Giá Phòng (VNĐ)', value: 'giaPhong' },
+        { text: 'Khu Phòng', value: 'khuPhongID' },
+        { text: 'Loại Phòng', value: 'loaiPhongID' },
+        { text: 'Thao Tác', value: '' }
+      ],
       dialog: false,
       valid: true,
       tenPhong: '',
@@ -31,6 +46,12 @@ export default {
     this.$store.dispatch('getTinhTrangPhongs')
   },
   computed: {
+    pages () {
+      if (this.pagination.rowsPerPage == null ||
+        this.pagination.totalItems == null
+      ) return 0
+      return Math.ceil(this.dsPhong.length / this.pagination.rowsPerPage)
+    },
     dsPhong () {
       return this.$store.state.phong.dsPhong
     },
@@ -45,6 +66,46 @@ export default {
     }
   },
   methods: {
+    select(entity) {
+      if(this.selected && this.selected.length == 0)
+      {
+        this.selected.push(entity)
+      }
+      else
+      {
+        let a = false;
+        for(let item of this.selected)
+        {
+          if(item._id === entity._id)
+          {
+            a = true
+            break
+          }
+        }
+        if(a === true)
+          this.selected = this.selected.filter(item => item._id != entity._id)
+        else
+          this.selected.push(entity)
+      }
+    },
+    toggleAll () {
+      if (this.selected.length) 
+      {
+        this.selected = []
+      }
+      else
+      {
+        this.selected = this.dsPhong.slice()
+      }
+    },
+    changeSort (column) {
+      if (this.pagination.sortBy === column) {
+        this.pagination.descending = !this.pagination.descending
+      } else {
+        this.pagination.sortBy = column
+        this.pagination.descending = false
+      }
+    },
     choosedFile () {
       const files = this.$refs['file'].files
       if(files[0].name.lastIndexOf('.') <=0) {

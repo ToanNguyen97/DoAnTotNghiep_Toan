@@ -63,7 +63,6 @@
                       height="70"
                       outline
                       label="mô tả phòng trọ"
-                      placeholder="mô tả phòng trọ"
                       v-model="moTa"
                     ></v-textarea>
                   </v-flex>                                                                                     
@@ -147,38 +146,85 @@
         </v-card>
       </v-dialog>
     </v-layout>
-    <v-card flat v-for="phong in dsPhong" :key="phong._id">
-      <v-layout row wrap>
-        <v-flex>
-          <div class="caption grey--text">Tên Phòng</div>
-          <div>{{phong.TenPhong}}</div>
-        </v-flex>
-        <v-flex>
-          <div class="caption grey--text">Số Điện</div>
-          <div>{{phong.SoDien}}</div>
-        </v-flex>
-        <v-flex>
-          <div class="caption grey--text">Số Nước</div>
-          <div>{{phong.SoNuoc}}</div>
-        </v-flex>
-        <v-flex>
-          <div class="caption grey--text">Giá Phòng</div>
-          <div>{{phong.giaPhong}}</div>
-        </v-flex>
-        <v-flex>
-          <div class="caption grey--text">Loại Phòng</div>
-          <div>{{phong.loaiPhongID}}</div>
-        </v-flex>
-        <v-flex>
-          <div class="caption grey--text">Khu Phòng</div>
-          <div>{{phong.khuPhongID}}</div>
-        </v-flex>
-      </v-layout>
-    </v-card>
+      <v-data-table
+      v-model="selected"
+      :headers="headers"
+      :items="dsPhong"
+      :pagination.sync="pagination"
+      select-all
+      hide-actions
+      item-key="_id"
+      class="elevation-1"
+    >
+      <template v-slot:headers="props">
+        <tr>
+          <th>
+            <v-checkbox
+              :input-value="props.all"
+              :indeterminate="props.indeterminate"
+              primary
+              hide-details
+              @click.stop="toggleAll"
+            ></v-checkbox>
+          </th>
+          <th
+            v-for="header in props.headers"
+            :key="header.text"
+            :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+            @click="changeSort(header.value)"
+          >
+            <v-icon small>arrow_upward</v-icon>
+            {{ header.text }}
+          </th>
+        </tr>
+      </template>
+      <template v-slot:items="props">
+        {{ props.selected }}
+        <tr>
+          <td  :active="props.selected" @click="props.selected = !props.selected">
+            <v-checkbox
+              :input-value="props.selected"
+              primary
+              hide-details
+            ></v-checkbox>
+          </td>
+          <td class="text-xs-center">{{ props.item.tenPhong }}</td>
+          <td class="text-xs-center"><img height="100" :src="`//localhost:3003/image/${props.item.anhChinh}`" alt=""></td>
+          <td class="text-xs-center">{{ props.item.soDien }}</td>
+          <td class="text-xs-center">{{ props.item.soNuoc }}</td>
+          <td class="text-xs-center">{{ props.item.giaPhong }}</td>
+          <td class="text-xs-center">{{ props.item.khuPhongID.tenKhuPhong }}</td>
+          <td class="text-xs-center">{{ props.item.loaiPhongID.tenLoaiPhong}}</td>
+          <td class="justify-center text-xs-center">
+          <v-icon
+            small
+            class="mr-2"
+            @click="editItem(props.item)"
+          >
+            edit
+          </v-icon>
+          <v-icon
+            small
+            @click="deleteItem(props.item)"
+          >
+            delete
+          </v-icon>
+        </td>
+        </tr>
+      </template>
+    </v-data-table>
+    <div class="text-xs-center pt-2">
+      <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
+    </div>
   </div>
 </template>
 <script src="./listPhong.js"></script>
-<style>
+
+<style scoped>
+  .div-danhsach {
+    padding-top: 30px;
+    padding-left: 5px;
+  }
   .danhsachPT {
     border-bottom: 4px solid tomato;  
   }

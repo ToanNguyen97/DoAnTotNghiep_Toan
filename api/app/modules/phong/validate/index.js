@@ -28,8 +28,8 @@ const phongVal = {
     },
     payload: {
       tenPhong: Joi.string().required().max(20).trim(),
-      anhChinh: Joi.string().required(),
-      anhChiTiet: Joi.array(),
+      anhChinh: Joi.object(),
+      anhChiTiet: Joi.object(),
       moTa: Joi.string(),
       soDien: Joi.number().required(),
       soNuoc: Joi.number().required(),
