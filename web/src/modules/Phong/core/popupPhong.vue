@@ -54,13 +54,12 @@
                 <img v-for="(item,index) in anhChiTiet" :key="index" style="padding-right:5px;" :src="item" height="144">
               </div>
               <div v-else>
-                 <div v-if="changeAnhMulti">
-                   <img v-for="(item,index) in anhChiTiet" :key="index" style="padding-right:5px;" :src="item" height="144">
-                 </div>
-                 <div v-else>
-                   <img v-for="(item,index) in formData.anhChiTiet" :key="index" style="padding-right:5px;" :src="`//localhost:3003/image/${item}`" height="144">
-                 </div>
-                
+                 <div v-if="srcAnhChiTiet">
+                   <span v-for="(item,index) in srcAnhChiTiet" :key="index">
+                     <img v-if="item.type === 'base64'" style="padding-right:5px;" :src="item.anh" height="144">
+                     <img v-if="item.type === 'src'"  style="padding-right:5px;" :src="'//localhost:3003/image/' + item.anh" height="144">
+                   </span>
+                 </div>        
               </div>
             </v-flex>       
           </v-layout>

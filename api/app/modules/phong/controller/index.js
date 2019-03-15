@@ -6,49 +6,84 @@ const Phong = Mongoose.model('Phong')
 const fs = require('fs')
 
 const save = async (request, h) => {
-  try { 
-    let anhChinh = request.payload.anhChinh
-    let anhChinhName = anhChinh.name
-    let anhChinh64 = anhChinh.file64.replace(/^data(.*?)base64,/, "")
-    fs.writeFile(`app/lib/images/${anhChinhName}`, anhChinh64, 'base64', function(err) {
-      return err
-    })
-    let anhChiTiet = request.payload.anhChiTiet
-    let anhChiTiet64 = []
-    for(let item of anhChiTiet.file64)
-    {
-      let anh = item.replace(/^data(.*?)base64,/, "")
-      anhChiTiet64.push(anh)
-    }
-    for(let i=0; i < anhChiTiet.name.length; i++)
-    {
-      fs.writeFile(`app/lib/images/${anhChiTiet.name[i]}`, anhChiTiet64[i], 'base64', function(err) {
-        return err
-      })
-    }
+  try {
     let data = request.payload
-    console.log('xem data: ', data)
-    let payload = {tenPhong: data.tenPhong, anhChinh: anhChinhName, anhChiTiet: anhChiTiet.name, moTa: data.moTa, soDien: data.soDien,
-      soNuoc: data.soNuoc, giaPhong: data.giaPhong, dKMang: data.dKMang, status: data.status, homeFlag: data.homeFlag,
-      hotFlag:data.hotFlag, tinhTrangPhongID: data.tinhTrangPhongID, khuPhongID: data.khuPhongID, loaiPhongID: data.loaiPhongID }
+    let phong = {}
     let item = {}
-    
-    if(!data._id) {
-      item = await Phong.create(payload)
-    }
-    else {
-      if (data._id && !Mongoose.Types.ObjectId.isValid(data._id)) {
-        return Boom.badRequest('Phong Id not valid.')
+    let anhChinhName 
+    let anhChiTietName
+    if(data._id)
+    {
+      if(data.anhChinh.name === null || data.anhChinh.name.length === 0 || data.anhChinh.name === undefined )
+      {
+        let entity = await Phong.findById({_id: data._id})
+        anhChinhName = entity.anhChinh       
       }
-      payload._id = data._id
-      item = await Phong.findById({_id: data._id})
-      if (!item) {
-        return Boom.badRequest('Phong not found.')
+      else 
+      {
+        anhChinhName = data.anhChinh.name
+        let anhChinh64 = data.anhChinh.file64.replace(/^data(.*?)base64,/, "")
+        fs.writeFile(`app/lib/images/${anhChinhName}`, anhChinh64, 'base64', function(err) {
+          return err
+        })
       }
-      item = Object.assign(item, payload)
+
+      if(data.anhChiTiet.name.length !=0)
+      {
+        anhChiTietName = data.anhChiTiet.name
+        let anhChiTiet64 = []
+        for(let item of data.anhChiTiet.file64)
+        {
+          let anh = item.replace(/^data(.*?)base64,/, "")
+          anhChiTiet64.push(anh)
+        }
+        for(let i=0; i < data.anhChiTiet.name.length; i++)
+        {
+          fs.writeFile(`app/lib/images/${data.anhChiTiet.name[i]}`, anhChiTiet64[i], 'base64', function(err) {
+            return err
+          })
+        }
+      }
+      else {
+        let entity = await Phong.findById({_id: data._id})
+        anhChiTietName = entity.anhChiTiet
+      }
+
+      let payload = {tenPhong: data.tenPhong, anhChinh: anhChinhName, anhChiTiet: anhChiTietName, moTa: data.moTa, soDien: data.soDien,
+        soNuoc: data.soNuoc, giaPhong: data.giaPhong, dKMang: data.dKMang, status: data.status, homeFlag: data.homeFlag,
+        hotFlag:data.hotFlag, tinhTrangPhongID: data.tinhTrangPhongID, khuPhongID: data.khuPhongID, loaiPhongID: data.loaiPhongID }
+      
+      item = await Phong.findOneAndUpdate({_id: data._id}, payload) ||  Boom.notFound()
+      phong = await Phong.findById({_id: item._id}).populate('loaiPhongID').populate('khuPhongID')
     }
-    await item.save()
-    let phong = await Phong.findById({_id: item._id}).populate('loaiPhongID').populate('khuPhongID')
+    else
+    {
+      anhChinhName = data.anhChinh.name
+        let anhChinh64 = data.anhChinh.file64.replace(/^data(.*?)base64,/, "")
+        fs.writeFile(`app/lib/images/${anhChinhName}`, anhChinh64, 'base64', function(err) {
+          return err
+      })
+
+      anhChiTietName = data.anhChiTiet.name
+      let anhChiTiet64 = []
+      for(let item of data.anhChiTiet.file64)
+      {
+        let anh = item.replace(/^data(.*?)base64,/, "")
+        anhChiTiet64.push(anh)
+      }
+      for(let i=0; i < data.anhChiTiet.name.length; i++)
+      {
+        fs.writeFile(`app/lib/images/${data.anhChiTiet.name[i]}`, anhChiTiet64[i], 'base64', function(err) {
+          return err
+        })
+      }
+
+      let payload = {tenPhong: data.tenPhong, anhChinh: anhChinhName, anhChiTiet: anhChiTietName, moTa: data.moTa, soDien: data.soDien,
+        soNuoc: data.soNuoc, giaPhong: data.giaPhong, dKMang: data.dKMang, status: data.status, homeFlag: data.homeFlag,
+        hotFlag:data.hotFlag, tinhTrangPhongID: data.tinhTrangPhongID, khuPhongID: data.khuPhongID, loaiPhongID: data.loaiPhongID }
+      item =  await Phong.create(payload)
+      phong = await Phong.findById({_id: item._id}).populate('loaiPhongID').populate('khuPhongID')
+    }
     return phong
   } catch (err) {
     console.log(err)

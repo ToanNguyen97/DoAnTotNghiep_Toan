@@ -37,7 +37,6 @@ const getTinhTrangPhongs = async (context) => {
 }
 
 const XacNhan = async (context, payload) => {
-  console.log('xem: ',payload)
   let {data} = await axios.post('http://localhost:3003/api/phong', payload)
   context.commit('addPhong', data)
 }

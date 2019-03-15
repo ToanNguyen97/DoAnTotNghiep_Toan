@@ -38,7 +38,8 @@ export default {
         v => (v && v.length <= 20) || 'Tên tối đa 20 ký tự'
       ],
       uploadingPhoto: false,
-      srcAnhChinh: null
+      srcAnhChinh: null,
+      srcAnhChiTiet: null
     }
   },
   created() {
@@ -73,6 +74,8 @@ export default {
       this.anhChiTiet = []
       this.image = null
       this.anhChiTietName = []
+      this.changeAnh = false
+      this.changeAnhMulti = false
       this.$emit('input', false)
     },
     choosedFile () {
@@ -121,10 +124,24 @@ export default {
        }
     },
     XacNhan () {
-      let anhChinh = {name: this.image, file64: this.anhChinh}
-      let anhChiTiet = {name: this.anhChiTietName, file64: this.anhChiTiet}
-      this.formData.anhChinh = anhChinh
-      this.formData.anhChiTiet = anhChiTiet
+      if(this.image != "")
+      {
+        let anhChinh = {name: this.image, file64: this.anhChinh}
+        this.formData.anhChinh = anhChinh
+      }
+      else
+      {
+        this.formData.anhChinh = {name: "", file64: ""}
+      }
+      if(this.anhChiTietName != "")
+      {
+        let anhChiTiet = {name: this.anhChiTietName, file64: this.anhChiTiet}      
+        this.formData.anhChiTiet = anhChiTiet
+      }
+      else
+      {
+        this.formData.anhChiTiet = {name: [], file64: []}
+      }
       this.formData.tinhTrangPhongID = "5c88669ffcd238559ca25d13"
       if(this.formData.khuPhongID._id)
       {
@@ -139,10 +156,33 @@ export default {
       })
     },
     getSrcAnhChinh () {
-      if (this.changeAnh) {
-        this.srcAnhChinh = this.anhChinh
-      } else {
-        this.srcAnhChinh = `//localhost:3003/image/${this.formData.anhChinh}`
+      if(this.value && !this.isThem)
+      {
+        if (this.changeAnh) {
+          this.srcAnhChinh = this.anhChinh
+        } else {
+          this.srcAnhChinh = `//localhost:3003/image/${this.formData.anhChinh}`
+        }
+      }
+    },
+    getSrcAnhChiTiet () {
+      if(this.value && !this.isThem)
+      {
+        if (this.changeAnhMulti) {
+          this.srcAnhChiTiet = this.anhChiTiet.map(a => {
+            return {
+              anh: a,
+              type: 'base64'
+            }
+          })
+        } else {
+          this.srcAnhChiTiet = this.formData.anhChiTiet.map(a => {
+            return {
+              anh: a,
+              type: 'src'
+            }
+          })        
+        }
       }
     }
   },
@@ -166,7 +206,11 @@ export default {
       }
       }
     },
-    'formData': 'getSrcAnhChinh',
-    'anhChinh': 'getSrcAnhChinh'
+    formData () {
+      this.getSrcAnhChinh()
+      this.getSrcAnhChiTiet()
+    },
+    'anhChinh': 'getSrcAnhChinh',
+    'anhChiTiet': 'getSrcAnhChiTiet'
   },
 }
