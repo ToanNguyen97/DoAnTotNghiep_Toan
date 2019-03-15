@@ -49,8 +49,7 @@ const schema = {
 }
 
 const options = {
-  collection: 'phongs',
-  timestamps: true
+  collection: 'phongs'
 }
 
 export {schema, options}

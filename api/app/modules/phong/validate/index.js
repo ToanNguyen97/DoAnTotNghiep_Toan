@@ -6,6 +6,7 @@ Joi.ObjectId = require('joi-objectid') (Joi)
 const phongVal = {
   create: {
     payload: {
+      _id: Joi.string().length(24),
       tenPhong: Joi.string().required().max(20).trim(),
       anhChinh: Joi.object(),
       anhChiTiet: Joi.object(),
@@ -20,6 +21,9 @@ const phongVal = {
       tinhTrangPhongID: Joi.ObjectId(),
       khuPhongID: Joi.ObjectId(),
       loaiPhongID: Joi.ObjectId()
+    },
+    options: {
+      allowUnknown: true
     }
   },
   update: {

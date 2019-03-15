@@ -4,7 +4,8 @@
       <h1 class="mb-2 danhsachPT">Danh sách phòng trọ:</h1>    
     </v-layout>
     <v-layout row wrap>
-       <popupPhong v-model="edit" :phongSelect="phongSelect || {}"/>
+       <v-btn   @click="OpenThem" color="primary" dark class="mt-3 hidden-xs-only">Thêm Nhanh</v-btn>
+        <v-btn  fab small @click="OpenThem"  color="primary" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>add_circle_outline</v-icon></v-btn>
     </v-layout>
     <v-layout >
     </v-layout>
@@ -81,6 +82,7 @@
     <div class="text-xs-center pt-2">
       <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
     </div>
+    <popupPhong v-model="edit" :isThem="isThem" :phongSelect="phongSelect || {}"/>
   </div>
 </template>
 <script src="./listPhong.js">

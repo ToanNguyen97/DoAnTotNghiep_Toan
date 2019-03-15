@@ -15,6 +15,7 @@ const getListTinhTrangPhong = (state, data) => {
 }
 
 const addPhong = (state, phong) => {
+  state.dsPhong = state.dsPhong.filter( item => item._id != phong._id)
   state.dsPhong = [...state.dsPhong, ...[phong]]
 }
 

@@ -6,6 +6,7 @@ export default {
   data() {
     return {
       edit: false,
+      isThem: false,
       phongSelect: {},
       pagination: {},
       selected: [],
@@ -59,7 +60,12 @@ export default {
         this.pagination.descending = false
       }
     },
+    OpenThem () {
+      this.isThem = true
+      this.edit = true
+    },
     GotoEdit(item) {
+     this.isThem = false
      this.edit = true
      this.phongSelect = item
     }

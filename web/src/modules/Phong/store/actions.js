@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 const getPhongs = async (context) => {
   try {
     let {data} = await axios.get('http://localhost:3003/api/phong')
@@ -35,14 +36,14 @@ const getTinhTrangPhongs = async (context) => {
   }
 }
 
-const themPhong = async (context, payload) => {
-  console.log(payload)
+const XacNhan = async (context, payload) => {
+  console.log('xem: ',payload)
   let {data} = await axios.post('http://localhost:3003/api/phong', payload)
   context.commit('addPhong', data)
 }
 
 export default {
-  themPhong,
+  XacNhan,
   getPhongs,
   getKhuPhongs,
   getLoaiPhongs,

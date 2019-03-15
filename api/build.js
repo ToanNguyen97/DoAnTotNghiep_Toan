@@ -531,8 +531,7 @@ const schema = {
   }
 };
 const options = {
-  collection: 'phongs',
-  timestamps: true
+  collection: 'phongs'
 };
 exports.schema = schema;
 exports.options = options;
@@ -1174,7 +1173,7 @@ const Phong = _mongoose2.default.model('Phong');
 
 const fs = __webpack_require__(/*! fs */ "fs");
 
-const create = async (request, h) => {
+const save = async (request, h) => {
   try {
     let anhChinh = request.payload.anhChinh;
     let anhChinhName = anhChinh.name;
@@ -1190,32 +1189,54 @@ const create = async (request, h) => {
       anhChiTiet64.push(anh);
     }
 
-    console.log(anhChiTiet.name);
-
     for (let i = 0; i < anhChiTiet.name.length; i++) {
       fs.writeFile(`app/lib/images/${anhChiTiet.name[i]}`, anhChiTiet64[i], 'base64', function (err) {
         return err;
       });
     }
 
+    let data = request.payload;
+    console.log('xem data: ', data);
     let payload = {
-      tenPhong: request.payload.tenPhong,
+      tenPhong: data.tenPhong,
       anhChinh: anhChinhName,
       anhChiTiet: anhChiTiet.name,
-      moTa: request.payload.moTa,
-      soDien: request.payload.soDien,
-      soNuoc: request.payload.soNuoc,
-      giaPhong: request.payload.giaPhong,
-      dKMang: request.payload.dKMang,
-      status: request.payload.status,
-      homeFlag: request.payload.homeFlag,
-      tinhTrangPhongID: request.payload.tinhTrangPhongID,
-      khuPhongID: request.payload.khuPhongID,
-      loaiPhongID: request.payload.loaiPhongID
+      moTa: data.moTa,
+      soDien: data.soDien,
+      soNuoc: data.soNuoc,
+      giaPhong: data.giaPhong,
+      dKMang: data.dKMang,
+      status: data.status,
+      homeFlag: data.homeFlag,
+      hotFlag: data.hotFlag,
+      tinhTrangPhongID: data.tinhTrangPhongID,
+      khuPhongID: data.khuPhongID,
+      loaiPhongID: data.loaiPhongID
     };
-    let data = await Phong.create(payload);
+    let item = {};
+
+    if (!data._id) {
+      item = await Phong.create(payload);
+    } else {
+      if (data._id && !_mongoose2.default.Types.ObjectId.isValid(data._id)) {
+        return _boom2.default.badRequest('Phong Id not valid.');
+      }
+
+      payload._id = data._id;
+      item = await Phong.findById({
+        _id: data._id
+      });
+
+      if (!item) {
+        return _boom2.default.badRequest('Phong not found.');
+      }
+
+      item = Object.assign(item, payload);
+    }
+
+    await item.save();
     let phong = await Phong.findById({
-      _id: data._id
+      _id: item._id
     }).populate('loaiPhongID').populate('khuPhongID');
     return phong;
   } catch (err) {
@@ -1304,7 +1325,7 @@ const getById = async (request, h) => {
 };
 
 exports.default = {
-  create,
+  save,
   getById,
   getAll,
   update,
@@ -1401,10 +1422,10 @@ exports.default = [{
 }, {
   method: 'POST',
   path: '/phong',
-  handler: _index2.default.create,
+  handler: _index2.default.save,
   config: {
     validate: _index4.default.create,
-    description: 'tao phong moi',
+    description: 'vua them sua phong',
     tags: ['api'],
     plugins: {
       'hapi-swagger': {
@@ -1483,6 +1504,7 @@ _joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")
 const phongVal = {
   create: {
     payload: {
+      _id: _joi2.default.string().length(24),
       tenPhong: _joi2.default.string().required().max(20).trim(),
       anhChinh: _joi2.default.object(),
       anhChiTiet: _joi2.default.object(),
@@ -1497,6 +1519,9 @@ const phongVal = {
       tinhTrangPhongID: _joi2.default.ObjectId(),
       khuPhongID: _joi2.default.ObjectId(),
       loaiPhongID: _joi2.default.ObjectId()
+    },
+    options: {
+      allowUnknown: true
     }
   },
   update: {

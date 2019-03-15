@@ -36,10 +36,10 @@ export default [
   {
     method: 'POST',
     path:'/phong',
-    handler: PhongController.create,
+    handler: PhongController.save,
     config: {
       validate: PhongVal.create,
-      description: 'tao phong moi',
+      description: 'vua them sua phong',
       tags: ['api'],
       plugins: {
         'hapi-swagger': {
