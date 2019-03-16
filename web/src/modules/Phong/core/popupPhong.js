@@ -1,6 +1,5 @@
-
 import _ from 'lodash'
-
+import toast from '../../../plugins/toast'
 export default {
   props:{
     phongSelect: {
@@ -152,7 +151,8 @@ export default {
         this.formData.loaiPhongID = this.formData.loaiPhongID._id
       }
       this.$store.dispatch('XacNhan', this.formData).then(() => {
-       this.Huy()
+        toast.Info('Thành Công!')
+        this.Huy()
       })
     },
     getSrcAnhChinh () {

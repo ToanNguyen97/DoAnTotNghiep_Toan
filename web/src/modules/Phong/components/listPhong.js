@@ -26,7 +26,12 @@ export default {
       loading: true,     
     }
   },
-  created() {
+  beforeCreate () {
+    this.loading= true
+    console.log('before: ', this.loading)
+  },
+  created () {
+    this.loading = false
     this.$store.dispatch('getPhongs')
   },
   computed: {
@@ -37,7 +42,6 @@ export default {
       return Math.ceil(this.dsPhong.length / this.pagination.rowsPerPage)
     },
     dsPhong () {
-      this.loading = false   
       return this.$store.state.phong.dsPhong
     }
   },
