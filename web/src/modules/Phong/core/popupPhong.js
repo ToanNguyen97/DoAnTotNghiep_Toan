@@ -14,7 +14,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       valid: true,
       changeAnh: false,
@@ -58,7 +58,15 @@ export default {
     }
   },
   methods: {
-    Huy () {
+    Huy () {    
+      this.$refs.form.reset()
+      this.anhChinh = null
+      this.anhChiTiet = []
+      this.image = null
+      this.anhChiTietName = []
+      this.changeAnh = false
+      this.changeAnhMulti = false
+      this.$emit('input', false)
       this.formData = {
         soDien: 0,
         soNuoc: 0,
@@ -68,14 +76,6 @@ export default {
         hotFlag: false,
         status: false
       }
-      this.$refs.form.reset()
-      this.anhChinh = null
-      this.anhChiTiet = []
-      this.image = null
-      this.anhChiTietName = []
-      this.changeAnh = false
-      this.changeAnhMulti = false
-      this.$emit('input', false)
     },
     choosedFile () {
       const files = this.$refs['file'].files
@@ -151,8 +151,10 @@ export default {
         this.formData.loaiPhongID = this.formData.loaiPhongID._id
       }
       this.$store.dispatch('XacNhan', this.formData).then(() => {
-        toast.Info('Thành Công!')
+        toast.Success('Thành Công!')
         this.Huy()
+      }).catch( () => {
+        toast.Error('Lỗi!')  
       })
     },
     getSrcAnhChinh () {

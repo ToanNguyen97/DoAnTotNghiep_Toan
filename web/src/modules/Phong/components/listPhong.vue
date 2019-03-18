@@ -4,8 +4,12 @@
       <h1 class="mb-2 danhsachPT">Danh sách phòng trọ:</h1>    
     </v-layout>
     <v-layout row wrap>
-       <v-btn   @click="OpenThem" color="primary" dark class="mt-3 hidden-xs-only">Thêm Nhanh</v-btn>
-        <v-btn  fab small @click="OpenThem"  color="primary" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>add_circle_outline</v-icon></v-btn>
+      <v-btn @click="OpenThem"  color="success" dark class="mt-3 hidden-xs-only">Thêm Mới</v-btn>
+      <v-btn fab small @click="OpenThem"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>add_circle_outline</v-icon></v-btn>
+      <v-btn @click="OpenTimKiem"  color="info" dark class="mt-3 hidden-xs-only">Tìm kiếm</v-btn>
+      <v-btn fab small @click="OpenTimKiem"  color="info" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>search</v-icon></v-btn> 
+      <v-btn @click="OpenDeleteMulti" :disabled="disabled" color="warning" dark class="mt-3 hidden-xs-only">Xóa Nhiều</v-btn>
+      <v-btn fab small @click="OpenDeleteMulti" :disabled="disabled"  color="warning" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>remove_circle_outline</v-icon></v-btn>
     </v-layout>
     <v-layout >
     </v-layout>
@@ -66,7 +70,7 @@
                 <span>sửa</span>
               </v-tooltip>
               <v-tooltip top class="my-3">
-                <v-icon slot="activator" small @click="OpenSnackback(props.item._id)">delete</v-icon>
+                <v-icon slot="activator" small @click="OpenSnackback(props.item)">delete</v-icon>
                 <span>xóa</span>
               </v-tooltip>
               <v-tooltip top class="my-3">
@@ -82,7 +86,18 @@
     <div class="text-xs-center pt-2">
       <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
     </div>
+    <v-snackbar v-model="snackbar" top  color="warning">
+      <span>Bạn có chắc chắn muốn xóa {{this.tenPhong}}!</span>
+      <v-btn color="success" @click="Delete">OK</v-btn>
+      <v-btn color="red" @click="ResetSnackback">Cancel</v-btn>
+    </v-snackbar>
+    <v-snackbar v-model="snackbarMulti" top  color="warning">
+      <span>Bạn có chắc chắn muốn xóa những phòng chọn!</span>
+      <v-btn color="success" @click="DeleteMulti">OK</v-btn>
+      <v-btn color="red" @click="ResetSnackbackMulti">Cancel</v-btn>
+    </v-snackbar>
     <popupPhong v-model="edit" :isThem="isThem" :phongSelect="phongSelect || {}"/>
+    <popupTimKiem v-model="open" />
   </div>
 </template>
 <script src="./listPhong.js">
@@ -91,8 +106,5 @@
   .div-danhsach {
     padding-top: 30px;
     padding-left: 5px;
-  }
-  .danhsachPT {
-    border-bottom: 4px solid tomato;  
   }
 </style>

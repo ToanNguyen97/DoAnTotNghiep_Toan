@@ -1,11 +1,16 @@
 import popupPhong from '../core/popupPhong.vue'
+import popupTimKiem from '../core/popupTimKiem.vue'
+import toast from '../../../plugins/toast.js'
 export default {
   components: {
-    popupPhong
+    popupPhong,
+    popupTimKiem
   },
   data() {
     return {
+      open: false,
       edit: false,
+      disabled: true,
       isThem: false,
       phongSelect: {},
       pagination: {},
@@ -23,16 +28,19 @@ export default {
         { text: 'Loại Phòng', value: 'loaiPhongID' },
         { text: 'Thao Tác', value: '' }
       ],
-      loading: true,     
+      loading: true,
+      snackbar: false,
+      snackbarMulti: false,
+      idXoa: '',
+      tenPhong: '',   
     }
   },
-  beforeCreate () {
-    this.loading= true
-    console.log('before: ', this.loading)
-  },
-  created () {
+  mounted() {
     this.loading = false
-    this.$store.dispatch('getPhongs')
+  },
+  async created () {
+    this.loading = true
+   await this.$store.dispatch('getPhongs')
   },
   computed: {
     pages () {
@@ -43,6 +51,18 @@ export default {
     },
     dsPhong () {
       return this.$store.state.phong.dsPhong
+    }
+  },
+  watch: {
+    selected () {
+      if(this.selected && this.selected.length == 0)
+      {
+        this.disabled = true
+      }
+      else
+      {
+        this.disabled = false
+      }
     }
   },
   methods: {
@@ -68,10 +88,54 @@ export default {
       this.isThem = true
       this.edit = true
     },
+    OpenTimKiem () {
+      this.open = true
+    },
     GotoEdit(item) {
      this.isThem = false
      this.edit = true
      this.phongSelect = item
+    },
+    OpenSnackback (phong) {
+      this.tenPhong = phong.tenPhong
+      this.idXoa = phong._id
+      this.snackbar = true
+    },
+    Delete () {
+      if(this.idXoa != '')
+      {
+        this.$store.dispatch('deletePhong', this.idXoa).then( res => {
+          toast.Success('Đã xóa thành công '+ res.tenPhong)
+          this.snackbar = false
+        }).catch( res => {
+          toast.Error('Có lỗi xảy ra: ' + res)
+        })
+      } else {
+        toast.Error('Vui lòng chọn phòng cần xóa!')
+      }
+    },
+    DeleteMulti () {
+      if (this.selected && this.selected.length != 0)
+      {
+        let deleteMultiId = this.selected.map(item => item._id)
+        this.$store.dispatch('deleteMultiPhong', deleteMultiId).then(() => {
+          toast.Success('Xóa thành công!')
+          this.disabled = true
+        })
+      } else {
+        toast.Show('Vui lòng chọn phòng để xóa')
+      }
+    },
+    OpenDeleteMulti () {
+      this.snackbarMulti = true
+    },
+    ResetSnackback () {
+      this.idXoa = '',
+      this.tenPhong = '',
+      this.snackbar = false
+    },
+    ResetSnackbackMulti () {
+      this.snackbarMulti = false
     }
   },
   filters: {

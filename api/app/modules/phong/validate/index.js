@@ -26,6 +26,25 @@ const phongVal = {
       allowUnknown: true
     }
   },
+  search: {
+    params: {
+      isReal: Joi.boolean()
+    },
+    payload: {
+      tenPhong: Joi.string(), 
+      moTa: Joi.string(),
+      soDien: Joi.number(),
+      soNuoc: Joi.number(),
+      giaPhong: Joi.number(),
+      dKMang: Joi.boolean(),
+      status: Joi.boolean(),
+      homeFlag: Joi.boolean(),
+      hotFlag: Joi.boolean(),
+      tinhTrangPhongID: Joi.ObjectId(),
+      khuPhongID: Joi.ObjectId(),
+      loaiPhongID: Joi.ObjectId()
+    }
+  },
   update: {
     params: {
       id: Joi.ObjectId()

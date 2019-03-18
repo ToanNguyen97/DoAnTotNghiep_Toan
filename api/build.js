@@ -161,6 +161,8 @@ const Inert = __webpack_require__(/*! inert */ "inert");
 
 const Vision = __webpack_require__(/*! vision */ "vision");
 
+const HapiCors = __webpack_require__(/*! hapi-cors */ "hapi-cors");
+
 const HapiSwagger = __webpack_require__(/*! hapi-swagger */ "hapi-swagger");
 
 const HapiAuth2 = __webpack_require__(/*! hapi-auth-jwt2 */ "hapi-auth-jwt2");
@@ -181,7 +183,13 @@ const loader = exports.loader = async function (server) {
   mongo, redis, Inert, Vision, {
     plugin: HapiSwagger,
     options: swaggerOptions
-  }, HapiAuth2, RouteImage]).then(async err => {
+  }, HapiAuth2, RouteImage, {
+    plugin: HapiCors,
+    options: {
+      origins: ['*'],
+      methods: ['POST, GET, OPTIONS, PUT, DELETE']
+    }
+  }]).then(async err => {
     if (err) {
       console.log(err);
     }
@@ -434,6 +442,73 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/models/Phong/dao.js":
+/*!*********************************!*\
+  !*** ./app/models/Phong/dao.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (schema, options) {
+  schema.statics.SearchMultiple = async function (payload) {
+    let Model = this;
+    let queryString = {};
+
+    if (payload.tenPhong) {
+      queryString.tenPhong = {
+        $regex: '.*' + payload.tenPhong + '.*'
+      };
+    }
+
+    if (payload.khuPhongID) {
+      queryString.khuPhongID = payload.khuPhongID;
+    }
+
+    if (payload.loaiPhongID) {
+      queryString.loaiPhongID = payload.loaiPhongID;
+    }
+
+    if (payload.moTa) {
+      queryString.moTa = {
+        $regex: `.*${payload.moTa}.*`
+      };
+    }
+
+    if (payload.soDien) {
+      queryString.soDien = payload.soDien;
+    }
+
+    if (payload.soNuoc) {
+      queryString.soNuoc = payload.soNuoc;
+    }
+
+    if (payload.dKMang) {
+      queryString.dKMang = payload.dKMang;
+    }
+
+    if (payload.homeFlag) {
+      queryString.homeFlag = payload.homeFlag;
+    }
+
+    if (payload.hotFlag) {
+      queryString.hotFlag = payload.hotFlag;
+    }
+
+    if (payload.status) {
+      queryString.status = payload.status;
+    }
+
+    console.log(queryString);
+    let data = await Model.find(queryString).lean();
+    return data;
+  };
+};
+
+/***/ }),
+
 /***/ "./app/models/Phong/model.js":
 /*!***********************************!*\
   !*** ./app/models/Phong/model.js ***!
@@ -454,9 +529,14 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 var _schema = __webpack_require__(/*! ./schema */ "./app/models/Phong/schema.js");
 
+var _dao = __webpack_require__(/*! ./dao */ "./app/models/Phong/dao.js");
+
+var _dao2 = _interopRequireDefault(_dao);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+PhongSchema.plugin(_dao2.default);
 exports.default = _mongoose2.default.model('Phong', PhongSchema);
 
 /***/ }),
@@ -1366,12 +1446,29 @@ const getById = async (request, h) => {
   }
 };
 
+const searchMultiple = async (request, h) => {
+  try {
+    let data = request.payload;
+
+    if (request.params.isReal === true) {
+      let items = await Phong.find(data).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID');
+      return items;
+    } else {
+      let items = await Phong.SearchMultiple(request.payload);
+      return items;
+    }
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   save,
   getById,
   getAll,
   update,
-  deletePhong
+  deletePhong,
+  searchMultiple
 };
 
 /***/ }),
@@ -1430,6 +1527,25 @@ exports.default = [{
   handler: _index2.default.getAll,
   config: {
     description: 'lay danh sach phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/timkiemphong/timchinhxac={isReal}',
+  handler: _index2.default.searchMultiple,
+  config: {
+    description: 'tim kiem nhieu tham so',
+    validate: _index4.default.search,
     tags: ['api'],
     plugins: {
       'hapi-swagger': {
@@ -1564,6 +1680,25 @@ const phongVal = {
     },
     options: {
       allowUnknown: true
+    }
+  },
+  search: {
+    params: {
+      isReal: _joi2.default.boolean()
+    },
+    payload: {
+      tenPhong: _joi2.default.string(),
+      moTa: _joi2.default.string(),
+      soDien: _joi2.default.number(),
+      soNuoc: _joi2.default.number(),
+      giaPhong: _joi2.default.number(),
+      dKMang: _joi2.default.boolean(),
+      status: _joi2.default.boolean(),
+      homeFlag: _joi2.default.boolean(),
+      hotFlag: _joi2.default.boolean(),
+      tinhTrangPhongID: _joi2.default.ObjectId(),
+      khuPhongID: _joi2.default.ObjectId(),
+      loaiPhongID: _joi2.default.ObjectId()
     }
   },
   update: {
@@ -1897,7 +2032,7 @@ exports.default = { ...tinhTrangPhongVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-swagger":"^9.3.1","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.0","lodash":"^4.17.11","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","redis":"^2.8.0","vision":"^5.4.4"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.3.1","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.0","lodash":"^4.17.11","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","redis":"^2.8.0","vision":"^5.4.4"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 
@@ -1976,6 +2111,17 @@ module.exports = require("hapi");
 /***/ (function(module, exports) {
 
 module.exports = require("hapi-auth-jwt2");
+
+/***/ }),
+
+/***/ "hapi-cors":
+/*!****************************!*\
+  !*** external "hapi-cors" ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("hapi-cors");
 
 /***/ }),
 

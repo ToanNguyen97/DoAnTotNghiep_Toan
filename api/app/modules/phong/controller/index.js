@@ -148,10 +148,28 @@ const getById = async (request, h) => {
   }
 }
 
+const searchMultiple = async (request, h) => {
+  try {
+    let data = request.payload
+    if(request.params.isReal === true)
+    {
+      let items = await Phong.find(data).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID')
+      return items
+    }
+    else {
+      let items = await Phong.SearchMultiple(request.payload)
+      return items
+    }
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
 export default {
   save,
   getById,
   getAll,
   update,
-  deletePhong
+  deletePhong,
+  searchMultiple
 }

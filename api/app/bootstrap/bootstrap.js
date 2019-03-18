@@ -6,6 +6,7 @@ const mongo = require('../lib/mongo.js')
 const redis = require('../lib/redis.js')
 const Inert = require('inert')
 const Vision = require('vision')
+const HapiCors = require('hapi-cors')
 const HapiSwagger = require('hapi-swagger')
 const HapiAuth2 = require ('hapi-auth-jwt2')
 const RouteImage = require('../lib/routeimage')
@@ -28,7 +29,15 @@ export const loader = async function (server) {
       options: swaggerOptions
     },
     HapiAuth2,
-    RouteImage
+    RouteImage,
+    {
+      plugin: HapiCors,
+      options: {
+          origins: ['*'],        
+          methods: ['POST, GET, OPTIONS, PUT, DELETE']
+      
+      }
+    }
   ])
     .then(async (err) => {
       if (err) {

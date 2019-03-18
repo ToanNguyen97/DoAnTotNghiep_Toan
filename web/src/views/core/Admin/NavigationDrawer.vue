@@ -89,6 +89,7 @@
           {
             action: 'account_balance',
             title: 'Phòng Trọ',
+            active: true,
             items: [
               { title: 'Danh sách phòng', icon: 'visibility' },
               { title: 'Thêm phòng', icon: 'add' }
@@ -97,7 +98,6 @@
           {
             action: 'people_outline',
             title: 'Khách Thuê',
-            active: true,
             items: [
               { title: 'Danh sách khách thuê', icon: 'visibility' },
               { title: 'Thêm khách thuê', icon: 'person_add' }

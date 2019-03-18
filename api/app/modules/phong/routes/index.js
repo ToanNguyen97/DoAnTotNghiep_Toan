@@ -18,6 +18,22 @@ export default [
     }
   },
   {
+    method: 'POST',
+    path: '/timkiemphong/timchinhxac={isReal}',
+    handler: PhongController.searchMultiple,
+    config: {
+      description: 'tim kiem nhieu tham so',
+      validate: PhongVal.search,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'GET',
     path: '/phong/{id}',
     handler: PhongController.getById,

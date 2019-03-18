@@ -6,17 +6,10 @@ Vue.use(toasted)
 const options = {
   theme: "outline",
   position: 'top-center',
-  duration: 60000,
+  duration: 2000,
   icon: {
     name: 'check_circle',
     after: false
-  },
-  action: {
-    text: 'Close',
-    onClick : (e, toastObject) => {
-      toastObject.goAway(0);
-    },
-    after: true
   },
   className: 'colorText'
 }
