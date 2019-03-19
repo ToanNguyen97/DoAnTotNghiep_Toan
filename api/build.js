@@ -203,6 +203,10 @@ const loader = exports.loader = async function (server) {
     __webpack_require__(/*! ../models/LoaiPhong/model */ "./app/models/LoaiPhong/model.js");
 
     __webpack_require__(/*! ../models/TinhTrangPhong/model */ "./app/models/TinhTrangPhong/model.js");
+
+    __webpack_require__(/*! ../models/KhachThue/model */ "./app/models/KhachThue/model.js");
+
+    __webpack_require__(/*! ../models/LoaiKhachThue/model */ "./app/models/LoaiKhachThue/model.js");
     /* Load Modules */
 
 
@@ -211,6 +215,8 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/khuphong */ "./app/modules/khuphong/index.js"));
     modules.push(__webpack_require__(/*! ../modules/loaiphong */ "./app/modules/loaiphong/index.js"));
     modules.push(__webpack_require__(/*! ../modules/tinhtrangphong */ "./app/modules/tinhtrangphong/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/khachthue */ "./app/modules/khachthue/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/loaikhacthue */ "./app/modules/loaikhacthue/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -323,6 +329,110 @@ exports.name = 'route-image';
 
 /***/ }),
 
+/***/ "./app/models/KhachThue/model.js":
+/*!***************************************!*\
+  !*** ./app/models/KhachThue/model.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/KhachThue/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const phongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('KhachThue', phongSchema);
+
+/***/ }),
+
+/***/ "./app/models/KhachThue/schema.js":
+/*!****************************************!*\
+  !*** ./app/models/KhachThue/schema.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const schema = {
+  hoKhachThue: {
+    type: String,
+    required: true,
+    max: 30
+  },
+  tenKhachThue: {
+    type: String,
+    required: true,
+    max: 20
+  },
+  anhDaiDien: {
+    type: String,
+    required: true
+  },
+  ngaySinh: {
+    type: Date,
+    required: true
+  },
+  gioiTinh: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+  soCMND: {
+    type: String,
+    required: true,
+    max: 11
+  },
+  soDienThoai: {
+    type: String,
+    max: 11
+  },
+  hoTenNguoiThan: {
+    type: String,
+    max: 50
+  },
+  diaChi: {
+    type: String,
+    required: true,
+    max: 80
+  },
+  loaiKhachThueID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'LoaiKhachThue'
+  },
+  phongs: [{
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'Phong'
+  }],
+  email: String
+};
+const options = {
+  collection: 'khacthues'
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
 /***/ "./app/models/KhuPhong/model.js":
 /*!**************************************!*\
   !*** ./app/models/KhuPhong/model.js ***!
@@ -377,6 +487,61 @@ const schema = {
 const options = {
   collection: 'khuphongs',
   timestamps: true
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/models/LoaiKhachThue/model.js":
+/*!*******************************************!*\
+  !*** ./app/models/LoaiKhachThue/model.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/LoaiKhachThue/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const loaiKhachThueSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('LoaiKhachThue', loaiKhachThueSchema);
+
+/***/ }),
+
+/***/ "./app/models/LoaiKhachThue/schema.js":
+/*!********************************************!*\
+  !*** ./app/models/LoaiKhachThue/schema.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const schema = {
+  tenLoaiKhachThue: {
+    type: String,
+    required: true,
+    max: 30
+  }
+};
+const options = {
+  collection: 'loaikhachthues'
 };
 exports.schema = schema;
 exports.options = options;
@@ -673,6 +838,200 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/modules/khachthue/controller/index.js":
+/*!***************************************************!*\
+  !*** ./app/modules/khachthue/controller/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const fs = __webpack_require__(/*! fs */ "fs");
+
+const KhachThue = _mongoose2.default.model('KhachThue');
+
+const save = async (request, h) => {
+  try {
+    let item = await KhachThue.find();
+    return item;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const getAll = async (request, h) => {
+  try {
+    return (await KhachThue.find().populate('loaiKhachThueID')) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  save,
+  getAll
+};
+
+/***/ }),
+
+/***/ "./app/modules/khachthue/index.js":
+/*!****************************************!*\
+  !*** ./app/modules/khachthue/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index */ "./app/modules/khachthue/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = async (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'khach-thue-admin';
+
+/***/ }),
+
+/***/ "./app/modules/khachthue/routes/index.js":
+/*!***********************************************!*\
+  !*** ./app/modules/khachthue/routes/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/khachthue/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/khachthue/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/khachthue',
+  handler: _index2.default.getAll,
+  config: {
+    tags: ['api'],
+    description: 'lay danh sach khach thue',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/khachthue',
+  handler: _index2.default.save,
+  config: {
+    description: 'them va sua khach thue',
+    tags: ['api'],
+    validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/khachthue/validate/index.js":
+/*!*************************************************!*\
+  !*** ./app/modules/khachthue/validate/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Joi = __webpack_require__(/*! joi */ "joi");
+
+Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
+const khachThueVal = {
+  save: {
+    payload: {
+      _id: Joi.string().length(24),
+      hoKhachThue: Joi.string().required().max(30),
+      tenKhachThue: Joi.string().required().max(20),
+      anhDaiDien: Joi.string().required(),
+      ngaySinh: Joi.date().required(),
+      gioiTinh: Joi.boolean().required(),
+      soCMND: Joi.string().required().max(11),
+      soDienThoai: Joi.string().required().max(11),
+      hoTenNguoiThan: Joi.string().required().max(50),
+      diaChi: Joi.string().required().max(80),
+      loaiKhachThueID: Joi.ObjectId(),
+      email: Joi.string().email()
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
+  get: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  },
+  delete: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  }
+};
+exports.default = { ...khachThueVal
+};
+
+/***/ }),
+
 /***/ "./app/modules/khuphong/controller/index.js":
 /*!**************************************************!*\
   !*** ./app/modules/khuphong/controller/index.js ***!
@@ -942,6 +1301,194 @@ const khuPhongVal = {
   }
 };
 exports.default = { ...khuPhongVal
+};
+
+/***/ }),
+
+/***/ "./app/modules/loaikhacthue/controller/index.js":
+/*!******************************************************!*\
+  !*** ./app/modules/loaikhacthue/controller/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const LoaiKhachThue = _mongoose2.default.model('LoaiKhachThue');
+
+const getAll = async (request, h) => {
+  try {
+    return (await LoaiKhachThue.find()) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = {};
+
+    if (!data._id) {
+      item = new LoaiKhachThue(data);
+    } else {
+      item = await LoaiKhachThue.findById(data._id);
+      item = Object.assign(item, data);
+    }
+
+    await item.save();
+    return item;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  getAll,
+  save
+};
+
+/***/ }),
+
+/***/ "./app/modules/loaikhacthue/index.js":
+/*!*******************************************!*\
+  !*** ./app/modules/loaikhacthue/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _routes = __webpack_require__(/*! ./routes */ "./app/modules/loaikhacthue/routes/index.js");
+
+var _routes2 = _interopRequireDefault(_routes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = async (server, options) => {
+  server.route(_routes2.default);
+};
+
+exports.name = 'loai-khach-thue-admin';
+
+/***/ }),
+
+/***/ "./app/modules/loaikhacthue/routes/index.js":
+/*!**************************************************!*\
+  !*** ./app/modules/loaikhacthue/routes/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _controller = __webpack_require__(/*! ../controller */ "./app/modules/loaikhacthue/controller/index.js");
+
+var _controller2 = _interopRequireDefault(_controller);
+
+var _validate = __webpack_require__(/*! ../validate */ "./app/modules/loaikhacthue/validate/index.js");
+
+var _validate2 = _interopRequireDefault(_validate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/loaikhachthue',
+  handler: _controller2.default.getAll,
+  config: {
+    description: 'lay danh sach loai khach thue',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/loaikhachthue',
+  handler: _controller2.default.save,
+  config: {
+    description: 'them va sua loai khach thue',
+    tags: ['api'],
+    validate: _validate2.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/loaikhacthue/validate/index.js":
+/*!****************************************************!*\
+  !*** ./app/modules/loaikhacthue/validate/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const loaiKhachThueVal = {
+  get: {
+    params: {
+      id: _joi2.default.ObjectId()
+    }
+  },
+  save: {
+    payload: {
+      _id: _joi2.default.string(),
+      tenLoaiKhachThue: _joi2.default.string().required().max(30)
+    }
+  }
+};
+exports.default = { ...loaiKhachThueVal
 };
 
 /***/ }),

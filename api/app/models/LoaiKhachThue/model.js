@@ -4,4 +4,4 @@ import {schema, options} from './schema'
 
 const loaiKhachThueSchema = new Schema(schema, options)
 
-export default Mongoose.model('LoaiKhachThue',loaiKhachThueSchema)
+export default Mongoose.model('LoaiKhachThue', loaiKhachThueSchema)
