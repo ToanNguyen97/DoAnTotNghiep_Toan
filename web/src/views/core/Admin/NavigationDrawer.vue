@@ -92,10 +92,7 @@
           {
             action: 'people_outline',
             title: 'Khách Thuê',
-            items: [
-              { title: 'Danh sách khách thuê', icon: 'visibility' },
-              { title: 'Thêm khách thuê', icon: 'person_add' }
-            ]
+            link: '/danh-sach-khach-thue.html'
           },
           {
             action: 'event_note',

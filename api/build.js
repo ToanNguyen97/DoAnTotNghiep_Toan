@@ -329,6 +329,86 @@ exports.name = 'route-image';
 
 /***/ }),
 
+/***/ "./app/models/KhachThue/dao.js":
+/*!*************************************!*\
+  !*** ./app/models/KhachThue/dao.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (schema, options) {
+  schema.statics.searchMultiple = async function (payload) {
+    let Model = this;
+    let queryString = {};
+
+    if (payload.hoKhachThue) {
+      queryString.hoKhachThue = {
+        $regex: '.*' + payload.hoKhachThue + '.*'
+      };
+    }
+
+    if (payload.tenKhachThue) {
+      queryString.tenKhachThue = {
+        $regex: '.*' + payload.tenKhachThue + '.*'
+      };
+    }
+
+    if (payload.hoTenNguoiThan) {
+      queryString.hoTenNguoiThan = {
+        $regex: '.*' + payload.hoTenNguoiThan + '.*'
+      };
+    }
+
+    if (payload.diaChi) {
+      queryString.diaChi = {
+        $regex: '.*' + payload.diaChi + '.*'
+      };
+    }
+
+    if (payload.email) {
+      queryString.email = {
+        $regex: '.*' + payload.email + '.*'
+      };
+    }
+
+    if (payload.loaiKhachThueID) {
+      queryString.loaiKhachThueID = payload.loaiKhachThueID;
+    }
+
+    if (payload.tinhTrangKhachThue) {
+      queryString.tinhTrangKhachThue = payload.tinhTrangKhachThue;
+    }
+
+    if (payload.soDienThoai) {
+      queryString.soDienThoai = {
+        $regex: '.*' + payload.soDienThoai + '.*'
+      };
+    }
+
+    if (payload.soCMND) {
+      queryString.soCMND = {
+        $regex: '.*' + payload.soCMND + '.*'
+      };
+    }
+
+    if (payload.gioiTinh) {
+      queryString.gioiTinh = payload.gioiTinh;
+    }
+
+    if (payload.ngaySinh) {
+      queryString.ngaySinh = payload.ngaySinh;
+    }
+
+    let data = await Model.find(queryString).lean().populate('loaiKhachThueID');
+    return data;
+  };
+};
+
+/***/ }),
+
 /***/ "./app/models/KhachThue/model.js":
 /*!***************************************!*\
   !*** ./app/models/KhachThue/model.js ***!
@@ -349,9 +429,14 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 var _schema = __webpack_require__(/*! ./schema */ "./app/models/KhachThue/schema.js");
 
+var _dao = __webpack_require__(/*! ./dao.js */ "./app/models/KhachThue/dao.js");
+
+var _dao2 = _interopRequireDefault(_dao);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const phongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+phongSchema.plugin(_dao2.default);
 exports.default = _mongoose2.default.model('KhachThue', phongSchema);
 
 /***/ }),
@@ -418,6 +503,10 @@ const schema = {
   loaiKhachThueID: {
     type: _mongoose.Schema.Types.ObjectId,
     ref: 'LoaiKhachThue'
+  },
+  tinhTrangKhachThue: {
+    type: String,
+    required: true
   },
   phongs: [{
     type: _mongoose.Schema.Types.ObjectId,
@@ -868,8 +957,43 @@ const KhachThue = _mongoose2.default.model('KhachThue');
 
 const save = async (request, h) => {
   try {
-    let item = await KhachThue.find();
-    return item;
+    let data = request.payload;
+    let item = {};
+
+    if (!data._id) {
+      let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
+      fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+        return err;
+      });
+      data.anhDaiDien = data.anhDaiDien.name;
+      item = new KhachThue(data);
+    } else {
+      if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
+        item = await KhachThue.findById({
+          _id: data._id
+        });
+        data.anhDaiDien = item.anhDaiDien;
+        item = Object.assign(item, data);
+      } else {
+        let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
+        fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+          return err;
+        });
+        data.anhDaiDien = data.anhDaiDien.name;
+        item = await KhachThue.findById({
+          _id: data._id
+        });
+        item = Object.assign(item, data);
+      }
+    }
+
+    await item.save();
+
+    let khachThue = (await KhachThue.findById({
+      _id: item._id
+    }).populate('loaiKhachThueID')) || _boom2.default.notFound();
+
+    return khachThue;
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -883,9 +1007,37 @@ const getAll = async (request, h) => {
   }
 };
 
+const deleteKhachThue = async (request, h) => {
+  try {
+    return (await KhachThue.findOneAndDelete({
+      _id: request.params.id
+    })) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const search = async (request, h) => {
+  try {
+    let data = request.payload;
+
+    if (request.params.isReal === true) {
+      let items = await KhachThue.find(data).populate('loaiKhachThueID');
+      return items;
+    } else {
+      let items = await KhachThue.searchMultiple(data);
+      return items;
+    }
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   save,
-  getAll
+  getAll,
+  deleteKhachThue,
+  search
 };
 
 /***/ }),
@@ -975,6 +1127,44 @@ exports.default = [{
       }
     }
   }
+}, {
+  method: 'POST',
+  path: '/khachthuetimkiem/chinhxac={isReal}',
+  handler: _index2.default.search,
+  config: {
+    description: 'im kiem khach thue',
+    tags: ['api'],
+    validate: _index4.default.search,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'DELETE',
+  path: '/khachthue/{id}',
+  handler: _index2.default.deleteKhachThue,
+  config: {
+    tags: ['api'],
+    description: 'xoa thong tin khach thue',
+    validate: _index4.default.delete,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
 }];
 
 /***/ }),
@@ -1002,7 +1192,7 @@ const khachThueVal = {
       _id: Joi.string().length(24),
       hoKhachThue: Joi.string().required().max(30),
       tenKhachThue: Joi.string().required().max(20),
-      anhDaiDien: Joi.string().required(),
+      anhDaiDien: Joi.object(),
       ngaySinh: Joi.date().required(),
       gioiTinh: Joi.boolean().required(),
       soCMND: Joi.string().required().max(11),
@@ -1010,10 +1200,29 @@ const khachThueVal = {
       hoTenNguoiThan: Joi.string().required().max(50),
       diaChi: Joi.string().required().max(80),
       loaiKhachThueID: Joi.ObjectId(),
+      tinhTrangKhachThue: Joi.string().required(),
       email: Joi.string().email()
     },
     options: {
       allowUnknown: true
+    }
+  },
+  search: {
+    params: {
+      isReal: Joi.boolean()
+    },
+    payload: {
+      hoKhachThue: Joi.string(),
+      tenKhachThue: Joi.string(),
+      ngaySinh: Joi.date(),
+      gioiTinh: Joi.boolean(),
+      soCMND: Joi.string(),
+      soDienThoai: Joi.string(),
+      hoTenNguoiThan: Joi.string(),
+      diaChi: Joi.string(),
+      loaiKhachThueID: Joi.ObjectId(),
+      tinhTrangKhachThue: Joi.string(),
+      email: Joi.string()
     }
   },
   get: {

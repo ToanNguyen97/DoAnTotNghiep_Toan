@@ -34,5 +34,37 @@ export default [
         }
       }
     }
+  },
+  {
+    method: 'POST',
+    path: '/khachthuetimkiem/chinhxac={isReal}',
+    handler: KhachThueController.search,
+    config: {
+      description: 'im kiem khach thue',
+      tags: ['api'],
+      validate: KhachThueVal.search,
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'DELETE',
+    path:'/khachthue/{id}',
+    handler: KhachThueController.deleteKhachThue,
+    config: {
+      tags: ['api'],
+      description: 'xoa thong tin khach thue',
+      validate: KhachThueVal.delete,
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
   }
 ]

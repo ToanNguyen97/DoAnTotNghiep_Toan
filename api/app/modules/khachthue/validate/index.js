@@ -8,7 +8,7 @@ const khachThueVal = {
       _id: Joi.string().length(24),
       hoKhachThue: Joi.string().required().max(30),
       tenKhachThue: Joi.string().required().max(20),
-      anhDaiDien: Joi.string().required(),
+      anhDaiDien: Joi.object(),
       ngaySinh: Joi.date().required(),
       gioiTinh: Joi.boolean().required(),
       soCMND: Joi.string().required().max(11),
@@ -16,10 +16,29 @@ const khachThueVal = {
       hoTenNguoiThan: Joi.string().required().max(50),
       diaChi: Joi.string().required().max(80),
       loaiKhachThueID: Joi.ObjectId(),
+      tinhTrangKhachThue: Joi.string().required(),
       email: Joi.string().email()
     },
     options: {
       allowUnknown: true
+    }
+  },
+  search: {
+    params: {
+      isReal: Joi.boolean()
+    },
+    payload: {
+      hoKhachThue: Joi.string(),
+      tenKhachThue: Joi.string(),
+      ngaySinh: Joi.date(),
+      gioiTinh: Joi.boolean(),
+      soCMND: Joi.string(),
+      soDienThoai: Joi.string(),
+      hoTenNguoiThan: Joi.string(),
+      diaChi: Joi.string(),
+      loaiKhachThueID: Joi.ObjectId(),
+      tinhTrangKhachThue: Joi.string(),
+      email: Joi.string()
     }
   },
   get: {

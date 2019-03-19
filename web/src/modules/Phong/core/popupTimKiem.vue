@@ -119,10 +119,7 @@
             </v-speed-dial>
             <v-btn color="info" dark @click="Reset" >Làm Mới <v-icon dark right>autorenew</v-icon></v-btn>
             <v-btn color="yellow darken-1" dark @click="Huy" >Hủy <v-icon dark right>highlight_off</v-icon></v-btn>  
-          </v-flex>
-          <v-flex>
-          
-          </v-flex>                                                                   
+          </v-flex>                                                                  
         </v-form>                                                        
       </v-container>
     </v-card-text>

@@ -12,6 +12,7 @@ const schema = {
   hoTenNguoiThan: {type: String, max: 50},
   diaChi: {type: String, required: true, max:80},
   loaiKhachThueID: {type: Schema.Types.ObjectId, ref: 'LoaiKhachThue'},
+  tinhTrangKhachThue: {type:String, required: true},
   phongs: [{type: Schema.Types.ObjectId, ref: 'Phong'}],
   email: String
 }
