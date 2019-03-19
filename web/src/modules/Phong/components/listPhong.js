@@ -96,6 +96,9 @@ export default {
      this.edit = true
      this.phongSelect = item
     },
+    ResetPage () {
+      this.$store.dispatch('getPhongs')
+    },
     OpenSnackback (phong) {
       this.tenPhong = phong.tenPhong
       this.idXoa = phong._id
@@ -120,6 +123,7 @@ export default {
         let deleteMultiId = this.selected.map(item => item._id)
         this.$store.dispatch('deleteMultiPhong', deleteMultiId).then(() => {
           toast.Success('Xóa thành công!')
+          this.snackbarMulti = false
           this.disabled = true
         })
       } else {

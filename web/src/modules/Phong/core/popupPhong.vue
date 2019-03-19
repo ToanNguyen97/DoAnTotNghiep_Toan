@@ -68,6 +68,7 @@
               <v-textarea
                 height="70"
                 outline
+                hide-details
                 label="mô tả phòng trọ"
                 v-model="formData.moTa"
               ></v-textarea>
@@ -77,6 +78,7 @@
                   height="70"
                   type="number"
                   label="Số điện"
+                  hide-details
                   v-model="formData.soDien"
                   outline
                 ></v-text-field>
@@ -86,6 +88,7 @@
                   height="70" 
                   type="number"
                   label="Số nước"
+                  hide-details
                   v-model="formData.soNuoc"
                   outline
                 ></v-text-field>
@@ -95,12 +98,13 @@
                 height="70"
                 type="number"
                 label="Giá phòng"
+                hide-details
                 v-model="formData.giaPhong"
                 outline
               ></v-text-field>
             </v-flex>                                                                                        
           </v-layout>
-          <v-layout row wrap>
+          <v-layout row wrap justify-center>
             <v-flex xs6 sm6 md2>
               <v-checkbox
                 v-model="formData.dKMang"
@@ -128,7 +132,7 @@
                 hide-details
               ></v-checkbox>
             </v-flex>
-            <v-flex xs6 sm6 md2>
+            <v-flex xs6 sm6 md2 >
               <v-checkbox
                 v-model="formData.hotFlag"
                 label="Phòng hot"
@@ -139,7 +143,7 @@
             </v-flex>
           </v-layout>                                                                          
         </v-form>                                                       
-        <v-layout row wrap mt-2 >
+        <v-layout row wrap mt-2>
             <v-flex xs12 sm12 md12 style="display: flex !important;justify-content: center !important;">                   
               <v-btn color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
               <v-btn color="yellow darken-1" dark @click="Huy" >Hủy</v-btn>

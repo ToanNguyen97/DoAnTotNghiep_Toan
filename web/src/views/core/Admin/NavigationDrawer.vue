@@ -26,23 +26,15 @@
       </v-toolbar>
       <v-list class="pt-0" dense>
         <hr class="white"/>
-        <v-list-tile to="/danh-sach-phong.html">
-           <v-list-tile-action>
-              <v-icon color="white">insert_chart_outlined</v-icon>
-           </v-list-tile-action>
-           <v-list-tile-content >
-              <v-list-tile-title class="fonttext" >Biểu Đồ</v-list-tile-title>
-            </v-list-tile-content>
-        </v-list-tile>
         <v-list-group
             v-for="item in menus"
             :key="item.title"
             v-model="item.active"
             :prepend-icon="item.action"
-            no-action
+            
           >
             <template v-slot:activator>
-              <v-list-tile>
+              <v-list-tile :to="item.link">
                 <v-list-tile-content>
                   <v-list-tile-title class="fonttext">{{ item.title }}</v-list-tile-title>
                 </v-list-tile-content>
@@ -87,13 +79,15 @@
       return {
         menus: [
           {
+            action: 'insert_chart_outlined',
+            title: 'Biểu Đồ',
+            active: true,
+            link: '/danh-sach-phong.html'
+          },
+          {
             action: 'account_balance',
             title: 'Phòng Trọ',
-            active: true,
-            items: [
-              { title: 'Danh sách phòng', icon: 'visibility' },
-              { title: 'Thêm phòng', icon: 'add' }
-            ]
+            link: '/danh-sach-phong.html'
           },
           {
             action: 'people_outline',
@@ -172,7 +166,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 .theme--light.v-list .v-list__group--active:before {
   background: transparent !important;
 }
