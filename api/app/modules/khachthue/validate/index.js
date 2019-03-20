@@ -50,6 +50,11 @@ const khachThueVal = {
     params: {
       id: Joi.ObjectId()
     }
+  },
+  getByDT: {
+    params: {
+      sdt: Joi.string().required()
+    }
   }
 }
 

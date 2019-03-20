@@ -20,6 +20,22 @@ export default [
     }
   },
   {
+    method: 'GET',
+    path: '/khachthue/sdt={sdt}',
+    handler: KhachThueController.getByDT,
+    config: {
+      tags: ['api'],
+      validate: KhachThueVal.getByDT,
+      description: 'lay thong tin khach by so dien thoai',
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'POST',
     path: '/khachthue',
     handler: KhachThueController.save,

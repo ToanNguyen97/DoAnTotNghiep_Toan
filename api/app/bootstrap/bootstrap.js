@@ -50,6 +50,7 @@ export const loader = async function (server) {
      require('../models/TinhTrangPhong/model')
      require('../models/KhachThue/model')
      require('../models/LoaiKhachThue/model')
+     require('../models/HopDongThuePhong/model')
 
      /* Load Modules */
      let modules = []
@@ -59,6 +60,7 @@ export const loader = async function (server) {
      modules.push(require('../modules/tinhtrangphong'))
      modules.push(require('../modules/khachthue'))
      modules.push(require('../modules/loaikhacthue'))
+     modules.push(require('../modules/hopdongthue'))
      
      if (modules.length) {
        let options = {}

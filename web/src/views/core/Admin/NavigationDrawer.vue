@@ -43,17 +43,13 @@
             <v-list-tile
               v-for="subItem in item.items"
               :key="subItem.title"
-              to="/danh-sach-phong.html"
-              prepend-icon="insert_chart_outlined"             
+              :to="subItem.link"         
             >
             <v-list-tile-content>
-              <v-tooltip left>
                 <template slot="activator">
                   <v-list-tile-title class="colortext">{{subItem.title }}</v-list-tile-title>
                 </template>
-                <span>{{ subItem.title }}</span>
-              </v-tooltip>
-                                         
+                <span>{{ subItem.title }}</span>                                       
             </v-list-tile-content>
               <v-list-tile-action>
                 <v-icon dark>{{ subItem.icon }}</v-icon>
@@ -98,8 +94,8 @@
             action: 'event_note',
             title: 'Hợp Đồng',
             items: [
-              { title: 'Danh sách hợp đồng', icon: 'visibility' },
-              { title: 'Lập hợp đồng', icon: 'add'}
+              { title: 'Danh sách hợp đồng', icon: 'visibility', link: '/danh-sach-hop-dong-thue-phong.html'},
+              { title: 'Lập hợp đồng', icon: 'add', link: '/lap-hop-dong-thue-phong.html'}
             ]
           },
           {
@@ -168,7 +164,7 @@
   background: transparent !important;
 }
 .white {
-  border-color: #fff;
+  border-color: #fff !important;
   width: 50%;
   margin: auto;
 }

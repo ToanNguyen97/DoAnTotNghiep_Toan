@@ -207,6 +207,8 @@ const loader = exports.loader = async function (server) {
     __webpack_require__(/*! ../models/KhachThue/model */ "./app/models/KhachThue/model.js");
 
     __webpack_require__(/*! ../models/LoaiKhachThue/model */ "./app/models/LoaiKhachThue/model.js");
+
+    __webpack_require__(/*! ../models/HopDongThuePhong/model */ "./app/models/HopDongThuePhong/model.js");
     /* Load Modules */
 
 
@@ -217,6 +219,7 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/tinhtrangphong */ "./app/modules/tinhtrangphong/index.js"));
     modules.push(__webpack_require__(/*! ../modules/khachthue */ "./app/modules/khachthue/index.js"));
     modules.push(__webpack_require__(/*! ../modules/loaikhacthue */ "./app/modules/loaikhacthue/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/hopdongthue */ "./app/modules/hopdongthue/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -326,6 +329,78 @@ exports.register = async (server, options) => {
 };
 
 exports.name = 'route-image';
+
+/***/ }),
+
+/***/ "./app/models/HopDongThuePhong/model.js":
+/*!**********************************************!*\
+  !*** ./app/models/HopDongThuePhong/model.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/HopDongThuePhong/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const hopDongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('HopDongThuePhong', hopDongSchema);
+
+/***/ }),
+
+/***/ "./app/models/HopDongThuePhong/schema.js":
+/*!***********************************************!*\
+  !*** ./app/models/HopDongThuePhong/schema.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const schema = {
+  _id: {
+    type: String,
+    required: true
+  },
+  khachThueID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'KhachThue'
+  },
+  phongID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'Phong'
+  },
+  ngayKetThuc: {
+    type: Date
+  }
+};
+const options = {
+  collection: 'hopdongs',
+  timestamps: {
+    createAt: 'ngayLap'
+  }
+};
+exports.schema = schema;
+exports.options = options;
 
 /***/ }),
 
@@ -545,6 +620,11 @@ var _schema = __webpack_require__(/*! ./schema */ "./app/models/KhuPhong/schema.
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const KhuPhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+KhuPhongSchema.virtual('dsPhong', {
+  ref: 'Phong',
+  localField: '_id',
+  foreignField: 'khuPhongID'
+});
 exports.default = _mongoose2.default.model('KhuPhong', KhuPhongSchema);
 
 /***/ }),
@@ -575,7 +655,8 @@ const schema = {
 };
 const options = {
   collection: 'khuphongs',
-  timestamps: true
+  timestamps: true,
+  virtuals: true
 };
 exports.schema = schema;
 exports.options = options;
@@ -927,6 +1008,234 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/modules/hopdongthue/controller/index.js":
+/*!*****************************************************!*\
+  !*** ./app/modules/hopdongthue/controller/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong');
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = await HopDongThuePhong.findById(data._id);
+
+    if (item) {
+      item = Object.assign(item, data);
+    } else {
+      item = new HopDongThuePhong(data);
+    }
+
+    await item.save();
+    return await HopDongThuePhong.find({
+      _id: item._id
+    }).populate('khachThueID').populate('phongID');
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const getAll = async (request, h) => {
+  try {
+    return await HopDongThuePhong.find().populate('khachThueID').populate('phongID');
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const getById = async (request, h) => {
+  try {
+    return (await HopDongThuePhong.find({
+      _id: request.params.id
+    }).populate('khachThueID').populate('phongID')) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  getAll,
+  getById,
+  save
+};
+
+/***/ }),
+
+/***/ "./app/modules/hopdongthue/index.js":
+/*!******************************************!*\
+  !*** ./app/modules/hopdongthue/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _routes = __webpack_require__(/*! ./routes */ "./app/modules/hopdongthue/routes/index.js");
+
+var _routes2 = _interopRequireDefault(_routes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = async (server, options) => {
+  server.route(_routes2.default);
+};
+
+exports.name = 'hop-dong-thue-phong-admin';
+
+/***/ }),
+
+/***/ "./app/modules/hopdongthue/routes/index.js":
+/*!*************************************************!*\
+  !*** ./app/modules/hopdongthue/routes/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _controller = __webpack_require__(/*! ../controller */ "./app/modules/hopdongthue/controller/index.js");
+
+var _controller2 = _interopRequireDefault(_controller);
+
+var _validate = __webpack_require__(/*! ../validate */ "./app/modules/hopdongthue/validate/index.js");
+
+var _validate2 = _interopRequireDefault(_validate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/hopdongthuephong',
+  handler: _controller2.default.getAll,
+  config: {
+    tags: ['api'],
+    description: 'xem danh sach hop dong',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/hopdongthuephong',
+  handler: _controller2.default.save,
+  config: {
+    tags: ['api'],
+    description: 'them va sua thong tin hop dong',
+    validate: _validate2.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/hopdongthuephong/{id}',
+  handler: _controller2.default.getById,
+  config: {
+    tags: ['api'],
+    description: 'xem thong tin 1 hop dong',
+    validate: _validate2.default.getById,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/hopdongthue/validate/index.js":
+/*!***************************************************!*\
+  !*** ./app/modules/hopdongthue/validate/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const hopDongThueVal = {
+  save: {
+    payload: {
+      _id: _joi2.default.string(),
+      khachThueID: _joi2.default.ObjectId(),
+      phongID: _joi2.default.ObjectId()
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
+  get: {
+    params: {
+      id: _joi2.default.string().required()
+    }
+  },
+  delete: {
+    params: {
+      id: _joi2.default.string().required()
+    }
+  }
+};
+exports.default = { ...hopDongThueVal
+};
+
+/***/ }),
+
 /***/ "./app/modules/khachthue/controller/index.js":
 /*!***************************************************!*\
   !*** ./app/modules/khachthue/controller/index.js ***!
@@ -1033,11 +1342,23 @@ const search = async (request, h) => {
   }
 };
 
+const getByDT = async (request, h) => {
+  try {
+    console.log('vao roi');
+    return (await KhachThue.find({
+      soDienThoai: request.params.sdt
+    }).populate('loaiKhachThueID')) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   save,
   getAll,
   deleteKhachThue,
-  search
+  search,
+  getByDT
 };
 
 /***/ }),
@@ -1097,6 +1418,25 @@ exports.default = [{
   config: {
     tags: ['api'],
     description: 'lay danh sach khach thue',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/khachthue/sdt={sdt}',
+  handler: _index2.default.getByDT,
+  config: {
+    tags: ['api'],
+    validate: _index4.default.getByDT,
+    description: 'lay thong tin khach by so dien thoai',
     plugins: {
       'hapi-swagger': {
         responses: {
@@ -1234,6 +1574,11 @@ const khachThueVal = {
     params: {
       id: Joi.ObjectId()
     }
+  },
+  getByDT: {
+    params: {
+      sdt: Joi.string().required()
+    }
   }
 };
 exports.default = { ...khachThueVal
@@ -1259,7 +1604,9 @@ const KhuPhong = Mongoose.model('KhuPhong');
 
 exports.getAll = async (request, h) => {
   try {
-    return await KhuPhong.find();
+    return await KhuPhong.find().populate([{
+      path: 'dsPhong'
+    }]).lean();
   } catch (err) {
     return Boom.forbidden(err);
   }

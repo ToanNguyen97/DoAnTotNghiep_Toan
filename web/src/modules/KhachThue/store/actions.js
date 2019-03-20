@@ -20,6 +20,14 @@ const getLoaiKhachs = async (context) => {
   }
 }
 
+const getKhachBySDT = async (context, sdt) => {
+  try {
+    let {data} = await axios.get(`http://localhost:3003/api/khachthue/sdt=${sdt}`)
+    return data
+  } catch (err) {
+    return err
+  }
+}
 const save =  async (context, payload) => {
   try {
     let {data} = await axios.post('http://localhost:3003/api/khachthue', payload)
@@ -67,5 +75,6 @@ export default {
   save,
   deleteKhachThue,
   deleteMultiKhachThue,
-  timKiemKhachThue
+  timKiemKhachThue,
+  getKhachBySDT
 }

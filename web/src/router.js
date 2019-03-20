@@ -5,6 +5,7 @@ import Admin from './views/Admin.vue'
 import Login from './views/Login.vue'
 import PhongRoutes from './modules/Phong/index.js'
 import KhachThueRoutes from './modules/KhachThue/index.js'
+import HopDongThuePhongRoutes from './modules/HopDongThuePhong/index.js'
 Vue.use(Router)
 
 export default new Router({
@@ -20,7 +21,7 @@ export default new Router({
       path: '/admin',
       name: 'Admin',
       component: Admin,
-      children: [...PhongRoutes, ...KhachThueRoutes]
+      children: [...PhongRoutes, ...KhachThueRoutes, ...HopDongThuePhongRoutes]
     },
     {
       path: '/',

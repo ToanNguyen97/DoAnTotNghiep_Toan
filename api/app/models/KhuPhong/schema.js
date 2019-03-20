@@ -12,7 +12,8 @@ const schema = {
 
 const options = {
   collection: 'khuphongs',
-  timestamps: true
+  timestamps: true,
+  virtuals: true
 }
 
 export { schema, options}

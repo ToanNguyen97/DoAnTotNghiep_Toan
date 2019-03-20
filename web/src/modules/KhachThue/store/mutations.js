@@ -20,10 +20,16 @@ const deleteKhachThue = function (state, data) {
 const deleteMultiKhachThue = function (state, idMulti) {
   state.dsKhachThue = state.dsKhachThue.filter(item => !idMulti.includes(item._id))
 }
+
+const addKhachByDT = function (state, data) {
+  state.khachThue = data
+}
+
 export default {
   getListKhachThue,
   getListLoaiKhachThue,
   addKhachThue,
   deleteKhachThue,
-  deleteMultiKhachThue
+  deleteMultiKhachThue,
+  addKhachByDT
 }
