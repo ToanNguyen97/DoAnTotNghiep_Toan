@@ -89,9 +89,9 @@
                     <v-btn class="ml-1" @click="infoPhong" color="info">Xem</v-btn>
                    </v-flex>
                    <v-flex xs12 sm6 md9 v-if="phong">
-                     <v-text-field style="padding-bottom:4px" readonly :value="phong.loaiPhongID"  hide-details label="Loại phòng" append-icon="fas fa-home"></v-text-field>
+                     <v-text-field style="padding-bottom:4px" readonly :value="phong.loaiPhongID.tenLoaiPhong"  hide-details label="Loại phòng" append-icon="fas fa-home"></v-text-field>
                      <v-text-field style="padding-bottom:4px" readonly :value="phong.giaPhong"  hide-details label="Giá phòng" append-icon="fas fa-dollar-sign"></v-text-field>
-                     <v-text-field style="padding-bottom:4px" readonly hide-details :value="phong.tinhTrangPhongID" label="Tình trạng phòng" append-icon="fas fa-door-open"></v-text-field>
+                     <v-text-field style="padding-bottom:4px" readonly hide-details :value="phong.tinhTrangPhongID.tenTinhTrangPhong" label="Tình trạng phòng" append-icon="fas fa-door-open"></v-text-field>
                      <v-text-field style="padding-bottom:4px" readonly hide-details label="Số điện" :value="phong.soDien" append-icon="fas fa-bolt"></v-text-field>
                      <v-text-field style="padding-bottom:4px" readonly hide-details label="Số nước" :value="phong.soNuoc" append-icon="fas fa-tint"></v-text-field>
                    </v-flex>
@@ -112,9 +112,9 @@
                <v-card-text >
                  <v-layout row wrap>
                    <v-flex xs12 sm6 md12>
-                     <v-text-field style="padding-bottom:4px" readonly  hide-details label="Số hợp đồng" append-icon="fas fa-address-book"></v-text-field>
-                     <v-text-field style="padding-bottom:4px" readonly  hide-details label="tên khách" append-icon="fas fa-user"></v-text-field>
-                     <v-text-field style="padding-bottom:4px" readonly hide-details label="tên phòng" append-icon="fas fa-home"></v-text-field>
+                     <v-text-field style="padding-bottom:4px"  readonly v-model="soHD"  hide-details label="Số hợp đồng" append-icon="fas fa-address-book"></v-text-field>
+                     <v-text-field style="padding-bottom:4px" v-if="khachThue" readonly :value="`${khachThue.hoKhachThue.trim()} ${khachThue.tenKhachThue}`"   hide-details label="tên khách" append-icon="fas fa-user"></v-text-field>
+                     <v-text-field style="padding-bottom:4px" v-if="phong" :value="`${phong.tenPhong}`" readonly hide-details label="tên phòng" append-icon="fas fa-home"></v-text-field>
                      <v-menu v-model="menu" style="padding-bottom: 9px;"  :close-on-content-click="false"  full-width  max-width="290"  >
                         <template v-slot:activator="{ on }">
                           <v-text-field
@@ -138,8 +138,7 @@
                           :value="formatngayKetThuc"
                           clearable
                           hide-details
-                          label="Ngày kết thúc"
-                          readonly
+                          label="Ngày kết thúc"                        
                           v-on="on"
                         ></v-text-field>
                       </template>

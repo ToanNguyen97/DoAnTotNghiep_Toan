@@ -47,11 +47,11 @@ export default {
     },
     Search (value) {
       this.isReal = value
-      let payload = {isReal: this.isReal, formData: this.formData}
-      this.$store.dispatch('timKiemKhachThue', payload).then(res => {
-        this.Huy()
-        toast.Info('Có '+ res.length + ' kết quả  đã được tìm thấy !')
-      })
+      //let payload = {isReal: this.isReal, formData: this.formData}
+      // this.$store.dispatch('timKiemKhachThue', payload).then(res => {
+      //   this.Huy()
+      //   toast.Info('Có '+ res.length + ' kết quả  đã được tìm thấy !')
+      // })
     }
   }
 

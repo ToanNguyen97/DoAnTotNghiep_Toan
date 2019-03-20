@@ -93,10 +93,7 @@
           {
             action: 'event_note',
             title: 'Hợp Đồng',
-            items: [
-              { title: 'Danh sách hợp đồng', icon: 'visibility', link: '/danh-sach-hop-dong-thue-phong.html'},
-              { title: 'Lập hợp đồng', icon: 'add', link: '/lap-hop-dong-thue-phong.html'}
-            ]
+            link: '/danh-sach-hop-dong-thue-phong.html'
           },
           {
             action: 'monetization_on',

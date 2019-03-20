@@ -3,6 +3,7 @@
 import Mongoose from 'mongoose'
 import Boom from 'boom'
 const HopDongThuePhong = Mongoose.model('HopDongThuePhong')
+//import translateCharacter from '../../../lib/services/translateCharacter.js'
 
 const save = async (request, h) => {
   try {
@@ -15,7 +16,7 @@ const save = async (request, h) => {
       item = new HopDongThuePhong(data)
     }
     await item.save()
-    return await HopDongThuePhong.find({_id: item._id}).populate('khachThueID').populate('phongID')
+    return await HopDongThuePhong.findById({_id: item._id}).populate('khachThueID').populate('phongID')
   } catch (err) {
     return Boom.forbidden(err)
   }

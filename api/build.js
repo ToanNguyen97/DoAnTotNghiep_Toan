@@ -1032,7 +1032,8 @@ var _boom2 = _interopRequireDefault(_boom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong');
+const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong'); //import translateCharacter from '../../../lib/services/translateCharacter.js'
+
 
 const save = async (request, h) => {
   try {
@@ -1046,7 +1047,7 @@ const save = async (request, h) => {
     }
 
     await item.save();
-    return await HopDongThuePhong.find({
+    return await HopDongThuePhong.findById({
       _id: item._id
     }).populate('khachThueID').populate('phongID');
   } catch (err) {
@@ -1214,7 +1215,8 @@ const hopDongThueVal = {
     payload: {
       _id: _joi2.default.string(),
       khachThueID: _joi2.default.ObjectId(),
-      phongID: _joi2.default.ObjectId()
+      phongID: _joi2.default.ObjectId(),
+      ngayKetThuc: _joi2.default.date()
     },
     options: {
       allowUnknown: true
@@ -1604,9 +1606,7 @@ const KhuPhong = Mongoose.model('KhuPhong');
 
 exports.getAll = async (request, h) => {
   try {
-    return await KhuPhong.find().populate([{
-      path: 'dsPhong'
-    }]).lean();
+    return await KhuPhong.find().populate('dsPhong').lean();
   } catch (err) {
     return Boom.forbidden(err);
   }
@@ -2543,7 +2543,7 @@ const getById = async (request, h) => {
   try {
     return await Phong.findById({
       _id: request.params.id
-    }).populate('loaiPhongID').populate('khuPhongID');
+    }).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID');
   } catch (err) {
     return _boom2.default.forbidden(err);
   }

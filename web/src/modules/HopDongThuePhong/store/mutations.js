@@ -5,9 +5,9 @@ const getListHopDongThuePhong = function (state, data) {
 }
 
 const addOrUpadteHopDong = function (state, data) {
-  state.dsHopDongThuePhong = state.dsHopDongThuePhong.filter((item) => {
+  state.dsHopDongThuePhong = state.dsHopDongThuePhong.filter(item => 
     item._id != data._id 
-  })
+  )
   state.dsHopDongThuePhong = [...state.dsHopDongThuePhong, ...[data]]
 }
 

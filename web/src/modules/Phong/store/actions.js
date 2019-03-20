@@ -62,7 +62,15 @@ const timKiem = async (context, payload) => {
   } catch (err) {
     console.log(err)
   }
-  
+}
+
+const getPhongById = async (context, idPhong) => {
+  try {
+    let {data} = await axios.get('http://localhost:3003/api/phong/'+ idPhong)
+    return data
+  } catch (err) {
+    return err
+  }
 }
 export default {
   XacNhan,
@@ -72,5 +80,6 @@ export default {
   getLoaiPhongs,
   getTinhTrangPhongs,
   deleteMultiPhong,
-  deletePhong
+  deletePhong,
+  getPhongById
 }

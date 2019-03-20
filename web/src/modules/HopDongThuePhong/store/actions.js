@@ -2,7 +2,7 @@
 
 import axios from 'axios'
 
-const save = async (context, payload) => {
+const saveHopDong = async (context, payload) => {
   try {
     let {data} = await axios.post('http://localhost:3003/api/hopdongthuephong', payload)
     context.commit('addOrUpadteHopDong', data)
@@ -23,5 +23,5 @@ const getListHopDongThuePhong = async (context) => {
 
 export default {
   getListHopDongThuePhong,
-  save
+  saveHopDong
 }

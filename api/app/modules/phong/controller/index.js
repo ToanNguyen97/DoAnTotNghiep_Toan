@@ -142,7 +142,7 @@ const deletePhong = async (request, h) => {
 
 const getById = async (request, h) => {
   try {
-    return await Phong.findById({_id: request.params.id}).populate('loaiPhongID').populate('khuPhongID')
+    return await Phong.findById({_id: request.params.id}).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID')
   } catch (err) {
     return Boom.forbidden(err)
   }

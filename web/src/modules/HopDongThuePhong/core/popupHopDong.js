@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import toast from '../../../plugins/toast'
+import translateCharacter from '../../../plugins/translateCharacter.js'
 import moment from 'moment'
 export default {
   props:{
@@ -27,6 +28,7 @@ export default {
       },
       menu: false,
       formData: {},
+      soHD: 'HD',
       phong: null,
       soDienThoai: null,
       khachThue: null,
@@ -34,8 +36,6 @@ export default {
       phongID: null,
       dsPhong: null
     }
-  },
-  created() {
   },
   computed: {
     dsKhuPhong () {
@@ -58,8 +58,13 @@ export default {
       this.$emit('input', false)
     },
     XacNhan () {
-      this.$store.dispatch('save', this.formData).then(() => {
-        toast.Success('Thành Công!')
+      this.formData._id = this.soHD
+      this.formData.khachThueID = this.khachThue._id
+      this.formData.phongID = this.phong._id
+      this.formData.ngayKetThuc = this.ngayKetThuc
+      // chỗ này bị xung đột hàm nếu dispatch đến hàm save sẽ phân vân save của khach hay của hợp đồng nên phai đổi tên hàm
+      this.$store.dispatch('saveHopDong', this.formData).then(res => {       
+        toast.Success(`Hợp đồng ${res._id} đã được lập`)
         this.Huy()
       }).catch( () => {
         toast.Error('Lỗi!')  
@@ -73,7 +78,7 @@ export default {
       else
       {
         this.$store.dispatch('getKhachBySDT', this.soDienThoai).then( res => {
-        this.khachThue = res[0]
+        this.khachThue = res[0]      
         })
       }
     },
@@ -92,12 +97,11 @@ export default {
       }
       else
       {
-        for (let item of this.dsPhong) {
-          if(item._id === this.phongID) {
-            this.phong = item
-            break
-          }
-        }
+        this.$store.dispatch('getPhongById', this.phongID).then( res => {
+          this.phong = res
+          // lưu ý số hợp đồng cần thêm tên phòng vì khách có thể thuê nhiều phòng
+          this.soHD = this.soHD + moment(this.ngayLap).format('DDMMYYYY') + this.khachThue.soCMND + translateCharacter(this.phong.tenPhong)
+        })
       }
     }
   },
@@ -110,6 +114,9 @@ export default {
       if (v && this.isThem === false) {
         if (this.HopDongThuePhongSelect && this.HopDongThuePhongSelect._id) {
           this.formData = _.cloneDeep(this.HopDongThuePhongSelect)
+          this.soHD = this.formData._id
+          this.khachThue = this.formData.khachThueID
+          this.phong = this.formData.phongID
           // if (this.formData && this.formData.ngaySinh){
           //   this.formData.ngaySinh = new Date(this.formData.ngaySinh).toISOString().substr(0, 10)
           // }

@@ -101,12 +101,13 @@ export default {
     Delete () {
       if(this.idXoa != '')
       {
-        this.$store.dispatch('deleteKhachThue', this.idXoa).then( res => {
-          toast.Success('Đã xóa khách thuê: '+ res._id)
-          this.snackbar = false
-        }).catch( res => {
-          toast.Error('Có lỗi xảy ra: ' + res)
-        })
+        // this.$store.dispatch('deleteKhachThue', this.idXoa).then( res => {
+        //   toast.Success('Đã xóa khách thuê: '+ res._id)
+        //   this.snackbar = false
+        // }).catch( res => {
+        //   toast.Error('Có lỗi xảy ra: ' + res)
+        // })
+        toast.Success('Đã xóa khách thuê')
       } else {
         toast.Error('Vui lòng chọn phòng cần xóa!')
       }
@@ -114,12 +115,13 @@ export default {
     DeleteMulti () {
       if (this.selected && this.selected.length != 0)
       {
-        let deleteMultiId = this.selected.map(item => item._id)
-        this.$store.dispatch('deleteMultiKhachThue', deleteMultiId).then(() => {
-          toast.Success('Xóa thành công!')
-          this.snackbarMulti = false
-          this.disabled = true
-        })
+        // let deleteMultiId = this.selected.map(item => item._id)
+        // this.$store.dispatch('deleteMultiKhachThue', deleteMultiId).then(() => {
+        //   toast.Success('Xóa thành công!')
+        //   this.snackbarMulti = false
+        //   this.disabled = true
+        // })
+        toast.Success('Đã xóa khách thuê')
       } else {
         toast.Show('Vui lòng chọn phòng để xóa')
       }

@@ -8,7 +8,8 @@ const hopDongThueVal = {
     payload: {
       _id: Joi.string(),
       khachThueID: Joi.ObjectId(),
-      phongID: Joi.ObjectId()
+      phongID: Joi.ObjectId(),
+      ngayKetThuc: Joi.date()
     },
     options: {
       allowUnknown: true
