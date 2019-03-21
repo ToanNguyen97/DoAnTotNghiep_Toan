@@ -115,39 +115,40 @@
                      <v-text-field style="padding-bottom:4px"  readonly v-model="soHD"  hide-details label="Số hợp đồng" append-icon="fas fa-address-book"></v-text-field>
                      <v-text-field style="padding-bottom:4px" v-if="khachThue" readonly :value="`${khachThue.hoKhachThue.trim()} ${khachThue.tenKhachThue}`"   hide-details label="tên khách" append-icon="fas fa-user"></v-text-field>
                      <v-text-field style="padding-bottom:4px" v-if="phong" :value="`${phong.tenPhong}`" readonly hide-details label="tên phòng" append-icon="fas fa-home"></v-text-field>
-                     <v-menu v-model="menu" style="padding-bottom: 9px;"  :close-on-content-click="false"  full-width  max-width="290"  >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            :value="formatNgayLap"
-                            clearable
-                            hide-details
-                            label="Ngày lập"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          locale=vi
-                          v-model="formData.ngaySinh"
-                          @change="menu = false"
-                        ></v-date-picker>
-                      </v-menu> 
-                    <v-menu v-model="menu"   :close-on-content-click="false"  full-width  max-width="290"  >
+                     <v-menu v-model="menu" style="padding-bottom:9px" :close-on-content-click="false"  full-width  max-width="290"  >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          :value="formatngayKetThuc"
+                          :value="formatNgayLap"
                           clearable
                           hide-details
-                          label="Ngày kết thúc"                        
+                          label="Ngày Lập"
+                          readonly
                           v-on="on"
                         ></v-text-field>
                       </template>
                       <v-date-picker
                         locale=vi
-                        v-model="formData.ngaySinh"
+                        v-model="formData.ngayLap"
                         @change="menu = false"
                       ></v-date-picker>
                     </v-menu> 
+                    <v-menu v-model="menu1" :close-on-content-click="false"  full-width  max-width="290"  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        :value="formatngayKetThuc"
+                        clearable
+                        hide-details
+                        label="Ngày Kết Thúc"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      locale=vi
+                      v-model="formData.ngayKetThuc"
+                      @change="menu1 = false"
+                    ></v-date-picker>
+                  </v-menu>
                    </v-flex>
                  </v-layout>
                 </v-card-text>

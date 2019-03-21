@@ -87,8 +87,9 @@ export default {
       this.open = true
     },
     GotoEdit(item) {
-     this.edit = true
-     this.HopDongThuePhongSelect = item
+      this.isThem = false
+      this.edit = true
+      this.HopDongThuePhongSelect = item
     },
     ResetPage () {
       this.$store.dispatch('getListHopDongThuePhong')

@@ -9,7 +9,8 @@ const hopDongThueVal = {
       _id: Joi.string(),
       khachThueID: Joi.ObjectId(),
       phongID: Joi.ObjectId(),
-      ngayKetThuc: Joi.date()
+      ngayKetThuc: Joi.date(),
+      ngayLap: Joi.date()
     },
     options: {
       allowUnknown: true

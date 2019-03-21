@@ -1,5 +1,5 @@
 <template>
- <div style="background-color: #fff; border-radius:10px" class="danhsachkhachthue">
+ <div style="background-color: #fff; border-radius:10px" class="danhsachhopdongthue">
     <v-layout row wrap justify-start class="ml-2 pl-1">
       <h1 class="mb-2 danhsachPT">Danh sách hợp đồng thuê phòng:</h1>    
     </v-layout>
@@ -72,10 +72,6 @@
               <v-tooltip top class="my-3">
                 <v-icon slot="activator" small @click="OpenSnackback(props.item)">delete</v-icon>
                 <span>xóa</span>
-              </v-tooltip>
-              <v-tooltip top class="my-3">
-                <v-icon  slot="activator"  small @click="GotoDetail(props.item._id)">error</v-icon>
-                <span>chi tiết</span>
               </v-tooltip>
             </v-layout>   
           </td>

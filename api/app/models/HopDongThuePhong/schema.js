@@ -15,16 +15,16 @@ const schema = {
     type: Schema.Types.ObjectId,
     ref: 'Phong'
   },
+  ngayLap: {
+    type: Date
+  },
   ngayKetThuc: {
     type: Date
   }
 }
 
 const options = {
-  collection: 'hopdongs',
-  timestamps: {
-    createAt: 'ngayLap'
-  }
+  collection: 'hopdongs'
 }
 
 export {schema, options}

@@ -18,15 +18,8 @@ export default {
   },
   data () {
     return {
-      ngayLap: {
-       type: Date,
-       default: Date.now()
-      },
-      ngayKetThuc: {
-        type: Date,
-        default: Date.now()
-      },
       menu: false,
+      menu1: false,
       formData: {},
       soHD: 'HD',
       phong: null,
@@ -41,17 +34,18 @@ export default {
     dsKhuPhong () {
       return this.$store.state.phong.dsKhuPhong
     },
-    formatNgayLap () {
-      return this.ngayLap ? moment(this.ngayLap).format('DD/MM/YYYY') : ''
+    formatNgayLap () {      
+      return this.formData.ngayLap ? moment(this.formData.ngayLap).format('DD/MM/YYYY') : moment(Date.now()).format('DD/MM/YYYY')
     },
     formatngayKetThuc () {
-      let getDay = new Date()
-      this.ngayKetThuc = new Date(`${getDay.getMonth() + 1}-${getDay.getDate()}-${getDay.getFullYear() + 3}`)   
-      return this.ngayKetThuc ? moment(this.ngayKetThuc).format('DD/MM/YYYY') : ''
+      return this.formData.ngayKetThuc ? moment(this.formData.ngayKetThuc).format('DD/MM/YYYY') : ''
     }
   },
   methods: {
     Huy () {
+      this.soHD = null
+      this.khuPhongID = null
+      this.phongID = null
       this.soDienThoai = null
       this.phong = null
       this.khachThue = null
@@ -61,7 +55,6 @@ export default {
       this.formData._id = this.soHD
       this.formData.khachThueID = this.khachThue._id
       this.formData.phongID = this.phong._id
-      this.formData.ngayKetThuc = this.ngayKetThuc
       // chỗ này bị xung đột hàm nếu dispatch đến hàm save sẽ phân vân save của khach hay của hợp đồng nên phai đổi tên hàm
       this.$store.dispatch('saveHopDong', this.formData).then(res => {       
         toast.Success(`Hợp đồng ${res._id} đã được lập`)
@@ -99,8 +92,9 @@ export default {
       {
         this.$store.dispatch('getPhongById', this.phongID).then( res => {
           this.phong = res
+          this.soHD = ''
           // lưu ý số hợp đồng cần thêm tên phòng vì khách có thể thuê nhiều phòng
-          this.soHD = this.soHD + moment(this.ngayLap).format('DDMMYYYY') + this.khachThue.soCMND + translateCharacter(this.phong.tenPhong)
+          this.soHD = 'HD' + moment(this.formData.ngayLap).format('DDMMYYYY') + this.khachThue.soCMND + translateCharacter(this.phong.tenPhong)
         })
       }
     }
@@ -117,9 +111,12 @@ export default {
           this.soHD = this.formData._id
           this.khachThue = this.formData.khachThueID
           this.phong = this.formData.phongID
-          // if (this.formData && this.formData.ngaySinh){
-          //   this.formData.ngaySinh = new Date(this.formData.ngaySinh).toISOString().substr(0, 10)
-          // }
+          if (this.formData && this.formData.ngayLap){
+            this.formData.ngayLap = new Date(this.formData.ngayLap).toISOString().substr(0, 10)
+          }
+          if (this.formData && this.formData.ngayKetThuc){
+            this.formData.ngayKetThuc = new Date(this.formData.ngayKetThuc).toISOString().substr(0, 10)
+          }
         }
       }
       else

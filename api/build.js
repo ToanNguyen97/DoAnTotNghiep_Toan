@@ -237,6 +237,63 @@ const loader = exports.loader = async function (server) {
 
 /***/ }),
 
+/***/ "./app/lib/basemail/sendMail.js":
+/*!**************************************!*\
+  !*** ./app/lib/basemail/sendMail.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _text = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'text.html'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+var _text2 = _interopRequireDefault(_text);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const nodemailer = __webpack_require__(/*! nodemailer */ "nodemailer");
+
+const SenMail = async () => {
+  let transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      type: 'OAuth2',
+      user: 'toan210597ntu@gmail.com',
+      clientId: '529369342696-4u88ucm5d6rgudkl84alam67eht2h7rq.apps.googleusercontent.com',
+      clientSecret: '10jxMEC_wXSxRlMxkPfU39pF',
+      refreshToken: '1/aG6GoKDmPvwG2OQK3H_tUkzeu1RopMJV8_vBfirFQL0'
+    }
+  });
+  let mailOptions = {
+    from: '<toan210597ntu@gmail.com>',
+    to: "BeachCrestNhaTrang@gmail.com",
+    subject: "Hợp Đồng Thuê Phòng Trọ",
+    text: "Hợp Đồng Thuê Phòng Trọ",
+    html: _text2.default
+  };
+  await transporter.sendMail(mailOptions, function (err, res) {
+    if (err) {
+      console.log('Lỗi', err);
+    } else {
+      console.log("Đã gửi mail"); // Preview only available when sending through an Ethereal account
+    }
+  });
+};
+
+exports.default = {
+  SenMail
+};
+
+/***/ }),
+
 /***/ "./app/lib/mongo.js":
 /*!**************************!*\
   !*** ./app/lib/mongo.js ***!
@@ -389,15 +446,15 @@ const schema = {
     type: _mongoose.Schema.Types.ObjectId,
     ref: 'Phong'
   },
+  ngayLap: {
+    type: Date
+  },
   ngayKetThuc: {
     type: Date
   }
 };
 const options = {
-  collection: 'hopdongs',
-  timestamps: {
-    createAt: 'ngayLap'
-  }
+  collection: 'hopdongs'
 };
 exports.schema = schema;
 exports.options = options;
@@ -1030,9 +1087,15 @@ var _boom = __webpack_require__(/*! boom */ "boom");
 
 var _boom2 = _interopRequireDefault(_boom);
 
+var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./app/lib/basemail/sendMail.js");
+
+var _sendMail2 = _interopRequireDefault(_sendMail);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong'); //import translateCharacter from '../../../lib/services/translateCharacter.js'
+const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong');
+
+const KhachThue = _mongoose2.default.model('KhachThue'); //import translateCharacter from '../../../lib/services/translateCharacter.js'
 
 
 const save = async (request, h) => {
@@ -1043,7 +1106,21 @@ const save = async (request, h) => {
     if (item) {
       item = Object.assign(item, data);
     } else {
-      item = new HopDongThuePhong(data);
+      item = new HopDongThuePhong(data); // sau khi lập hợp đồng thì thêm phòng đó vào khách thuê
+
+      let khachThue = await KhachThue.findById({
+        _id: item.khachThueID
+      });
+
+      if (khachThue && !khachThue.phongs) {
+        khachThue.phongs = [];
+      }
+
+      khachThue.phongs = khachThue.phongs.filter(key => key != item.phongID);
+      khachThue.phongs = [...khachThue.phongs, ...[item.phongID]];
+      khachThue.save();
+
+      _sendMail2.default.SenMail();
     }
 
     await item.save();
@@ -1216,7 +1293,8 @@ const hopDongThueVal = {
       _id: _joi2.default.string(),
       khachThueID: _joi2.default.ObjectId(),
       phongID: _joi2.default.ObjectId(),
-      ngayKetThuc: _joi2.default.date()
+      ngayKetThuc: _joi2.default.date(),
+      ngayLap: _joi2.default.date()
     },
     options: {
       allowUnknown: true
@@ -3135,7 +3213,7 @@ exports.default = { ...tinhTrangPhongVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.3.1","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.0","lodash":"^4.17.11","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","redis":"^2.8.0","vision":"^5.4.4"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.3.1","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.0","lodash":"^4.17.11","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","nodemailer":"^5.1.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 
@@ -3313,6 +3391,17 @@ module.exports = require("mongoose");
 /***/ (function(module, exports) {
 
 module.exports = require("mongoose-paginate");
+
+/***/ }),
+
+/***/ "nodemailer":
+/*!*****************************!*\
+  !*** external "nodemailer" ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("nodemailer");
 
 /***/ }),
 

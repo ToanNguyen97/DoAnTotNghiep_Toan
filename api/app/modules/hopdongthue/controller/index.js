@@ -2,7 +2,9 @@
 
 import Mongoose from 'mongoose'
 import Boom from 'boom'
+import Mail from '../../../lib/basemail/sendMail.js'
 const HopDongThuePhong = Mongoose.model('HopDongThuePhong')
+const KhachThue = Mongoose.model('KhachThue')
 //import translateCharacter from '../../../lib/services/translateCharacter.js'
 
 const save = async (request, h) => {
@@ -14,6 +16,15 @@ const save = async (request, h) => {
     }
     else {
       item = new HopDongThuePhong(data)
+      // sau khi lập hợp đồng thì thêm phòng đó vào khách thuê
+      let khachThue = await KhachThue.findById({_id: item.khachThueID})
+      if(khachThue && !khachThue.phongs) {
+        khachThue.phongs = []
+      }
+      khachThue.phongs = khachThue.phongs.filter(key => key != item.phongID)
+      khachThue.phongs = [...khachThue.phongs, ...[item.phongID]]
+      khachThue.save()
+      Mail.SenMail()
     }
     await item.save()
     return await HopDongThuePhong.findById({_id: item._id}).populate('khachThueID').populate('phongID')
