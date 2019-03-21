@@ -10,6 +10,7 @@ const KhachThue = Mongoose.model('KhachThue')
 const save = async (request, h) => {
   try {
     let data = request.payload
+    console.log('data', data)
     let item = await HopDongThuePhong.findById(data._id)
     if(item) {
       item = Object.assign(item, data)
@@ -24,10 +25,11 @@ const save = async (request, h) => {
       khachThue.phongs = khachThue.phongs.filter(key => key != item.phongID)
       khachThue.phongs = [...khachThue.phongs, ...[item.phongID]]
       khachThue.save()
-      Mail.SenMail()
     }
     await item.save()
-    return await HopDongThuePhong.findById({_id: item._id}).populate('khachThueID').populate('phongID')
+    let hopdong = await HopDongThuePhong.findById(item._id).populate('khachThueID').populate('phongID')
+    Mail.SenMail(hopdong)
+    return hopdong
   } catch (err) {
     return Boom.forbidden(err)
   }

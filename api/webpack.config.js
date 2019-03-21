@@ -36,6 +36,10 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader'
+      },
+      {
+        test: /\.html$/,
+        loader: "file?name=[name].[ext]"
       }
     ]
   },

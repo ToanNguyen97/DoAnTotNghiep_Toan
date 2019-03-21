@@ -237,6 +237,45 @@ const loader = exports.loader = async function (server) {
 
 /***/ }),
 
+/***/ "./app/lib/basemail/mailHopDong.js":
+/*!*****************************************!*\
+  !*** ./app/lib/basemail/mailHopDong.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const fs = __webpack_require__(/*! fs */ "fs");
+
+const moment = __webpack_require__(/*! moment */ "moment");
+
+const path = __webpack_require__(/*! path */ "path");
+
+const mailHopDong = function (data) {
+  let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'templateHopDong.html'));
+  content = String(content);
+  content = content.replace('{{soHD}}', `${data._id}`);
+  content = content.replace('{{TenKhachHang}}', `${data.khachThueID.hoKhachThue} ${data.khachThueID.tenKhachThue}`);
+  content = content.replace('{{hoTenKhachThue}}', `${data.khachThueID.hoKhachThue} ${data.khachThueID.tenKhachThue}`);
+  content = content.replace('{{tenPhong}}', `${data.phongID.tenPhong}`);
+  content = content.replace('{{giaPhong}}', `${data.phongID.giaPhong} VNĐ`);
+  content = content.replace('{{ngayThue}}', `${moment(data.ngayLap).format('DD/MM/YYYY')} `);
+  content = content.replace('{{ngayTra}}', `${moment(data.ngayKetThuc).format('DD/MM/YYYY')}`);
+  return content;
+};
+
+exports.default = {
+  mailHopDong
+};
+
+/***/ }),
+
 /***/ "./app/lib/basemail/sendMail.js":
 /*!**************************************!*\
   !*** ./app/lib/basemail/sendMail.js ***!
@@ -251,15 +290,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _text = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'text.html'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+var _mailHopDong = __webpack_require__(/*! ./mailHopDong */ "./app/lib/basemail/mailHopDong.js");
 
-var _text2 = _interopRequireDefault(_text);
+var _mailHopDong2 = _interopRequireDefault(_mailHopDong);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const nodemailer = __webpack_require__(/*! nodemailer */ "nodemailer");
 
-const SenMail = async () => {
+const SenMail = async data => {
   let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -277,7 +316,7 @@ const SenMail = async () => {
     to: "BeachCrestNhaTrang@gmail.com",
     subject: "Hợp Đồng Thuê Phòng Trọ",
     text: "Hợp Đồng Thuê Phòng Trọ",
-    html: _text2.default
+    html: _mailHopDong2.default.mailHopDong(data)
   };
   await transporter.sendMail(mailOptions, function (err, res) {
     if (err) {
@@ -1101,6 +1140,7 @@ const KhachThue = _mongoose2.default.model('KhachThue'); //import translateChara
 const save = async (request, h) => {
   try {
     let data = request.payload;
+    console.log('data', data);
     let item = await HopDongThuePhong.findById(data._id);
 
     if (item) {
@@ -1119,14 +1159,14 @@ const save = async (request, h) => {
       khachThue.phongs = khachThue.phongs.filter(key => key != item.phongID);
       khachThue.phongs = [...khachThue.phongs, ...[item.phongID]];
       khachThue.save();
-
-      _sendMail2.default.SenMail();
     }
 
     await item.save();
-    return await HopDongThuePhong.findById({
-      _id: item._id
-    }).populate('khachThueID').populate('phongID');
+    let hopdong = await HopDongThuePhong.findById(item._id).populate('khachThueID').populate('phongID');
+
+    _sendMail2.default.SenMail(hopdong);
+
+    return hopdong;
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -3213,7 +3253,7 @@ exports.default = { ...tinhTrangPhongVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.3.1","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.0","lodash":"^4.17.11","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","nodemailer":"^5.1.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.3.1","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.0","lodash":"^4.17.11","moment":"^2.24.0","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","nodemailer":"^5.1.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 
@@ -3369,6 +3409,17 @@ module.exports = require("joi-objectid");
 /***/ (function(module, exports) {
 
 module.exports = require("lodash");
+
+/***/ }),
+
+/***/ "moment":
+/*!*************************!*\
+  !*** external "moment" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("moment");
 
 /***/ }),
 
