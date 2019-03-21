@@ -43,7 +43,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('getLoaiKhachs')
+    
   },
   computed: {
     dsLoaiKhachThue () {
@@ -115,6 +115,9 @@ export default {
   },
   watch: {
     value (v) {
+      if(v) {
+        this.$store.dispatch('getLoaiKhachs')
+      }
       if (v && this.isThem === false) {
         if (this.khachThueSelect && this.khachThueSelect._id) {
           this.formData = _.cloneDeep(this.khachThueSelect)

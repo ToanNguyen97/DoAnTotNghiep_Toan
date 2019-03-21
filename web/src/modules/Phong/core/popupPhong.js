@@ -42,9 +42,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('getKhuPhongs')
-    this.$store.dispatch('getLoaiPhongs')
-    this.$store.dispatch('getTinhTrangPhongs')
+  
   },
   computed: {
     dsKhuPhong () {
@@ -190,6 +188,11 @@ export default {
   },
   watch: {
     value (v) {
+      if(v) {
+        this.$store.dispatch('getKhuPhongs')
+        this.$store.dispatch('getLoaiPhongs')
+        this.$store.dispatch('getTinhTrangPhongs')
+      }
       if (v && this.isThem === false) {
         if (this.phongSelect && this.phongSelect._id) {
           this.formData = _.cloneDeep(this.phongSelect)

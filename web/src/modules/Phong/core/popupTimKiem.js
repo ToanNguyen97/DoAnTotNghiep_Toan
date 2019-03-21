@@ -15,9 +15,6 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('getKhuPhongs')
-    this.$store.dispatch('getLoaiPhongs')
-    this.$store.dispatch('getTinhTrangPhongs')
   },
   computed: {
     dsKhuPhong () {
@@ -52,6 +49,15 @@ export default {
         toast.Info('Có '+ res.length + ' kết quả  đã được tìm thấy !')
       })
     }
-  }
+  },
+  watch: {
+    value (v) {
+      if(v) {
+        this.$store.dispatch('getKhuPhongs')
+        this.$store.dispatch('getLoaiPhongs')
+        this.$store.dispatch('getTinhTrangPhongs')
+      }
+    }
+  },
 
 }
