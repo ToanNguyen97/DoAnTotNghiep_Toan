@@ -1162,7 +1162,12 @@ const save = async (request, h) => {
     }
 
     await item.save();
-    let hopdong = await HopDongThuePhong.findById(item._id).populate('khachThueID').populate('phongID');
+    let hopdong = await HopDongThuePhong.findById(item._id).populate([{
+      path: 'khachThueID'
+    }, {
+      path: 'phongID',
+      populate: 'khuPhongID'
+    }]);
 
     _sendMail2.default.SenMail(hopdong);
 
