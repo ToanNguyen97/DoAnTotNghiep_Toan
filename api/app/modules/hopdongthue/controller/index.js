@@ -29,7 +29,7 @@ const save = async (request, h) => {
     await item.save()
     let hopdong = await HopDongThuePhong.findById(item._id).populate([
       { path: 'khachThueID' },
-      { path: 'phongID', populate: 'khuPhongID' }
+      { path: 'phongID', populate: ['khuPhongID', 'tinhTrangPhongID', 'loaiPhongID'] }
     ])
     Mail.SenMail(hopdong)
     return hopdong

@@ -29,7 +29,7 @@
                     <v-avatar size="100" tile  v-else  >                     
                       <img height="144" alt="ảnh đại diện">
                     </v-avatar>
-                    <v-btn class="ml-1" @click="infoKhachThue" color="info">Xem</v-btn>
+                    <v-btn depressed class="ml-1" @click="infoKhachThue" color="info">Xem</v-btn>
                    </v-flex>
                    <v-flex xs12 sm6 md9 v-if="khachThue">
                      <v-text-field style="padding-bottom:4px" :value="`${khachThue.hoKhachThue.trim()} ${khachThue.tenKhachThue}`" readonly  hide-details label="Họ tên" append-icon="fas fa-user"></v-text-field>
@@ -86,7 +86,7 @@
                     <v-avatar size="100" tile  v-else  >                     
                       <img height="144" alt="ảnh phòng">
                     </v-avatar>
-                    <v-btn class="ml-1" @click="infoPhong" color="info">Xem</v-btn>
+                    <v-btn depressed class="ml-1" @click="infoPhong" color="info">Xem</v-btn>
                    </v-flex>
                    <v-flex xs12 sm6 md9 v-if="phong">
                      <v-text-field style="padding-bottom:4px" readonly :value="phong.loaiPhongID.tenLoaiPhong"  hide-details label="Loại phòng" append-icon="fas fa-home"></v-text-field>
@@ -157,8 +157,8 @@
         </v-layout>                                                          
         <v-layout row wrap mt-2>
             <v-flex xs12 sm12 md12 style="display: flex !important;justify-content: center !important;">                   
-              <v-btn color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
-              <v-btn color="yellow darken-1" dark @click="Huy" >Hủy</v-btn>
+              <v-btn depressed color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
+              <v-btn depressed color="yellow darken-1" dark @click="Huy" >Hủy</v-btn>
             </v-flex>
         </v-layout>  
       </v-container>

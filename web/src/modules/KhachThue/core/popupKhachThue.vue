@@ -37,7 +37,7 @@
             <v-flex   xs12 sm6 md3 size="10px">
               <div>
                 <input hidden type="file" style="display: none" ref="file" accept="image/*"  @change="choosedFile">
-                <v-btn  color="success"  @click="chooseFIle">Ảnh Đại Diện</v-btn>
+                <v-btn depressed  color="success"  @click="chooseFIle">Ảnh Đại Diện</v-btn>
               </div>
               <div v-if="isThem">
                   <img :src="anhDaiDien" height="144">
@@ -100,8 +100,8 @@
         </v-form>                                                       
         <v-layout row wrap mt-2>
             <v-flex xs12 sm12 md12 style="display: flex !important;justify-content: center !important;">                   
-              <v-btn color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
-              <v-btn color="yellow darken-1" dark @click="Huy" >Hủy</v-btn>
+              <v-btn depressed color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
+              <v-btn depressed color="yellow darken-1" dark @click="Huy" >Hủy</v-btn>
             </v-flex>
         </v-layout>  
       </v-container>

@@ -4,14 +4,14 @@
       <h1 class="mb-2 danhsachPT">Danh sách phòng trọ:</h1>    
     </v-layout>
     <v-layout row wrap>
-      <v-btn @click="ResetPage"  color="cyan" dark class="mt-3 hidden-xs-only">Làm Mới</v-btn>
-      <v-btn fab small @click="ResetPage"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>refresh</v-icon></v-btn>
-      <v-btn @click="OpenThem"  color="success" dark class="mt-3 hidden-xs-only">Thêm Mới</v-btn>
-      <v-btn fab small @click="OpenThem"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>add_circle_outline</v-icon></v-btn>
-      <v-btn @click="OpenTimKiem"  color="info" dark class="mt-3 hidden-xs-only">Tìm kiếm</v-btn>
-      <v-btn fab small @click="OpenTimKiem"  color="info" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>search</v-icon></v-btn> 
-      <v-btn @click="OpenDeleteMulti" :disabled="disabled" color="warning" dark class="mt-3 hidden-xs-only">Xóa Nhiều</v-btn>
-      <v-btn fab small @click="OpenDeleteMulti" :disabled="disabled"  color="warning" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>remove_circle_outline</v-icon></v-btn>
+      <v-btn depressed @click="ResetPage"  color="cyan" dark class="mt-3 hidden-xs-only">Làm Mới</v-btn>
+      <v-btn depressed fab small @click="ResetPage"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>refresh</v-icon></v-btn>
+      <v-btn depressed @click="OpenThem"  color="success" dark class="mt-3 hidden-xs-only">Thêm Mới</v-btn>
+      <v-btn depressed fab small @click="OpenThem"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>add_circle_outline</v-icon></v-btn>
+      <v-btn depressed @click="OpenTimKiem"  color="info" dark class="mt-3 hidden-xs-only">Tìm kiếm</v-btn>
+      <v-btn depressed fab small @click="OpenTimKiem"  color="info" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>search</v-icon></v-btn> 
+      <v-btn depressed @click="OpenDeleteMulti" :disabled="disabled" color="warning" dark class="mt-3 hidden-xs-only">Xóa Nhiều</v-btn>
+      <v-btn depressed fab small @click="OpenDeleteMulti" :disabled="disabled"  color="warning" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>remove_circle_outline</v-icon></v-btn>
     </v-layout>
     <v-layout >
     </v-layout>
