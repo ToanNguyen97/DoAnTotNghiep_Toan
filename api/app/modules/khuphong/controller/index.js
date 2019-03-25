@@ -4,7 +4,7 @@ const KhuPhong = Mongoose.model('KhuPhong')
 
 exports.getAll = async (request, h) => {
   try {
-    return await KhuPhong.find().populate('dsPhong').lean()
+    return await KhuPhong.find().populate([{path:'dsPhong', populate:['dsPhieuThu']}]).lean()
   } catch (err) {
     return Boom.forbidden(err)
   }

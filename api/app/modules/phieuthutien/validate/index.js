@@ -9,7 +9,7 @@ const phieuThuTienVal = {
       ngayLap: Joi.date().required(),
       ngayHetHan: Joi.date().required(),
       moTa: Joi.string(),
-      tinhTrangPhieuThu: Joi.string().required()    
+      tinhTrangPhieuThu: Joi.string()
     },
     options: {
       allowUnknown: true

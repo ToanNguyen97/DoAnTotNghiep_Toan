@@ -49,7 +49,8 @@ const schema = {
 }
 
 const options = {
-  collection: 'phongs'
+  collection: 'phongs',
+  virtuals: true
 }
 
 export {schema, options}

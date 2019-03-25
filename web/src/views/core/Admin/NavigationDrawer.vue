@@ -98,10 +98,7 @@
           {
             action: 'monetization_on',
             title: 'Phiếu Thu Tiền',
-            items: [
-              { title: 'Danh sách phiếu thu', icon: 'visibility' },
-              { title: 'Lập phiếu thu', icon: 'add'}
-            ]
+            link:'/phieu-thu-tien-phong.html'           
           },
           {
             action: 'signal_cellular_no_sim',

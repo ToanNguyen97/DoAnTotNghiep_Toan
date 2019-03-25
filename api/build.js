@@ -1201,6 +1201,11 @@ var _dao2 = _interopRequireDefault(_dao);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+PhongSchema.virtual('dsPhieuThu', {
+  ref: 'PhieuThuTien',
+  localField: '_id',
+  foreignField: 'phongID'
+});
 PhongSchema.plugin(_dao2.default);
 exports.default = _mongoose2.default.model('Phong', PhongSchema);
 
@@ -1276,7 +1281,8 @@ const schema = {
   }
 };
 const options = {
-  collection: 'phongs'
+  collection: 'phongs',
+  virtuals: true
 };
 exports.schema = schema;
 exports.options = options;
@@ -2142,7 +2148,10 @@ const KhuPhong = Mongoose.model('KhuPhong');
 
 exports.getAll = async (request, h) => {
   try {
-    return await KhuPhong.find().populate('dsPhong').lean();
+    return await KhuPhong.find().populate([{
+      path: 'dsPhong',
+      populate: ['dsPhieuThu']
+    }]).lean();
   } catch (err) {
     return Boom.forbidden(err);
   }
@@ -2886,13 +2895,19 @@ var _boom = __webpack_require__(/*! boom */ "boom");
 
 var _boom2 = _interopRequireDefault(_boom);
 
+var _moment = __webpack_require__(/*! moment */ "moment");
+
+var _moment2 = _interopRequireDefault(_moment);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhieuThuTien = _mongoose2.default.model('PhieuThuTien');
 
+const Phong = _mongoose2.default.model('Phong');
+
 const getAll = async (request, h) => {
   try {
-    return await PhieuThuTien.find();
+    return await PhieuThuTien.find().populate('phongID');
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -2904,7 +2919,22 @@ const save = async (request, h) => {
     let item = {};
 
     if (!data._id) {
-      data._id = "PTP01KV01032019";
+      let phong = await Phong.findById({
+        _id: data.phongID
+      }).populate('khuPhongID');
+      let soKhuPhong = phong.khuPhongID.tenKhuPhong.split(' ');
+      let soPhong = phong.tenPhong.split(' ');
+      let ngayLap = new Date(data.ngayLap);
+      console.log(ngayLap);
+      let getThangNam = (0, _moment2.default)(ngayLap).format('MMYYYY'); // ngày hết hạn là ngày 10 của tháng tiếp theo
+
+      data.ngayHetHan = new Date(`${ngayLap.getFullYear()}-${ngayLap.getMonth() + 2}-11`); // mã phiểu thu gồm: PT + số phòng + số khu phòng + tháng và năm tạo
+
+      data._id = `PTP${soPhong[1]}KV${soKhuPhong[2]}${getThangNam}`;
+      data.tinhTrangPhieuThu = 'chưa đóng';
+      phong.soDien = data.soDienMoi;
+      phong.soNuoc = data.soNuocMoi;
+      await phong.save();
       item = new PhieuThuTien(data);
     } else {
       item = await PhieuThuTien.findById({
@@ -3040,7 +3070,7 @@ const phieuThuTienVal = {
       ngayLap: Joi.date().required(),
       ngayHetHan: Joi.date().required(),
       moTa: Joi.string(),
-      tinhTrangPhieuThu: Joi.string().required()
+      tinhTrangPhieuThu: Joi.string()
     },
     options: {
       allowUnknown: true
@@ -3196,7 +3226,7 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID');
+    return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean();
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
