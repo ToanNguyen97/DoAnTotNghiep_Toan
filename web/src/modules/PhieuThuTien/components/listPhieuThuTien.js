@@ -30,7 +30,7 @@ export default {
   },
   created() {
     this.loading = false
-    this.$store.dispatch('getPhieuThuTiens')
+  // this.$store.dispatch('getPhieuThuTiens')
     this.$store.dispatch('phong/getKhuPhongs').then( () => {
       this.idKhuPhong = this.dsKhuPhong[0]._id
     })
@@ -45,7 +45,7 @@ export default {
     dsPhieuThuTien () {
       return this.$store.state.phieuthutien.dsPhieuThuTien
     },
-    dsKhuPhong () {
+    dsKhuPhong () { 
       return this.$store.state.phong.dsKhuPhong
     }
   },
@@ -58,6 +58,16 @@ export default {
       else
       {
         this.disabled = false
+      }
+    },
+    dsKhuPhong () {
+      this.idKhuPhong = this.dsKhuPhong[0]._id
+      for(let item of this.dsKhuPhong) {
+        if(item._id === this.idKhuPhong)
+        {
+          this.dsPhong = item.dsPhong
+          break
+        }
       }
     },
     idKhuPhong (v) {
@@ -104,8 +114,15 @@ export default {
       let {tenPhong, anhChinh, soDien, soNuoc} = item
       this.phieuThuTienSelect = {phongID: item._id, tenPhong, anhChinh, soDien, soNuoc}
     },
+    loadPage () {
+      console.log('load page')
+    },
     ResetPage () {
-      this.$store.dispatch('getListHopDongThuePhong')
+      console.log('vao ne')
+      this.idKhuPhong = null
+      this.$store.dispatch('phong/getKhuPhongs').then( () => {
+        this.idKhuPhong = this.dsKhuPhong[0]._id
+      })
     }
   },
   filters: {

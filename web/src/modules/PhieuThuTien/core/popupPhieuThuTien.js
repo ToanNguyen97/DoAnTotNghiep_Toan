@@ -24,15 +24,14 @@ export default {
   computed: {
   },
   methods: {
-    Huy () { 
-      this.$emit('input', false)
+    async Huy () { 
+     await this.$emit('input', false)
     },
     XacNhan () {
       this.formData.ngayLap = Date.now()
       this.formData.ngayHetHan = Date.now()
       this.$store.dispatch('addPhieuThuTien', this.formData).then( res => {
-        console.log(res)
-        this.$store.dispatch('phong/getPhongs')
+        this.$store.dispatch('phong/getKhuPhongs')
         this.Huy()
         toast.Success('Phiếu thu: '+res._id + ' đã được lập')
       }).catch( res => {

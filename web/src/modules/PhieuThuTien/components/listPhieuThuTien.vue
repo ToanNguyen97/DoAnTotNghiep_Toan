@@ -90,7 +90,7 @@
     <div class="text-xs-center pt-2">
       <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
     </div>  
-    <popupPhieuThuTien v-model="edit" :isThem="isThem" :phieuThuTienSelect="phieuThuTienSelect || {}"/>
+    <popupPhieuThuTien v-model="edit"  :isThem="isThem" :phieuThuTienSelect="phieuThuTienSelect || {}"/>
   </div>
 </template>
 <script src="./listPhieuThuTien.js">

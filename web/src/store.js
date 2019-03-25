@@ -4,7 +4,7 @@ import Phong from './modules/Phong/store/index'
 import KhachThue from './modules/KhachThue/store/index'
 import HopDongThuePhong from './modules/HopDongThuePhong/store/index'
 import PhieuThuTien from './modules/PhieuThuTien/store/index'
-console.log(Phong)
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({

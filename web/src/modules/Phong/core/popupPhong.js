@@ -148,7 +148,7 @@ export default {
       {
         this.formData.loaiPhongID = this.formData.loaiPhongID._id
       }
-      this.$store.dispatch('XacNhan', this.formData).then(() => {
+      this.$store.dispatch('phong/XacNhan', this.formData).then(() => {
         toast.Success('Thành Công!')
         this.Huy()
       }).catch( () => {
@@ -189,9 +189,9 @@ export default {
   watch: {
     value (v) {
       if(v) {
-        this.$store.dispatch('getKhuPhongs')
-        this.$store.dispatch('getLoaiPhongs')
-        this.$store.dispatch('getTinhTrangPhongs')
+        this.$store.dispatch('phong/getKhuPhongs')
+        this.$store.dispatch('phong/getLoaiPhongs')
+        this.$store.dispatch('phong/getTinhTrangPhongs')
       }
       if (v && this.isThem === false) {
         if (this.phongSelect && this.phongSelect._id) {

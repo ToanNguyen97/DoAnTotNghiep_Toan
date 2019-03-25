@@ -40,7 +40,7 @@ export default {
   },
   async created () {
     this.loading = true
-   await this.$store.dispatch('getPhongs')
+   await this.$store.dispatch('phong/getPhongs')
   },
   computed: {
     pages () {
