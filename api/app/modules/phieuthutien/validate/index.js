@@ -1,0 +1,20 @@
+const Joi = require('joi')
+Joi.ObjectId = require('joi-objectid') (Joi)
+
+const phieuThuTienVal = {
+  save: {
+    payload: {
+      _id: Joi.string(),
+      phongID: Joi.ObjectId(),
+      ngayLap: Joi.date().required(),
+      ngayHetHan: Joi.date().required(),
+      moTa: Joi.string(),
+      tinhTrangPhieuThu: Joi.string().required()    
+    },
+    options: {
+      allowUnknown: true
+    }
+  }
+}
+
+export default {...phieuThuTienVal}

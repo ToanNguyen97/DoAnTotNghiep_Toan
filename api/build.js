@@ -209,6 +209,12 @@ const loader = exports.loader = async function (server) {
     __webpack_require__(/*! ../models/LoaiKhachThue/model */ "./app/models/LoaiKhachThue/model.js");
 
     __webpack_require__(/*! ../models/HopDongThuePhong/model */ "./app/models/HopDongThuePhong/model.js");
+
+    __webpack_require__(/*! ../models/PhieuThuTien/model */ "./app/models/PhieuThuTien/model.js");
+
+    __webpack_require__(/*! ../models/CTPhieuThuTien/model */ "./app/models/CTPhieuThuTien/model.js");
+
+    __webpack_require__(/*! ../models/CacKhoanThu/model */ "./app/models/CacKhoanThu/model.js");
     /* Load Modules */
 
 
@@ -220,6 +226,8 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/khachthue */ "./app/modules/khachthue/index.js"));
     modules.push(__webpack_require__(/*! ../modules/loaikhacthue */ "./app/modules/loaikhacthue/index.js"));
     modules.push(__webpack_require__(/*! ../modules/hopdongthue */ "./app/modules/hopdongthue/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/cackhoanthu */ "./app/modules/cackhoanthu/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/phieuthutien */ "./app/modules/phieuthutien/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -432,6 +440,145 @@ exports.register = async (server, options) => {
 };
 
 exports.name = 'route-image';
+
+/***/ }),
+
+/***/ "./app/models/CTPhieuThuTien/model.js":
+/*!********************************************!*\
+  !*** ./app/models/CTPhieuThuTien/model.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/CTPhieuThuTien/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const cTPhieuThuTienSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('CTPhieuThuTien', cTPhieuThuTienSchema);
+
+/***/ }),
+
+/***/ "./app/models/CTPhieuThuTien/schema.js":
+/*!*********************************************!*\
+  !*** ./app/models/CTPhieuThuTien/schema.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const schema = {
+  STT: {
+    type: Number,
+    required: true,
+    unique: true
+  },
+  phieuThuID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  chiSoMoi: {
+    type: Number,
+    required: true
+  },
+  giaKhoanThu: {
+    type: Number,
+    required: true
+  },
+  cacKhoanaThuID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    required: true
+  }
+};
+const options = {
+  collection: 'ctphieuthutiens'
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/models/CacKhoanThu/model.js":
+/*!*****************************************!*\
+  !*** ./app/models/CacKhoanThu/model.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/CacKhoanThu/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const cacKhoanThuSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('CacKhoanThu', cacKhoanThuSchema);
+
+/***/ }),
+
+/***/ "./app/models/CacKhoanThu/schema.js":
+/*!******************************************!*\
+  !*** ./app/models/CacKhoanThu/schema.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const schema = {
+  tenKhoanThu: {
+    type: String,
+    required: true,
+    max: 30
+  },
+  giaKhoanThu: {
+    type: Number,
+    required: true
+  },
+  donViTinh: {
+    type: String,
+    required: true,
+    max: 30
+  }
+};
+const options = {
+  collection: 'cackhoanthus'
+};
+exports.schema = schema;
+exports.options = options;
 
 /***/ }),
 
@@ -880,6 +1027,86 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/models/PhieuThuTien/model.js":
+/*!******************************************!*\
+  !*** ./app/models/PhieuThuTien/model.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/PhieuThuTien/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const PhieuThuTienSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('PhieuThuTien', PhieuThuTienSchema);
+
+/***/ }),
+
+/***/ "./app/models/PhieuThuTien/schema.js":
+/*!*******************************************!*\
+  !*** ./app/models/PhieuThuTien/schema.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const schema = {
+  _id: {
+    type: String,
+    required: true,
+    length: 16
+  },
+  phongID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'Phong'
+  },
+  ngayLap: {
+    type: Date,
+    required: true,
+    default: Date.now()
+  },
+  ngayHetHan: {
+    type: Date,
+    required: true
+  },
+  moTa: {
+    type: String
+  },
+  tinhTrangPhieuThu: {
+    type: String,
+    required: true,
+    enum: ['chưa đóng', 'đã đóng', 'quá hạn']
+  }
+};
+const options = {
+  collection: 'phieuthutiens'
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
 /***/ "./app/models/Phong/dao.js":
 /*!*********************************!*\
   !*** ./app/models/Phong/dao.js ***!
@@ -1111,6 +1338,185 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/modules/cackhoanthu/controller/index.js":
+/*!*****************************************************!*\
+  !*** ./app/modules/cackhoanthu/controller/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const CacKhoanThu = Mongoose.model('CacKhoanThu');
+
+const Boom = __webpack_require__(/*! boom */ "boom");
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = {};
+
+    if (!data.id) {
+      item = new CacKhoanThu(data);
+    } else {
+      item = await CacKhoanThu.findById({
+        _id: data.id
+      });
+      item = Object.assign(item, data);
+    }
+
+    return await item.save();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+const getAll = async (request, h) => {
+  try {
+    return await CacKhoanThu.find();
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+exports.default = {
+  save,
+  getAll
+};
+
+/***/ }),
+
+/***/ "./app/modules/cackhoanthu/index.js":
+/*!******************************************!*\
+  !*** ./app/modules/cackhoanthu/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index */ "./app/modules/cackhoanthu/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'cac-khoan-thu-admin';
+
+/***/ }),
+
+/***/ "./app/modules/cackhoanthu/routes/index.js":
+/*!*************************************************!*\
+  !*** ./app/modules/cackhoanthu/routes/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/cackhoanthu/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/cackhoanthu/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/cackhoanthu',
+  handler: _index2.default.getAll,
+  config: {
+    tags: ['api'],
+    description: 'lay danh sach cac khoan thu',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/cackhoanthu',
+  handler: _index2.default.save,
+  config: {
+    tags: ['api'],
+    description: 'them hoac sua cac khoan thu',
+    validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/cackhoanthu/validate/index.js":
+/*!***************************************************!*\
+  !*** ./app/modules/cackhoanthu/validate/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const cacKhoanThuVal = {
+  save: {
+    payload: {
+      tenKhoanThu: _joi2.default.string().required().max(30),
+      giaKhoanThu: _joi2.default.number().required(),
+      donViTinh: _joi2.default.string().required().max(30)
+    }
+  }
+};
+exports.default = { ...cacKhoanThuVal
+};
+
+/***/ }),
+
 /***/ "./app/modules/hopdongthue/controller/index.js":
 /*!*****************************************************!*\
   !*** ./app/modules/hopdongthue/controller/index.js ***!
@@ -1226,7 +1632,7 @@ var _routes2 = _interopRequireDefault(_routes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.register = async (server, options) => {
+exports.register = (server, options) => {
   server.route(_routes2.default);
 };
 
@@ -1511,7 +1917,7 @@ var _index2 = _interopRequireDefault(_index);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.register = async (server, options) => {
+exports.register = (server, options) => {
   server.route(_index2.default);
 };
 
@@ -1808,7 +2214,7 @@ var _index2 = _interopRequireDefault(_index);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.register = async (server, options) => {
+exports.register = (server, options) => {
   server.route(_index2.default);
 };
 
@@ -2067,7 +2473,7 @@ var _routes2 = _interopRequireDefault(_routes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.register = async (server, options) => {
+exports.register = (server, options) => {
   server.route(_routes2.default);
 };
 
@@ -2279,7 +2685,7 @@ var _index2 = _interopRequireDefault(_index);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.register = async (server, options) => {
+exports.register = (server, options) => {
   server.route(_index2.default);
 };
 
@@ -2454,6 +2860,194 @@ const LoaiPhongVal = {
   }
 };
 exports.default = { ...LoaiPhongVal
+};
+
+/***/ }),
+
+/***/ "./app/modules/phieuthutien/controller/index.js":
+/*!******************************************************!*\
+  !*** ./app/modules/phieuthutien/controller/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const PhieuThuTien = _mongoose2.default.model('PhieuThuTien');
+
+const getAll = async (request, h) => {
+  try {
+    return await PhieuThuTien.find();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = {};
+
+    if (!data._id) {
+      data._id = "PTP01KV01032019";
+      item = new PhieuThuTien(data);
+    } else {
+      item = await PhieuThuTien.findById({
+        _id: data._id
+      });
+      item = Object.assign(item, data);
+    }
+
+    return await item.save();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  getAll,
+  save
+};
+
+/***/ }),
+
+/***/ "./app/modules/phieuthutien/index.js":
+/*!*******************************************!*\
+  !*** ./app/modules/phieuthutien/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index */ "./app/modules/phieuthutien/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'phieu-thu-tien-admin';
+
+/***/ }),
+
+/***/ "./app/modules/phieuthutien/routes/index.js":
+/*!**************************************************!*\
+  !*** ./app/modules/phieuthutien/routes/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/phieuthutien/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/phieuthutien/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/phieuthutien',
+  handler: _index2.default.getAll,
+  config: {
+    tags: ['api'],
+    description: "lay danh sach phieu thu",
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/phieuthutien',
+  handler: _index2.default.save,
+  config: {
+    tags: ['api'],
+    description: 'them hoac sua phieu thu',
+    validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/phieuthutien/validate/index.js":
+/*!****************************************************!*\
+  !*** ./app/modules/phieuthutien/validate/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Joi = __webpack_require__(/*! joi */ "joi");
+
+Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
+const phieuThuTienVal = {
+  save: {
+    payload: {
+      _id: Joi.string(),
+      phongID: Joi.ObjectId(),
+      ngayLap: Joi.date().required(),
+      ngayHetHan: Joi.date().required(),
+      moTa: Joi.string(),
+      tinhTrangPhieuThu: Joi.string().required()
+    },
+    options: {
+      allowUnknown: true
+    }
+  }
+};
+exports.default = { ...phieuThuTienVal
 };
 
 /***/ }),
@@ -2722,7 +3316,7 @@ var _index2 = _interopRequireDefault(_index);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.register = async (server, options) => {
+exports.register = (server, options) => {
   server.route(_index2.default);
 };
 

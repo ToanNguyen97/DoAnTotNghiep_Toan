@@ -2,7 +2,7 @@
 
 import HopDongThuePhongRoutes from './routes'
 
-exports.register = async (server, options) => {
+exports.register =  (server, options) => {
   server.route(HopDongThuePhongRoutes)
 }
 

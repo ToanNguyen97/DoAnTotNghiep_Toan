@@ -2,7 +2,7 @@
 
 import KhachThueRoutes from './routes/index'
 
-exports.register = async (server, options) => {
+exports.register =  (server, options) => {
   server.route(KhachThueRoutes)
 }
 

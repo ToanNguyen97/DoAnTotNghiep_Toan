@@ -2,7 +2,7 @@
 
 import Routes from './routes/index.js'
 
-exports.register = async (server, options) => {
+exports.register =  (server, options) => {
   server.route(Routes)
 }
 
