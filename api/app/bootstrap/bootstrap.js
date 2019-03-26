@@ -66,6 +66,7 @@ export const loader = async function (server) {
      modules.push(require('../modules/hopdongthue'))
      modules.push(require('../modules/cackhoanthu'))
      modules.push(require('../modules/phieuthutien'))
+     modules.push(require('../modules/ctphieuthutien'))
      
      if (modules.length) {
        let options = {}

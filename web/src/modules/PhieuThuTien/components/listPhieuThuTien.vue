@@ -69,18 +69,8 @@
             </td>
             <td class="justify-center text-xs-left">
              <v-layout row justify-center>    
-              <v-tooltip  top class="my-3 ml-4 mr-1">
-                <v-icon slot="activator" small @click="OpenThem(props.item)">fas fa-plus</v-icon>
-                <span>lập phiếu</span>
-              </v-tooltip>
-              <v-tooltip  top class="my-3">
-                <v-icon slot="activator" small @click="GotoEdit(props.item)">edit</v-icon>
-                <span>sửa</span>
-              </v-tooltip>
-              <v-tooltip top class="my-3">
-                <v-icon slot="activator" small @click="OpenSnackback(props.item)">delete</v-icon>
-                <span>xóa</span>
-              </v-tooltip>
+                <v-btn color="success"  outline flat small depressed @click="OpenThem(props.item)">Ghi Điện Nước</v-btn>
+                <v-btn color="indigo" outline flat small depressed @click="OpenThem(props.item)">Xem Chi Tiết</v-btn>                 
             </v-layout>   
           </td>
           </tr>

@@ -228,6 +228,7 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/hopdongthue */ "./app/modules/hopdongthue/index.js"));
     modules.push(__webpack_require__(/*! ../modules/cackhoanthu */ "./app/modules/cackhoanthu/index.js"));
     modules.push(__webpack_require__(/*! ../modules/phieuthutien */ "./app/modules/phieuthutien/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/ctphieuthutien */ "./app/modules/ctphieuthutien/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -490,24 +491,21 @@ var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 const schema = {
   STT: {
     type: Number,
-    required: true,
-    unique: true
+    required: true
   },
   phieuThuID: {
-    type: _mongoose.Schema.Types.ObjectId,
-    required: true
+    type: String,
+    ref: 'PhieuThuTien'
+  },
+  chiSoCu: {
+    type: Number
   },
   chiSoMoi: {
-    type: Number,
-    required: true
+    type: Number
   },
-  giaKhoanThu: {
-    type: Number,
-    required: true
-  },
-  cacKhoanaThuID: {
+  cacKhoanThuID: {
     type: _mongoose.Schema.Types.ObjectId,
-    required: true
+    ref: 'CacKhoanThu'
   }
 };
 const options = {
@@ -1519,6 +1517,235 @@ const cacKhoanThuVal = {
   }
 };
 exports.default = { ...cacKhoanThuVal
+};
+
+/***/ }),
+
+/***/ "./app/modules/ctphieuthutien/controller/index.js":
+/*!********************************************************!*\
+  !*** ./app/modules/ctphieuthutien/controller/index.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const Mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const CTPhieuThuTien = Mongoose.model('CTPhieuThuTien');
+
+const getAll = async (request, h) => {
+  try {
+    return await CTPhieuThuTien.find().populate([{
+      path: 'cacKhoanThuID'
+    }, {
+      path: 'phieuThuID'
+    }]);
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+}; // lấy thông tin theo mã phiếu thu
+
+
+const getById = async (request, h) => {
+  try {
+    return (await CTPhieuThuTien.find({
+      phieuThuID: request.params.id
+    }).populate([{
+      path: 'cacKhoanThuID'
+    }, {
+      path: 'phieuThuID'
+    }])) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = {};
+
+    if (!data._id) {
+      item = new CTPhieuThuTien(data);
+    } else {
+      item = await CTPhieuThuTien.findById({
+        _id: data._id
+      });
+      item = Object.assign(item, data);
+    }
+
+    return await item.save();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  save,
+  getAll,
+  getById
+};
+
+/***/ }),
+
+/***/ "./app/modules/ctphieuthutien/index.js":
+/*!*********************************************!*\
+  !*** ./app/modules/ctphieuthutien/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index */ "./app/modules/ctphieuthutien/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, option) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'chi-tiet-phieu-thu-admin';
+
+/***/ }),
+
+/***/ "./app/modules/ctphieuthutien/routes/index.js":
+/*!****************************************************!*\
+  !*** ./app/modules/ctphieuthutien/routes/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/ctphieuthutien/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/ctphieuthutien/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/chitietphieuthu',
+  handler: _index2.default.getAll,
+  config: {
+    tags: ['api'],
+    description: 'lay tat ca cac chi tiet phieu thu',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/chitietphieuthu/{id}',
+  handler: _index2.default.getById,
+  config: {
+    tags: ['api'],
+    description: 'xem chi tiet phieu thu cua mot phieu thu',
+    validate: _index4.default.getById,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/chitietphieuthu',
+  handler: _index2.default.save,
+  config: {
+    tags: ['api'],
+    description: 'them',
+    validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/ctphieuthutien/validate/index.js":
+/*!******************************************************!*\
+  !*** ./app/modules/ctphieuthutien/validate/index.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Joi = __webpack_require__(/*! joi */ "joi");
+
+Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
+const CTPhieuThuTienVal = {
+  save: {
+    payload: {
+      _id: Joi.string(),
+      STT: Joi.number(),
+      phieuThuID: Joi.string(),
+      chiSoCu: Joi.number(),
+      chiSoMoi: Joi.number(),
+      cacKhoanThuID: Joi.ObjectId()
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
+  getById: {
+    params: {
+      id: Joi.string()
+    }
+  }
+};
+exports.default = { ...CTPhieuThuTienVal
 };
 
 /***/ }),
@@ -2905,6 +3132,10 @@ const PhieuThuTien = _mongoose2.default.model('PhieuThuTien');
 
 const Phong = _mongoose2.default.model('Phong');
 
+const CTPhieuThuTien = _mongoose2.default.model('CTPhieuThuTien');
+
+const CacKhoanThu = _mongoose2.default.model('CacKhoanThu');
+
 const getAll = async (request, h) => {
   try {
     return await PhieuThuTien.find().populate('phongID');
@@ -2926,7 +3157,7 @@ const save = async (request, h) => {
       let soPhong = phong.tenPhong.split(' ');
       let ngayLap = new Date(data.ngayLap);
       console.log(ngayLap);
-      let getThangNam = (0, _moment2.default)(ngayLap).format('MMYYYY'); // ngày hết hạn là ngày 10 của tháng tiếp theo
+      let getThangNam = (0, _moment2.default)(ngayLap).format('MMYYYY'); // ngày hết hạn là ngày 10 của tháng tiếp theo: số 11 ở cuối vì chênh lệch múi giờ sẽ giảm xuống 10
 
       data.ngayHetHan = new Date(`${ngayLap.getFullYear()}-${ngayLap.getMonth() + 2}-11`); // mã phiểu thu gồm: PT + số phòng + số khu phòng + tháng và năm tạo
 
@@ -2935,7 +3166,33 @@ const save = async (request, h) => {
       phong.soDien = data.soDienMoi;
       phong.soNuoc = data.soNuocMoi;
       await phong.save();
-      item = new PhieuThuTien(data);
+      item = new PhieuThuTien(data); // tiếp theo sẽ tạo chi tiết phiếu thu và thêm vào DB
+
+      let tienThu = [{
+        STT: 1,
+        phieuThuID: item._id,
+        chiSoCu: data.soDien,
+        chiSoMoi: data.soDienMoi,
+        cacKhoanThuID: '5c983b7d28aebc66041a45aa'
+      }, {
+        STT: 2,
+        phieuThuID: item._id,
+        chiSoCu: data.soNuoc,
+        chiSoMoi: data.soNuocMoi,
+        cacKhoanThuID: '5c983b9b28aebc66041a45ab'
+      }];
+
+      if (phong.dKMang === true) {
+        tienThu.push({
+          STT: 3,
+          phieuThuID: item._id,
+          cacKhoanThuID: '5c983bf228aebc66041a45ac'
+        });
+      }
+
+      for (let item of tienThu) {
+        await CTPhieuThuTien.create(item);
+      }
     } else {
       item = await PhieuThuTien.findById({
         _id: data._id

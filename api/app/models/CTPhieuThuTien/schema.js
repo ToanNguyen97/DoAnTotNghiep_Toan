@@ -4,24 +4,21 @@ import { Schema } from "mongoose";
 const schema = {
   STT: {
     type: Number,
-    required: true,
-    unique: true
+    required: true
   },
   phieuThuID: {
-    type: Schema.Types.ObjectId,
-    required: true
+    type: String,
+    ref: 'PhieuThuTien'
+  },
+  chiSoCu: {
+    type: Number
   },
   chiSoMoi: {
-    type: Number,
-    required: true
+    type: Number
   },
-  giaKhoanThu: {
-    type: Number,
-    required: true
-  },
-  cacKhoanaThuID: {
+  cacKhoanThuID: {
     type: Schema.Types.ObjectId,
-    required: true
+    ref: 'CacKhoanThu'
   }
 }
 
