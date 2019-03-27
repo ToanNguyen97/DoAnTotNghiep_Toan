@@ -16,10 +16,10 @@
                 <div class="headline">{{phong && phong.khuPhongID && phong.khuPhongID.tenKhuPhong}}: <span class="subheading">{{phong && phong.loaiPhongID && phong.loaiPhongID.tenLoaiPhong}}</span> </div>               
               </div>
             </v-card-title>
-            <v-card-text class="py-0">
-              <span >Giá phòng: {{phong && phong.giaPhong.toLocaleString()}}</span> <br>
-              <span>Số điện: {{phong && phong.soDien}} Kwh</span> <br>     
-              <span>Số nước: {{phong && phong.soNuoc}} Khối</span>     
+            <v-card-text class="py-0" v-if="phong && phong.giaPhong">
+              <span >Giá phòng: {{phong.giaPhong | formatCurrentcy}}</span> <br>
+              <span>Số điện: {{ phong.soDien}} Kwh</span> <br>     
+              <span>Số nước: {{ phong.soNuoc}} Khối</span>     
             </v-card-text>
             <v-card-actions>
               <v-btn flat>Share</v-btn>
@@ -95,7 +95,6 @@
                   <div class="subheading pb-1" style="text-align:center;">Thành tiền</div>
                 </v-flex>              
               </v-layout>
-              <v-divider></v-divider>
               <v-divider style="margin-top:5px;"></v-divider>
               <v-card flat v-for="phieuthu in dsCTPT" :key="phieuthu._id">
                 <v-layout row wrap  mt-1>                
@@ -115,16 +114,16 @@
                    <div >1</div>
                   </v-flex>
                   <v-flex sm4 md2 style="padding-top: 6px;">
-                   <div style="text-align:center;">{{phieuthu.donGia.toLocaleString()}}</div>
+                   <div style="text-align:center;">{{phieuthu.donGia | formatCurrentcy}}</div>
                   </v-flex>
                   <v-flex xs4 sm4 md2>
                     <div style="text-align:center;"><v-chip small color="info" class="white--text my-2`">{{phieuthu.cacKhoanThuID.donViTinh}}</v-chip></div>
                   </v-flex>
                   <v-flex v-if="phieuthu.chiSoMoi > 0" sm4 md2 style="padding-top: 6px;">
-                    <div style="text-align:center;">{{((phieuthu.chiSoMoi - phieuthu.chiSoCu)*phieuthu.donGia).toLocaleString()}}</div>
+                    <div style="text-align:center;">{{(phieuthu.chiSoMoi - phieuthu.chiSoCu)*phieuthu.donGia | formatCurrentcy}}</div>
                   </v-flex>                
                   <v-flex v-else sm4 md2 style="padding-top: 6px;">
-                    <div style="text-align:center;">{{phieuthu.donGia.toLocaleString()}}</div>
+                    <div style="text-align:center;">{{phieuthu.donGia | formatCurrentcy}}</div>
                   </v-flex>                
                 </v-layout>
                 <v-divider style="margin-top:5px;"></v-divider>

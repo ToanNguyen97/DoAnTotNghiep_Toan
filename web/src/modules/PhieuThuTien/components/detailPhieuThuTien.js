@@ -64,6 +64,9 @@ export default {
   filters: {
     formatDate (ngay) {
       return moment(ngay).format('DD/MM/YYYY')
+    },
+    formatCurrentcy (tien) {
+      return tien.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
     }
   },
   methods: {
