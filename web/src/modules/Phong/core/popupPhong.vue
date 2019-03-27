@@ -8,10 +8,10 @@
         </v-layout>     
         <v-form  ref="form" v-model="valid" lazy-validation>
           <v-layout row wrap justify-space-between>
-            <v-flex xs12 sm6 md4>
+            <v-flex xs12 sm6 md6>
               <v-text-field v-model="formData.tenPhong"  :rules="tenPhongRules" :counter="20" label="Tên Phòng Trọ"></v-text-field>
             </v-flex>   
-            <v-flex xs12 sm6 md4>
+            <v-flex xs12 sm6 md6>
               <v-select
                 v-model="formData.khuPhongID"
                 :items="dsKhuPhong"
@@ -20,7 +20,16 @@
                 item-value="_id"
               ></v-select>
             </v-flex>   
-            <v-flex xs12 sm6 md4>
+            <v-flex xs12 sm6 md6>
+              <v-select
+                v-model="formData.tinhTrangPhongID"
+                :items="dsTinhTrangPhong"
+                label="Tình Trạng Phòng"
+                item-text="tenTinhTrangPhong"
+                item-value="_id"
+              ></v-select>
+            </v-flex>   
+            <v-flex xs12 sm6 md6>
               <v-select
                 v-model="formData.loaiPhongID"
                 :items="dsLoaiPhong"

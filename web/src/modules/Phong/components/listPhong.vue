@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #fff; border-radius:10px" class="danhsachphong">
+  <div style="background-color: #fff; border-radius:10px;" class="danhsachphong">
     <v-layout row wrap justify-start class="ml-2 pl-1">
       <h1 class="mb-2 danhsachPT">Danh sách phòng trọ:</h1>    
     </v-layout>
@@ -59,12 +59,15 @@
               ></v-checkbox>
             </td>
             <td class="text-xs-center">{{ props.item.tenPhong }}</td>
-            <td class="text-xs-center"><img height="100" :src="`//localhost:3003/image/${props.item.anhChinh}`" alt=""></td>
+            <td class="text-xs-center"><img height="95" :src="`//localhost:3003/image/${props.item.anhChinh}`" alt=""></td>
             <td class="text-xs-center">{{ props.item.soDien }}</td>
             <td class="text-xs-center">{{ props.item.soNuoc }}</td>
             <td class="text-xs-center">{{ props.item.giaPhong | formatCurrency }}</td>
             <td class="text-xs-center">{{ props.item.khuPhongID.tenKhuPhong }}</td>
             <td class="text-xs-center">{{ props.item.loaiPhongID.tenLoaiPhong}}</td>
+            <td class="text-xs-center">
+            <v-chip :color="props.item.tinhTrangPhongID.tenTinhTrangPhong === 'Còn trống'?'cyan': (props.item.tinhTrangPhongID.tenTinhTrangPhong === 'Đã thuê'? 'green accent-4':(props.item.tinhTrangPhongID.tenTinhTrangPhong === 'Cho ở ghép'?'pink':'amber'))" class="white--text">{{props.item.tinhTrangPhongID.tenTinhTrangPhong}}</v-chip>  
+            </td>
             <td class="justify-center text-xs-center">
              <v-layout row justify-center>    
               <v-tooltip  top class="my-3">

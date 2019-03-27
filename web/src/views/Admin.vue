@@ -4,7 +4,7 @@
     <v-content class="ml-4" style="padding: 70px 0px 0px 70px; display: flex; flex: 1 1 auto;" :class="!mini ? 'padding-left-300' : ''">
       <router-view></router-view>  
     </v-content>
-    <v-content class="ml-4" style="padding: 70px 0px 0px 70px; display: flex; flex: 0 0 auto;" :class="!mini ? 'padding-left-300' : ''">
+    <v-content class="ml-4" style="padding: 5px 0px 0px 70px; display: flex; flex: 0 0 auto;" :class="!mini ? 'padding-left-300' : ''">
        <Footer />
     </v-content>
   </div>

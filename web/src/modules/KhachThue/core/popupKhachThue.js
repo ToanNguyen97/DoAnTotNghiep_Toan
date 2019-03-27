@@ -21,8 +21,8 @@ export default {
       valid: true,
       changeAnh: false,
       dsTinhTrang: [
-        { ten: 'Đã Thuê'},
-        { ten: 'Chưa Thuê'},
+        { ten: 'Đang thuê'},
+        { ten: 'Chưa thuê'},
         { ten: 'Đã trả phòng'}
       ],
       formData: {

@@ -61,20 +61,30 @@ export default {
       }
     },
     dsKhuPhong () {
+      this.dsPhong = []
       this.idKhuPhong = this.dsKhuPhong[0]._id
       for(let item of this.dsKhuPhong) {
         if(item._id === this.idKhuPhong)
         {
-          this.dsPhong = item.dsPhong
+          for(let phong of item.dsPhong) {
+            if(String(item.tinhTrangPhongID) === String("5c8866adfcd238559ca25d14")) {
+              this.dsPhong.push(phong)
+            }
+          }
           break
         }
       }
     },
     idKhuPhong (v) {
+      this.dsPhong = []
       for(let item of this.dsKhuPhong) {
         if(item._id === v)
         {
-          this.dsPhong = item.dsPhong
+          for(let phong of item.dsPhong) {
+            if(phong.tinhTrangPhongID === "5c8866adfcd238559ca25d14"  || phong.tinhTrangPhongID === "5c8866b6fcd238559ca25d15" ) {
+              this.dsPhong.push(phong)
+            }
+          }
           break
         }
       }

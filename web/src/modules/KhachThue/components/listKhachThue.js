@@ -26,7 +26,7 @@ export default {
         { text: 'Số Chứng Minh', value: 'soCMND' },
         { text: 'Số Điện Thoại', value: 'soDienThoai' },
         { text: 'Địa Chỉ', value: 'diaChi' },
-        { text: 'Loại Khách Thuê', value: 'loaiKhachThueID' },
+        { text: 'Tình Trạng Khách', value: 'tinhTrangKhachThue' },
         { text: 'Thao Tác', value: '' }
       ],
       loading: true,

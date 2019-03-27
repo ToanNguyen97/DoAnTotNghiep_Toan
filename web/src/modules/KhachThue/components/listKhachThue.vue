@@ -1,5 +1,5 @@
 <template>
- <div style="background-color: #fff; border-radius:10px" class="danhsachkhachthue">
+ <div style="background-color: #fff; border-radius:10px " class="danhsachkhachthue">
     <v-layout row wrap justify-start class="ml-2 pl-1">
       <h1 class="mb-2 danhsachPT">Danh sách khách thuê:</h1>    
     </v-layout>
@@ -65,7 +65,9 @@
             <td class="text-xs-center">{{ props.item.soCMND }}</td>
             <td class="text-xs-center">{{ props.item.soDienThoai }}</td>
             <td class="text-xs-center">{{ props.item.diaChi}}</td>
-            <td class="text-xs-center">{{ props.item.loaiKhachThueID.tenLoaiKhachThue }}</td>
+            <td class="text-xs-center">
+             <v-chip :color="props.item.tinhTrangKhachThue === 'Chưa thuê'? 'deep-orange ':(props.item.tinhTrangKhachThue === 'Đang thuê'? 'green accent-4': 'amber ')" class="white--text">{{ props.item.tinhTrangKhachThue }}</v-chip>
+            </td>
             <td class="justify-center text-xs-center">
              <v-layout row justify-center>    
               <v-tooltip  top class="my-3">

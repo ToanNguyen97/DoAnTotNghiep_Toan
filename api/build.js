@@ -314,7 +314,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const nodemailer = __webpack_require__(/*! nodemailer */ "nodemailer");
 
-const SenMail = async data => {
+const SenMail = async (data, email) => {
   let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -329,7 +329,7 @@ const SenMail = async data => {
   });
   let mailOptions = {
     from: '<toan210597ntu@gmail.com>',
-    to: "BeachCrestNhaTrang@gmail.com",
+    to: email,
     subject: "Hợp Đồng Thuê Phòng Trọ",
     text: "Hợp Đồng Thuê Phòng Trọ",
     html: _mailHopDong2.default.mailHopDong(data)
@@ -1048,6 +1048,11 @@ var _schema = __webpack_require__(/*! ./schema */ "./app/models/PhieuThuTien/sch
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhieuThuTienSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+PhieuThuTienSchema.virtual('dsCTPT', {
+  ref: 'CTPhieuThuTien',
+  localField: '_id',
+  foreignField: 'phieuThuID'
+});
 exports.default = _mongoose2.default.model('PhieuThuTien', PhieuThuTienSchema);
 
 /***/ }),
@@ -1780,21 +1785,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong');
 
-const KhachThue = _mongoose2.default.model('KhachThue'); //import translateCharacter from '../../../lib/services/translateCharacter.js'
+const KhachThue = _mongoose2.default.model('KhachThue');
+
+const Phong = _mongoose2.default.model('Phong'); //import translateCharacter from '../../../lib/services/translateCharacter.js'
 
 
 const save = async (request, h) => {
   try {
     let data = request.payload;
-    console.log('data', data);
     let item = await HopDongThuePhong.findById(data._id);
+    let khachThue = {};
 
     if (item) {
       item = Object.assign(item, data);
     } else {
-      item = new HopDongThuePhong(data); // sau khi lập hợp đồng thì thêm phòng đó vào khách thuê
+      item = new HopDongThuePhong(data); // sau khi lập hợp đồng thì thêm phòng đó vào khách thuê và sửa tình trạng khách từ chưa thuê sang đã thuê
 
-      let khachThue = await KhachThue.findById({
+      khachThue = await KhachThue.findById({
         _id: item.khachThueID
       });
 
@@ -1802,9 +1809,23 @@ const save = async (request, h) => {
         khachThue.phongs = [];
       }
 
-      khachThue.phongs = khachThue.phongs.filter(key => key != item.phongID);
+      khachThue.phongs = khachThue.phongs.filter(key => key != String(item.phongID));
       khachThue.phongs = [...khachThue.phongs, ...[item.phongID]];
-      khachThue.save();
+      khachThue.tinhTrangKhachThue = "Đang thuê";
+      await khachThue.save(); // cập nhật tình trạng phòng đã thuê
+
+      let phong = await Phong.findById({
+        _id: item.phongID
+      }).populate('tinhTrangPhongID');
+
+      if (phong.tinhTrangPhongID.id === "5c88669ffcd238559ca25d13") {
+        phong.tinhTrangPhongID = "5c8866adfcd238559ca25d14";
+      } else if (phong.tinhTrangPhongID.id === "5c8866b6fcd238559ca25d15") // tạm thời chưa check số lượng == 4 =>  đã thuê else cho ở ghép
+        {
+          phong.tinhTrangPhongID = "5c8866adfcd238559ca25d14";
+        }
+
+      await phong.save();
     }
 
     await item.save();
@@ -1815,7 +1836,7 @@ const save = async (request, h) => {
       populate: ['khuPhongID', 'tinhTrangPhongID', 'loaiPhongID']
     }]);
 
-    _sendMail2.default.SenMail(hopdong);
+    _sendMail2.default.SenMail(hopdong, khachThue.email);
 
     return hopdong;
   } catch (err) {
@@ -1825,7 +1846,12 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    return await HopDongThuePhong.find().populate('khachThueID').populate('phongID');
+    return await HopDongThuePhong.find().populate([{
+      path: 'khachThueID'
+    }, {
+      path: 'phongID',
+      populate: ['loaiPhongID', 'tinhTrangPhongID', 'khuPhongID']
+    }]);
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -3431,7 +3457,7 @@ const save = async (request, h) => {
       }, payload)) || _boom2.default.notFound();
       phong = await Phong.findById({
         _id: item._id
-      }).populate('loaiPhongID').populate('khuPhongID');
+      }).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID');
     } else {
       anhChinhName = data.anhChinh.name;
       let anhChinh64 = data.anhChinh.file64.replace(/^data(.*?)base64,/, "");
@@ -3471,7 +3497,7 @@ const save = async (request, h) => {
       item = await Phong.create(payload);
       phong = await Phong.findById({
         _id: item._id
-      }).populate('loaiPhongID').populate('khuPhongID');
+      }).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID');
     }
 
     return phong;
@@ -3554,7 +3580,13 @@ const getById = async (request, h) => {
   try {
     return await Phong.findById({
       _id: request.params.id
-    }).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID');
+    }).populate(['loaiPhongID', 'khuPhongID', 'tinhTrangPhongID', {
+      path: 'dsPhieuThu',
+      populate: [{
+        path: 'dsCTPT',
+        populate: ['cacKhoanThuID']
+      }]
+    }]).lean();
   } catch (err) {
     return _boom2.default.forbidden(err);
   }

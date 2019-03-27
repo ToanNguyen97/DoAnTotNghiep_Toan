@@ -54,7 +54,7 @@ const save = async (request, h) => {
         hotFlag:data.hotFlag, tinhTrangPhongID: data.tinhTrangPhongID, khuPhongID: data.khuPhongID, loaiPhongID: data.loaiPhongID }
       
       item = await Phong.findOneAndUpdate({_id: data._id}, payload) ||  Boom.notFound()
-      phong = await Phong.findById({_id: item._id}).populate('loaiPhongID').populate('khuPhongID')
+      phong = await Phong.findById({_id: item._id}).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID')
     }
     else
     {
@@ -82,7 +82,7 @@ const save = async (request, h) => {
         soNuoc: data.soNuoc, giaPhong: data.giaPhong, dKMang: data.dKMang, status: data.status, homeFlag: data.homeFlag,
         hotFlag:data.hotFlag, tinhTrangPhongID: data.tinhTrangPhongID, khuPhongID: data.khuPhongID, loaiPhongID: data.loaiPhongID }
       item =  await Phong.create(payload)
-      phong = await Phong.findById({_id: item._id}).populate('loaiPhongID').populate('khuPhongID')
+      phong = await Phong.findById({_id: item._id}).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID')
     }
     return phong
   } catch (err) {
@@ -142,7 +142,7 @@ const deletePhong = async (request, h) => {
 
 const getById = async (request, h) => {
   try {
-    return await Phong.findById({_id: request.params.id}).populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID')
+    return await Phong.findById({_id: request.params.id}).populate(['loaiPhongID','khuPhongID','tinhTrangPhongID', {path:'dsPhieuThu', populate:[{path:'dsCTPT', populate:['cacKhoanThuID']}]}]).lean()
   } catch (err) {
     return Boom.forbidden(err)
   }

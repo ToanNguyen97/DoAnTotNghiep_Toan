@@ -139,7 +139,6 @@ export default {
       {
         this.formData.anhChiTiet = {name: [], file64: []}
       }
-      this.formData.tinhTrangPhongID = "5c88669ffcd238559ca25d13"
       if(this.formData.khuPhongID._id)
       {
         this.formData.khuPhongID = this.formData.khuPhongID._id

@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer')
 import Mail from './mailHopDong'
 
 
-const SenMail = async (data) => {
+const SenMail = async (data, email) => {
   let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -19,7 +19,7 @@ const SenMail = async (data) => {
   
   let mailOptions = {
     from: '<toan210597ntu@gmail.com>',
-    to: "BeachCrestNhaTrang@gmail.com",
+    to: email,
     subject: "Hợp Đồng Thuê Phòng Trọ",
     text: "Hợp Đồng Thuê Phòng Trọ",
     html: Mail.mailHopDong(data)

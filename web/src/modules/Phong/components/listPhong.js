@@ -13,7 +13,7 @@ export default {
       disabled: true,
       isThem: false,
       phongSelect: {},
-      pagination: {},
+      pagination: {rowsPerPage:4},
       selected: [],
       headers: [
         {
@@ -26,6 +26,7 @@ export default {
         { text: 'Giá Phòng (VNĐ)', value: 'giaPhong' },
         { text: 'Khu Phòng', value: 'khuPhongID' },
         { text: 'Loại Phòng', value: 'loaiPhongID' },
+        { text: 'Tình Trạng', value: 'tinhTrangPhongID' },
         { text: 'Thao Tác', value: '' }
       ],
       loading: true,
@@ -97,7 +98,7 @@ export default {
      this.phongSelect = item
     },
     ResetPage () {
-      this.$store.dispatch('getPhongs')
+      this.$store.dispatch('phong/getPhongs')
     },
     OpenSnackback (phong) {
       this.tenPhong = phong.tenPhong
@@ -107,7 +108,7 @@ export default {
     Delete () {
       if(this.idXoa != '')
       {
-        this.$store.dispatch('deletePhong', this.idXoa).then( res => {
+        this.$store.dispatch('phong/deletePhong', this.idXoa).then( res => {
           toast.Success('Đã xóa thành công '+ res.tenPhong)
           this.snackbar = false
         }).catch( res => {
@@ -121,7 +122,7 @@ export default {
       if (this.selected && this.selected.length != 0)
       {
         let deleteMultiId = this.selected.map(item => item._id)
-        this.$store.dispatch('deleteMultiPhong', deleteMultiId).then(() => {
+        this.$store.dispatch('phong/deleteMultiPhong', deleteMultiId).then(() => {
           toast.Success('Xóa thành công!')
           this.snackbarMulti = false
           this.disabled = true

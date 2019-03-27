@@ -1,12 +1,12 @@
 <template>
- <div style="background-color: #fff; border-radius:10px" class="danhsachhopdongthue">
+ <div style="background-color: #fff; border-radius:10px;" class="danhsachhopdongthue">
     <v-layout row wrap justify-start class="ml-2 pl-1">
       <h1 class="mb-2 danhsachPT">Danh sách hợp đồng thuê phòng:</h1>    
     </v-layout>
     <v-layout row wrap>
       <v-btn depressed @click="ResetPage"  color="cyan" dark class="mt-3 hidden-xs-only">Làm Mới</v-btn>
       <v-btn depressed fab small @click="ResetPage"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>refresh</v-icon></v-btn>
-      <v-btn depressed @click="OpenThem"  color="success" dark class="mt-3 hidden-xs-only">Thêm Mới</v-btn>
+      <v-btn depressed @click="OpenThem"  color="success" dark class="mt-3 hidden-xs-only">Lập Hợp Đồng</v-btn>
       <v-btn depressed fab small @click="OpenThem"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>add_circle_outline</v-icon></v-btn>
       <v-btn depressed @click="OpenTimKiem"  color="info" dark class="mt-3 hidden-xs-only">Tìm kiếm</v-btn>
       <v-btn depressed fab small @click="OpenTimKiem"  color="info" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>search</v-icon></v-btn> 
@@ -59,8 +59,8 @@
               ></v-checkbox>
             </td>
             <td class="text-xs-center">{{ props.item._id }}</td>
-            <td class="text-xs-center">{{ props.item.khachThueID.hoKhachThue}} {{ props.item.khachThueID.tenKhachThue}}</td>
-            <td class="text-xs-center">{{ props.item.phongID.tenPhong}}</td>
+            <td class="text-xs-center">{{ props.item.khachThueID && props.item.khachThueID.hoKhachThue}} {{ props.item.khachThueID &&  props.item.khachThueID.tenKhachThue}}</td>
+            <td class="text-xs-center">{{props.item.phongID &&  props.item.phongID.tenPhong}}</td>
             <td class="text-xs-center">{{ props.item.ngayLap | formarDate}}</td>
             <td class="text-xs-center">{{ props.item.ngayKetThuc | formarDate}}</td>
             <td class="justify-center text-xs-center">

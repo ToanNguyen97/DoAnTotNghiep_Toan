@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import toast from '../../../plugins/toast'
-import translateCharacter from '../../../plugins/translateCharacter.js'
 import moment from 'moment'
 export default {
   props:{
@@ -76,9 +75,15 @@ export default {
       }
     },
     getPhong (id) {
+      // lấy ra danh sách phòng với tình trạng khác tình trạng đã thuê
+      this.dsPhong = []
       for(let item of this.dsKhuPhong) {
-        if(item._id == id) {
-          this.dsPhong = item.dsPhong
+        if(item._id === id) {
+          for(let phong of item.dsPhong) {
+            if(String(phong.tinhTrangPhongID) !== String("5c8866adfcd238559ca25d14")){
+              this.dsPhong.push(phong)
+            }        
+          }
           break
         }
       }
@@ -90,11 +95,15 @@ export default {
       }
       else
       {
-        this.$store.dispatch('getPhongById', this.phongID).then( res => {
+        this.$store.dispatch('phong/getPhongById', this.phongID).then( res => {
           this.phong = res
           this.soHD = ''
+          let soPhong = this.phong.tenPhong.split(' ')
+          let soKhuPhong = this.phong.khuPhongID.tenKhuPhong.split(' ')
           // lưu ý số hợp đồng cần thêm tên phòng vì khách có thể thuê nhiều phòng
-          this.soHD = 'HD' + moment(this.formData.ngayLap).format('DDMMYYYY') + this.khachThue.soCMND + translateCharacter(this.phong.tenPhong)
+          if(this.khachThue && this.khachThue.soCMND) {
+            this.soHD = 'HD' + moment(this.formData.ngayLap).format('DDMMYYYY') + this.khachThue.soCMND + soPhong[1] + soKhuPhong[2]
+          }
         })
       }
     }
@@ -102,7 +111,7 @@ export default {
   watch: {   
     value (v) {
       if (v) {
-        this.$store.dispatch('getKhuPhongs')
+        this.$store.dispatch('phong/getKhuPhongs')
         this.$store.dispatch('getLoaiKhachs')
       }
       if (v && this.isThem === false) {

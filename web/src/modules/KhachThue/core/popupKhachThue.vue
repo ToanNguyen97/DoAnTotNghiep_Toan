@@ -22,7 +22,7 @@
                 item-text="tenLoaiKhachThue"
                 item-value="_id"
               ></v-select>
-            </v-flex>   
+            </v-flex>     
             <v-flex xs12 sm6 md3>
               <v-select
                 v-model="formData.tinhTrangKhachThue"

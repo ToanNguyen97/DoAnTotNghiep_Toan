@@ -33,6 +33,7 @@ const searchPhong = (state, data) => {
   state.dsPhong = [...data]
 }
 
+
 export default {
   addPhong,
   getListPhong,

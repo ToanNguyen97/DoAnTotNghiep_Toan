@@ -1,5 +1,5 @@
 <template>
- <div style="background-color: #fff; border-radius:10px" class="danhsachphieuthu">
+ <div style="background-color: #fff; border-radius:10px " class="danhsachphieuthu">
     <v-layout row wrap justify-start class="ml-2 pl-1">
       <h1 class="mb-2 danhsachPT">Phiếu Thu Tiền:</h1>    
     </v-layout>
@@ -70,7 +70,7 @@
             <td class="justify-center text-xs-left">
              <v-layout row justify-center>    
                 <v-btn color="success"  outline flat small depressed @click="OpenThem(props.item)">Ghi Điện Nước</v-btn>
-                <v-btn color="indigo" outline flat small depressed @click="OpenThem(props.item)">Xem Chi Tiết</v-btn>                 
+                <v-btn color="indigo" outline flat small depressed :to="`/chi-tiet-phieu-thu-tien/p.${props.item._id}.html`" >Xem Chi Tiết</v-btn>                 
             </v-layout>   
           </td>
           </tr>
