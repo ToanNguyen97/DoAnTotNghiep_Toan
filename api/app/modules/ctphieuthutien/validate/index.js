@@ -7,7 +7,6 @@ const CTPhieuThuTienVal = {
   save: {
     payload: {
       _id: Joi.string(),
-      STT: Joi.number(),
       phieuThuID: Joi.string(),
       chiSoCu: Joi.number(),
       chiSoMoi: Joi.number(),

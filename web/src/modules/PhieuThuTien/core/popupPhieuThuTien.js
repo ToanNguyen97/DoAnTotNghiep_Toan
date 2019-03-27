@@ -24,8 +24,8 @@ export default {
   computed: {
   },
   methods: {
-    async Huy () { 
-     await this.$emit('input', false)
+    Huy () { 
+      this.$emit('input', false)
     },
     XacNhan () {
       this.formData.ngayLap = Date.now()

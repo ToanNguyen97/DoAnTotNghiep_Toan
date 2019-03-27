@@ -195,6 +195,7 @@ export default {
       if (v && this.isThem === false) {
         if (this.phongSelect && this.phongSelect._id) {
           this.formData = _.cloneDeep(this.phongSelect)
+          this.formData.tinhTrangPhongID = this.formData.tinhTrangPhongID._id
         }
       }
       else

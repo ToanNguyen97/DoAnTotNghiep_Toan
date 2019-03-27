@@ -9,7 +9,7 @@ const getAll = async (request, h) => {
     return Boom.forbidden(err)
   }
 }
-// lấy thông tin theo mã phiếu thu
+// lấy thông tin theo mã phiếu thuư
 const getById = async (request, h) => {
   try {
     return await CTPhieuThuTien.find({phieuThuID: request.params.id}).populate([{path: 'cacKhoanThuID'},{path: 'phieuThuID'}]) || Boom.notFound()

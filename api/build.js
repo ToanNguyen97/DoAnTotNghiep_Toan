@@ -489,10 +489,6 @@ exports.options = exports.schema = undefined;
 var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 
 const schema = {
-  STT: {
-    type: Number,
-    required: true
-  },
   phieuThuID: {
     type: String,
     ref: 'PhieuThuTien'
@@ -1560,7 +1556,7 @@ const getAll = async (request, h) => {
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
-}; // lấy thông tin theo mã phiếu thu
+}; // lấy thông tin theo mã phiếu thuư
 
 
 const getById = async (request, h) => {
@@ -1734,7 +1730,6 @@ const CTPhieuThuTienVal = {
   save: {
     payload: {
       _id: Joi.string(),
-      STT: Joi.number(),
       phieuThuID: Joi.string(),
       chiSoCu: Joi.number(),
       chiSoMoi: Joi.number(),
@@ -3160,8 +3155,6 @@ const Phong = _mongoose2.default.model('Phong');
 
 const CTPhieuThuTien = _mongoose2.default.model('CTPhieuThuTien');
 
-const CacKhoanThu = _mongoose2.default.model('CacKhoanThu');
-
 const getAll = async (request, h) => {
   try {
     return await PhieuThuTien.find().populate('phongID');
@@ -3181,28 +3174,40 @@ const save = async (request, h) => {
       }).populate('khuPhongID');
       let soKhuPhong = phong.khuPhongID.tenKhuPhong.split(' ');
       let soPhong = phong.tenPhong.split(' ');
-      let ngayLap = new Date(data.ngayLap);
-      console.log(ngayLap);
-      let getThangNam = (0, _moment2.default)(ngayLap).format('MMYYYY'); // ngày hết hạn là ngày 10 của tháng tiếp theo: số 11 ở cuối vì chênh lệch múi giờ sẽ giảm xuống 10
+      let ngaylap = new Date(data.ngayLap);
+      let getThangNam = (0, _moment2.default)(ngaylap).format('MMYYYY'); // ngày hết hạn là ngày 10 của tháng tiếp theo: số 11 ở cuối vì chênh lệch múi giờ sẽ giảm xuống 10
 
-      data.ngayHetHan = new Date(`${ngayLap.getFullYear()}-${ngayLap.getMonth() + 2}-11`); // mã phiểu thu gồm: PT + số phòng + số khu phòng + tháng và năm tạo
+      data.ngayHetHan = new Date(`${ngaylap.getFullYear()}-${ngaylap.getMonth() + 2}-11`); // mã phiểu thu gồm: PT + số phòng + số khu phòng + tháng và năm tạo
 
       data._id = `PTP${soPhong[1]}KV${soKhuPhong[2]}${getThangNam}`;
       data.tinhTrangPhieuThu = 'chưa đóng';
       phong.soDien = data.soDienMoi;
       phong.soNuoc = data.soNuocMoi;
+      let {
+        _id,
+        phongID,
+        ngayLap,
+        ngayHetHan,
+        moTa,
+        tinhTrangPhieuThu
+      } = data;
       await phong.save();
-      item = new PhieuThuTien(data); // tiếp theo sẽ tạo chi tiết phiếu thu và thêm vào DB
+      item = new PhieuThuTien({
+        _id,
+        phongID,
+        ngayLap,
+        ngayHetHan,
+        moTa,
+        tinhTrangPhieuThu
+      }); //tiếp theo sẽ tạo chi tiết phiếu thu và thêm vào DB
 
       let tienThu = [{
-        STT: 1,
-        phieuThuID: item._id,
+        phieuThuID: item.id,
         chiSoCu: data.soDien,
         chiSoMoi: data.soDienMoi,
         cacKhoanThuID: '5c983b7d28aebc66041a45aa'
       }, {
-        STT: 2,
-        phieuThuID: item._id,
+        phieuThuID: item.id,
         chiSoCu: data.soNuoc,
         chiSoMoi: data.soNuocMoi,
         cacKhoanThuID: '5c983b9b28aebc66041a45ab'
@@ -3210,14 +3215,13 @@ const save = async (request, h) => {
 
       if (phong.dKMang === true) {
         tienThu.push({
-          STT: 3,
-          phieuThuID: item._id,
+          phieuThuID: item.id,
           cacKhoanThuID: '5c983bf228aebc66041a45ac'
         });
       }
 
-      for (let item of tienThu) {
-        await CTPhieuThuTien.create(item);
+      for (let ctPT of tienThu) {
+        await CTPhieuThuTien.create(ctPT);
       }
     } else {
       item = await PhieuThuTien.findById({

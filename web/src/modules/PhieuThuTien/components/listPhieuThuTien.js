@@ -67,13 +67,14 @@ export default {
         if(item._id === this.idKhuPhong)
         {
           for(let phong of item.dsPhong) {
-            if(String(item.tinhTrangPhongID) === String("5c8866adfcd238559ca25d14")) {
-              this.dsPhong.push(phong)
+            if(String(phong.tinhTrangPhongID) === String("5c8866adfcd238559ca25d14")) {
+              this.dsPhong.push(phong)              
             }
           }
           break
         }
       }
+
     },
     idKhuPhong (v) {
       this.dsPhong = []

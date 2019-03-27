@@ -32,11 +32,7 @@
             </v-card-title>
             <v-card-text v-if="phong.dsPhieuThu">
               <v-card flat v-for="phieuthu in phong.dsPhieuThu[0].dsCTPT" :key="phieuthu._id">
-                <v-layout row wrap >
-                  <v-flex xs4 md1>
-                    <div class="caption grey--text">STT</div>
-                    <div>{{phieuthu.STT}}</div>
-                  </v-flex>
+                <v-layout row wrap >                
                   <v-flex xs4 sm4 md2>
                     <div class="caption grey--text">Dịch vụ</div>
                     <div>{{phieuthu.cacKhoanThuID.tenKhoanThu}}</div>

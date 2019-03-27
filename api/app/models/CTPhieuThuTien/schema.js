@@ -2,10 +2,6 @@
 import { Schema } from "mongoose";
 
 const schema = {
-  STT: {
-    type: Number,
-    required: true
-  },
   phieuThuID: {
     type: String,
     ref: 'PhieuThuTien'
