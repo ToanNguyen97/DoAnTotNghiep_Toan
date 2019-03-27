@@ -12,6 +12,10 @@ const schema = {
   chiSoMoi: {
     type: Number
   },
+  donGia: {
+    type: Number,
+    required: true
+  },
   cacKhoanThuID: {
     type: Schema.Types.ObjectId,
     ref: 'CacKhoanThu'

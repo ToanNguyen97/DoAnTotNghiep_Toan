@@ -5,8 +5,7 @@ const schema = {
     max:30
   },
   giaKhoanThu: {
-    type: Number,
-    required: true
+    type: Number
   },
   donViTinh: {
     type: String,

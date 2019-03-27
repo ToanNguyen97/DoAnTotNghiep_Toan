@@ -11,6 +11,7 @@ export default {
     return {
       dsPhong: [],
       idKhuPhong: null,
+      combo: "",
       phieuThuTienSelect: {},
       open: false,
       isThem: false,
@@ -32,7 +33,7 @@ export default {
     this.loading = false
   // this.$store.dispatch('getPhieuThuTiens')
     this.$store.dispatch('phong/getKhuPhongs').then( () => {
-      this.idKhuPhong = this.dsKhuPhong[0]._id
+      this.idKhuPhong = this.dsKhuPhong[0]
     })
   },
   computed: {
@@ -62,9 +63,9 @@ export default {
     },
     dsKhuPhong () {
       this.dsPhong = []
-      this.idKhuPhong = this.dsKhuPhong[0]._id
+      this.idKhuPhong = this.dsKhuPhong[0]
       for(let item of this.dsKhuPhong) {
-        if(item._id === this.idKhuPhong)
+        if(item._id === this.idKhuPhong._id)
         {
           for(let phong of item.dsPhong) {
             if(String(phong.tinhTrangPhongID) === String("5c8866adfcd238559ca25d14")) {
@@ -79,7 +80,7 @@ export default {
     idKhuPhong (v) {
       this.dsPhong = []
       for(let item of this.dsKhuPhong) {
-        if(item._id === v)
+        if(item._id === v._id)
         {
           for(let phong of item.dsPhong) {
             if(phong.tinhTrangPhongID === "5c8866adfcd238559ca25d14"  || phong.tinhTrangPhongID === "5c8866b6fcd238559ca25d15" ) {
@@ -125,14 +126,10 @@ export default {
       let {tenPhong, anhChinh, soDien, soNuoc} = item
       this.phieuThuTienSelect = {phongID: item._id, tenPhong, anhChinh, soDien, soNuoc}
     },
-    loadPage () {
-      console.log('load page')
-    },
     ResetPage () {
-      console.log('vao ne')
       this.idKhuPhong = null
       this.$store.dispatch('phong/getKhuPhongs').then( () => {
-        this.idKhuPhong = this.dsKhuPhong[0]._id
+        this.idKhuPhong = this.dsKhuPhong[0]
       })
     }
   },

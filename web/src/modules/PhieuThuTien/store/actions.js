@@ -11,6 +11,7 @@ const getPhieuThuTiens = async (context) => {
 
 const addPhieuThuTien = async (context, payload) => {
   try {
+    console.log('payload',payload)
     let {data} = await axios.post('http://localhost:3003/api/phieuthutien', payload)
     context.commit('addPhieuThuTien', data)
     return data

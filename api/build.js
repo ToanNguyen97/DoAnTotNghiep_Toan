@@ -499,6 +499,10 @@ const schema = {
   chiSoMoi: {
     type: Number
   },
+  donGia: {
+    type: Number,
+    required: true
+  },
   cacKhoanThuID: {
     type: _mongoose.Schema.Types.ObjectId,
     ref: 'CacKhoanThu'
@@ -559,8 +563,7 @@ const schema = {
     max: 30
   },
   giaKhoanThu: {
-    type: Number,
-    required: true
+    type: Number
   },
   donViTinh: {
     type: String,
@@ -1368,11 +1371,11 @@ const save = async (request, h) => {
     let data = request.payload;
     let item = {};
 
-    if (!data.id) {
+    if (!data._id) {
       item = new CacKhoanThu(data);
     } else {
       item = await CacKhoanThu.findById({
-        _id: data.id
+        _id: data._id
       });
       item = Object.assign(item, data);
     }
@@ -1511,9 +1514,13 @@ _joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")
 const cacKhoanThuVal = {
   save: {
     payload: {
+      _id: _joi2.default.string(),
       tenKhoanThu: _joi2.default.string().required().max(30),
-      giaKhoanThu: _joi2.default.number().required(),
+      giaKhoanThu: _joi2.default.number(),
       donViTinh: _joi2.default.string().required().max(30)
+    },
+    options: {
+      allowUnknown: true
     }
   }
 };
@@ -1731,8 +1738,10 @@ const CTPhieuThuTienVal = {
     payload: {
       _id: Joi.string(),
       phieuThuID: Joi.string(),
+      tenDichVu: Joi.string().required(),
       chiSoCu: Joi.number(),
       chiSoMoi: Joi.number(),
+      donGia: Joi.number(),
       cacKhoanThuID: Joi.ObjectId()
     },
     options: {
@@ -3155,6 +3164,8 @@ const Phong = _mongoose2.default.model('Phong');
 
 const CTPhieuThuTien = _mongoose2.default.model('CTPhieuThuTien');
 
+const CacKhoanThu = _mongoose2.default.model('CacKhoanThu');
+
 const getAll = async (request, h) => {
   try {
     return await PhieuThuTien.find().populate('phongID');
@@ -3175,6 +3186,7 @@ const save = async (request, h) => {
       let soKhuPhong = phong.khuPhongID.tenKhuPhong.split(' ');
       let soPhong = phong.tenPhong.split(' ');
       let ngaylap = new Date(data.ngayLap);
+      data.ngayLap = ngaylap;
       let getThangNam = (0, _moment2.default)(ngaylap).format('MMYYYY'); // ngày hết hạn là ngày 10 của tháng tiếp theo: số 11 ở cuối vì chênh lệch múi giờ sẽ giảm xuống 10
 
       data.ngayHetHan = new Date(`${ngaylap.getFullYear()}-${ngaylap.getMonth() + 2}-11`); // mã phiểu thu gồm: PT + số phòng + số khu phòng + tháng và năm tạo
@@ -3201,22 +3213,38 @@ const save = async (request, h) => {
         tinhTrangPhieuThu
       }); //tiếp theo sẽ tạo chi tiết phiếu thu và thêm vào DB
 
+      let tienDien = await CacKhoanThu.findById({
+        _id: '5c983b7d28aebc66041a45aa'
+      });
+      let tienNuoc = await CacKhoanThu.findById({
+        _id: '5c983b9b28aebc66041a45ab'
+      });
+      let tienMang = await CacKhoanThu.findById({
+        _id: '5c983bf228aebc66041a45ac'
+      });
       let tienThu = [{
+        phieuThuID: item.id,
+        cacKhoanThuID: '5c9b3dc77e5bed22acc4811a',
+        donGia: phong.giaPhong
+      }, {
         phieuThuID: item.id,
         chiSoCu: data.soDien,
         chiSoMoi: data.soDienMoi,
-        cacKhoanThuID: '5c983b7d28aebc66041a45aa'
+        donGia: tienDien.giaKhoanThu,
+        cacKhoanThuID: tienDien._id
       }, {
         phieuThuID: item.id,
         chiSoCu: data.soNuoc,
         chiSoMoi: data.soNuocMoi,
-        cacKhoanThuID: '5c983b9b28aebc66041a45ab'
+        donGia: tienNuoc.giaKhoanThu,
+        cacKhoanThuID: tienNuoc._id
       }];
 
       if (phong.dKMang === true) {
         tienThu.push({
           phieuThuID: item.id,
-          cacKhoanThuID: '5c983bf228aebc66041a45ac'
+          donGia: tienMang.giaKhoanThu,
+          cacKhoanThuID: tienMang._id
         });
       }
 

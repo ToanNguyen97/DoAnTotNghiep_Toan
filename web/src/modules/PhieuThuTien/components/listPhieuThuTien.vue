@@ -6,15 +6,14 @@
     <v-layout row wrap>
       <v-btn depressed @click="ResetPage"  color="cyan" dark class="mt-3 hidden-xs-only">Làm Mới</v-btn>
       <v-btn depressed fab small @click="ResetPage"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>refresh</v-icon></v-btn>
-      <v-select
+      <v-combobox
         :items="dsKhuPhong"
         v-model="idKhuPhong"
         label="Khu Phòng"
         item-text= "tenKhuPhong"
         item-value= "_id"
-        hide-details
         style="max-width:150px; margin-left:10px;"
-      ></v-select>   
+      ></v-combobox>     
     </v-layout>
     <v-layout >
     </v-layout>

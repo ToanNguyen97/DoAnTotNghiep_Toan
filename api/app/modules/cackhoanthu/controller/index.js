@@ -6,10 +6,10 @@ const save = async (request, h) => {
   try {
     let data = request.payload
     let item = {}
-    if(!data.id) {
+    if(!data._id) {
       item = new CacKhoanThu(data)
     }else {
-      item = await CacKhoanThu.findById({_id: data.id})
+      item = await CacKhoanThu.findById({_id: data._id})
       item = Object.assign(item, data)
     }
     return await item.save()

@@ -8,8 +8,10 @@ const CTPhieuThuTienVal = {
     payload: {
       _id: Joi.string(),
       phieuThuID: Joi.string(),
+      tenDichVu: Joi.string().required(),
       chiSoCu: Joi.number(),
       chiSoMoi: Joi.number(),
+      donGia: Joi.number(),
       cacKhoanThuID: Joi.ObjectId()
     },
     options: {
