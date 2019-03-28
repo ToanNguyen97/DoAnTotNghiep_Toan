@@ -18,7 +18,7 @@
                                         <tr>
                                             <td valign="top" bgcolor="#FFFFFF" width="100%" style="padding:0">
                                                 <a style="border:medium none;text-decoration:none;color:#007ed3" href="#">
-                                                    <img alt="BeachCrest" src="https://raw.githubusercontent.com/sangcoder/qlphongtro-HighFly/master/banner.png" style="border:none;outline:none;text-decoration:none;display:inline;height: auto;" class="CToWUd">
+                                                    <img alt="BeachCrest" src="https://raw.githubusercontent.com/sangcoder/qlphongtro-HighFly/master/banner.png" style="border:none;outline:none;text-decoration:none;display:inline;" class="CToWUd">
                                                 </a>
                                             </td>
                                         </tr>
@@ -32,14 +32,14 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#444;line-height:18px;font-weight:normal">Chào {{TenKhachHang}},</p>
+                                                <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#444;line-height:18px;font-weight:normal">Chào quý khách,</p>
                                                 <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#444;line-height:18px;font-weight:normal">
-                                                    <span class="il">Beach Crest</span> Gửi đến quý khách hóa đơn tiền điện nước Tháng {{Thang}}. Quý khách vui lòng kiểm tra và đóng tiền đúng hạn.
+                                                    <span class="il">Phòng Trọ Cô Mai</span> gửi đến quý khách hóa đơn tiền điện nước Tháng {{Thang}} của {{TenPhong}}. Quý khách vui lòng kiểm tra và đóng tiền đúng hạn.
                                                 </p>
                                                 <h3 style="font-size:13px;font-weight:bold;color:#02acea;text-transform:uppercase;margin:20px 0 10px 0;border-bottom:1px solid #ddd">
-                                                    Thông tin điện nước #{{MaPT}}
+                                                    Thông tin phiếu thu #{{MaPT}}
 
-                                                    <span style="font-size:12px;color:#777;text-transform:none;font-weight:normal"> Ngày lập : ({{NgayLap}})</span>
+                                                    <span style="font-size:12px;color:#777;text-transform:none;font-weight:normal"> Ngày lập : {{NgayLap}}</span>
                                                 </h3>
                                             </td>
                                         </tr>
@@ -49,8 +49,6 @@
                                                 <tr>
                                                     <th align="left" style="padding:6px 9px;color:#fff;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:14px;background: linear-gradient(0deg, rgba(0,54,88,1) 0%, rgba(0,0,0,1) 100%);
                                                     ">Dịch vụ</th>
-                                                    <th align="left" style="padding:6px 9px;color:#fff;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:14px; background: linear-gradient(0deg, rgba(0,54,88,1) 0%, rgba(0,0,0,1) 100%);
-                                ">Đơn vị tính</th>
                                                     <th align="left" style="padding:6px 9px;color:#fff;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:14px;background: linear-gradient(0deg, rgba(0,54,88,1) 0%, rgba(0,0,0,1) 100%);
                                 ">Số cũ</th>
                                                     <th align="left" style="padding:6px 9px;color:#fff;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:14px;background: linear-gradient(0deg, rgba(0,54,88,1) 0%, rgba(0,0,0,1) 100%);
@@ -59,6 +57,8 @@
                                 ">Số lượng</th>
                                                     <th align="right" style="padding:6px 9px;color:#fff;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:14px;background: linear-gradient(0deg, rgba(0,54,88,1) 0%, rgba(0,0,0,1) 100%);
                                 ">Đơn giá</th>
+                                                    <th align="left" style="padding:6px 9px;color:#fff;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:14px; background: linear-gradient(0deg, rgba(0,54,88,1) 0%, rgba(0,0,0,1) 100%);
+                                ">Đơn vị tính</th>
                                                     <th align="right" style="padding:6px 9px;color:#fff;text-transform:uppercase;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:14px;background: linear-gradient(0deg, rgba(0,54,88,1) 0%, rgba(0,0,0,1) 100%);
                                 ">Thành tiền</th>
                                                 </tr>
@@ -66,10 +66,7 @@
                                             <tbody bgcolor="#eee" style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#444;line-height:18px">
                                                 <tr>
                                                     <td align="left" valign="top" style="padding:3px 9px">
-                                                        <strong>{{TenPhong}}</strong>
-                                                    <td align="left" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">VNĐ</span>
-                                                    </td>
+                                                        <strong>Tiền Phòng</strong>                                                  
                                                     <td align="left" valign="top" style="padding:3px 9px"></td>
                                                     <td align="left" valign="top" style="padding:3px 9px">
                                                         <span class="m_5226882840916851135price"></span>
@@ -80,6 +77,9 @@
                                                     <td align="right" valign="top" style="padding:3px 9px">
                                                         <span class="m_5226882840916851135price">{{Gia}}</span>
                                                     </td>
+                                                    <td align="left" valign="top" style="padding:3px 9px">
+                                                        <span class="m_5226882840916851135price">VNĐ</span>
+                                                    </td>
                                                     <td align="right" valign="top" style="padding:3px 9px">
                                                         <span class="m_5226882840916851135price">{{ThanhTien}}</span>
                                                     </td>
@@ -89,20 +89,21 @@
                                             <tbody bgcolor="#eee" style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#444;line-height:18px">
                                                 <tr>
                                                     <td align="left" valign="top" style="padding:3px 9px">
-                                                        <strong>Điện</strong>
+                                                        <strong>Tiền điện</strong>
+                                                    <td align="left" valign="top" style="padding:3px 9px">{{ChiSoCu}}</td>
+                                                    <td align="left" valign="top" style="padding:3px 9px">
+                                                        <span class="m_5226882840916851135price">{{ChiSoMoi}}</span>
+                                                    </td>
+                                                    <td align="right" valign="top" style="padding:3px 9px">
+                                                        <span class="m_5226882840916851135price">{{SoLuong}}</span>
+                                                    <td align="right" valign="top" style="padding:3px 9px">
+                                                        <span class="m_5226882840916851135price">{{GiaChiSo}}</span>
+                                                    </td>
                                                     <td align="left" valign="top" style="padding:3px 9px">
                                                         <span class="m_5226882840916851135price">kWh</span>
                                                     </td>
-                                                    <td align="left" valign="top" style="padding:3px 9px">{{ChiSoDienCu}}</td>
-                                                    <td align="left" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{ChiSoDienMoi}}</span>
-                                                    </td>
                                                     <td align="right" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{SoKyDien}}</span>
-                                                    <td align="right" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{GiaDien}}</span>
-                                                    <td align="right" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{ThanhTienDien}}</span>
+                                                        <span class="m_5226882840916851135price">{{ThanhTienDV}}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -112,19 +113,20 @@
                                                     <td align="left" valign="top" style="padding:3px 9px">
                                                         <strong>Nước</strong>
                                                     </td>
+                                                    <td align="left" valign="top" style="padding:3px 9px">{{ChiSoCu}}</td>
+                                                    <td align="left" valign="top" style="padding:3px 9px">
+                                                        <span class="m_5226882840916851135price">{{ChiSoMoi}}</span>
+                                                    </td>
+                                                    <td align="right" valign="top" style="padding:3px 9px">
+                                                        <span class="m_5226882840916851135price">{{SoLuong}}</span>
+                                                    <td align="right" valign="top" style="padding:3px 9px">
+                                                        <span class="m_5226882840916851135price">{{GiaChiSo}}</span>
+                                                    </td>
                                                     <td align="left" valign="top" style="padding:3px 9px">
                                                         <span class="m_5226882840916851135price">Khối</span>
                                                     </td>
-                                                    <td align="left" valign="top" style="padding:3px 9px">{{ChiSoNuocCu}}</td>
-                                                    <td align="left" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{ChiSoNuocMoi}}</span>
-                                                    </td>
                                                     <td align="right" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{SoLuongNuoc}}</span>
-                                                    <td align="right" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{GiaNuoc}}</span>
-                                                    <td align="right" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{ThanhTienNuoc}}</span>
+                                                        <span class="m_5226882840916851135price">{{ThanhTienDV}}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -133,9 +135,6 @@
                                                     <td align="left" valign="top" style="padding:3px 9px">
                                                         <strong>Mạng</strong>
                                                     </td>
-                                                    <td align="left" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">VNĐ</span>
-                                                    </td>
                                                     <td align="left" valign="top" style="padding:3px 9px"></td>
                                                     <td align="left" valign="top" style="padding:3px 9px">
                                                         <span class="m_5226882840916851135price"></span>
@@ -143,9 +142,13 @@
                                                     <td align="right" valign="top" style="padding:3px 9px">
                                                         <span class="m_5226882840916851135price">1</span>
                                                     <td align="right" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{TienMang}}</span>
+                                                        <span class="m_5226882840916851135price">{{Gia}}</span>
+                                                    </td>
+                                                    <td align="left" valign="top" style="padding:3px 9px">
+                                                        <span class="m_5226882840916851135price">VNĐ</span>
+                                                    </td>
                                                     <td align="right" valign="top" style="padding:3px 9px">
-                                                        <span class="m_5226882840916851135price">{{ThanhTienMang}}</span>
+                                                        <span class="m_5226882840916851135price">{{ThanhTien}}</span>
                                                     </td>
                                                 </tr>
                                             </tbody>

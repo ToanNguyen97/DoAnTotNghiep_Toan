@@ -1,9 +1,8 @@
 'use strict'
 const nodemailer = require('nodemailer')
-import Mail from './mailHopDong'
 
 
-const SenMail = async (data, email) => {
+const SenMail = async (options, email) => {
   let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -18,11 +17,11 @@ const SenMail = async (data, email) => {
   })
   
   let mailOptions = {
-    from: '<toan210597ntu@gmail.com>',
+    from: '"Phòng Trọ Cô Mai" <toan210597ntu@gmail.com>',
     to: email,
-    subject: "Hợp Đồng Thuê Phòng Trọ",
-    text: "Hợp Đồng Thuê Phòng Trọ",
-    html: Mail.mailHopDong(data)
+    subject: options.subject,
+    text: options.text,
+    html: options.content
   }
   await transporter.sendMail(mailOptions, function (err, res) {
     if( err)

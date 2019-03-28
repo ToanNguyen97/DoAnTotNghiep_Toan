@@ -1,5 +1,5 @@
 import moment from 'moment'
-
+import toast from '../../../plugins/toast.js'
 export default {
   data() {
     return {
@@ -8,6 +8,7 @@ export default {
       pagination: {
         rowsPerPage:3
       },
+      tongTien: 0,
       headers: [
         {
           text: 'Mã Phiếu',
@@ -40,16 +41,26 @@ export default {
           value: ''
         }
       ],
+      phieuThuTT: {},
       dsCTPT: [],
-      tenThang: ""
+      tenThang: "",
+      disabled: true
     }
   },
   created () {
    this.$store.dispatch('phong/getPhongById',this.$route.params.id).then( res => {
      this.phong = res
-     console.log('phong',res)
      let PhieuThuNow = res.dsPhieuThu[res.dsPhieuThu.length -1]
+     this.phieuThuTT = PhieuThuNow
+     if(this.phieuThuTT.tinhTrangPhieuThu != 'đã đóng') {
+       this.disabled = false
+     } else {
+       this.disabled = true
+     }
      this.dsCTPT = PhieuThuNow.dsCTPT
+     this.tongTien = this.dsCTPT.reduce((tongTien, current) => {
+      return (current.chiSoMoi && current.chiSoMoi >0)?tongTien + (current.chiSoMoi - current.chiSoCu) * current.donGia : tongTien + current.donGia
+     }, 0)
      this.tenThang = moment(PhieuThuNow.ngayLap).format('MM')
    })
   },
@@ -71,8 +82,35 @@ export default {
   },
   methods: {
     ViewDetail (phieuThu) {
+      this.phieuThuTT = phieuThu
+      if(this.phieuThuTT.tinhTrangPhieuThu != 'đã đóng') {
+        this.disabled = false
+      }
+      else {
+        this.disabled = true
+      }
       this.tenThang = moment(phieuThu.ngayLap).format('MM')
       this.dsCTPT = phieuThu.dsCTPT
+      this.tongTien = this.dsCTPT.reduce((tongTien, current) => {
+       return (current.chiSoMoi && current.chiSoMoi >0)?tongTien + (current.chiSoMoi - current.chiSoCu) * current.donGia : tongTien + current.donGia
+      },0)
+    },
+    ThanhToan () {
+      if (this.phieuThuTT) {
+        this.phieuThuTT.tinhTrangPhieuThu = 'đã đóng'
+        let {_id, phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu} = this.phieuThuTT
+        let payload = {_id, phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu}
+        this.$store.dispatch('thanhToan', payload).then( res => {
+          toast.Success(res._id + ' đã được thanh toán')
+          if(res.tinhTrangPhieuThu === 'đã đóng')
+          {
+            this.disabled = true
+          }
+        })
+      }
+    },
+    SendMail () {
+
     }
   },
 }

@@ -1,10 +1,13 @@
 import Mongoose, { Schema } from 'mongoose'
 import Boom from 'boom'
 import moment from 'moment'
+import MailPhieuThuTien from '../../../lib/basemail/mailPhieuThuTien.js'
+import Mail from '../../../lib/basemail/sendMail.js'
 const PhieuThuTien = Mongoose.model('PhieuThuTien')
 const Phong = Mongoose.model('Phong')
 const CTPhieuThuTien = Mongoose.model('CTPhieuThuTien')
 const CacKhoanThu = Mongoose.model('CacKhoanThu')
+const HopDongThue = Mongoose.model('HopDongThuePhong')
 const getAll = async (request, h) => {
   try {
     return await PhieuThuTien.find().populate('phongID')
@@ -22,10 +25,10 @@ const save = async (request, h) => {
       let soKhuPhong = phong.khuPhongID.tenKhuPhong.split(' ')
       let soPhong = phong.tenPhong.split(' ')
       let ngaylap = new Date(data.ngayLap)
-      data.ngayLap = ngaylap
+      data.ngayLap = ngaylap    
       let getThangNam = moment(ngaylap).format('MMYYYY')   
       // ngày hết hạn là ngày 10 của tháng tiếp theo: số 11 ở cuối vì chênh lệch múi giờ sẽ giảm xuống 10
-      data.ngayHetHan = new Date(`${ngaylap.getFullYear()}-${ngaylap.getMonth() + 2}-11`)
+      data.ngayHetHan = new Date(`${ngaylap.getFullYear()}-${ngaylap.getMonth() + 2 > 12? '01':ngaylap.getMonth() + 2}-11`)
       // mã phiểu thu gồm: PT + số phòng + số khu phòng + tháng và năm tạo
       data._id = `PTP${soPhong[1]}KV${soKhuPhong[2]}${getThangNam}`
       data.tinhTrangPhieuThu = 'chưa đóng'
@@ -69,11 +72,27 @@ const save = async (request, h) => {
       for(let ctPT of tienThu) {
         await CTPhieuThuTien.create(ctPT)
       }
+
     } else {
       item = await PhieuThuTien.findById({_id: data._id})
       item = Object.assign(item, data)
     }
-    return await item.save()
+    let phieuthu =  await item.save()
+    let phieuthuMail = await PhieuThuTien.findById({_id: phieuthu._id}).populate(['phongID','dsCTPT'])
+    // lấy ra hợp đồng của phòng có phiếu thu và lọc ra email khách thuê phòng này để gởi mail
+    let hopDong = await HopDongThue.find({phongID: phieuthuMail.phongID}).populate('khachThueID')
+    let mailKhachThues = hopDong.map(hd => hd.khachThueID.email)
+    let stringEmail = ""
+    for(let str of mailKhachThues) {
+      stringEmail += str + ', '
+    }
+    let options = {
+      content: MailPhieuThuTien.mailPhieuThuTien(phieuthuMail),
+      subject: phieuthuMail.tinhTrangPhieuThu === 'chưa đóng'? 'Phiếu Báo Hóa Đơn': 'Phiếu Thanh Toán',
+      text: phieuthuMail.tinhTrangPhieuThu === 'chưa đóng'? 'Phiếu Báo Hóa Đơn': 'Phiếu Thanh Toán'
+    }
+    Mail.SenMail(options, stringEmail)
+    return phieuthu
   } catch (err) {
     return Boom.forbidden(err)
   }

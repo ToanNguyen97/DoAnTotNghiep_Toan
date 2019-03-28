@@ -3,6 +3,7 @@
 import Mongoose from 'mongoose'
 import Boom from 'boom'
 import Mail from '../../../lib/basemail/sendMail.js'
+import MailHopDong from '../../../lib/basemail/mailHopDong.js'
 const HopDongThuePhong = Mongoose.model('HopDongThuePhong')
 const KhachThue = Mongoose.model('KhachThue')
 const Phong = Mongoose.model('Phong')
@@ -43,7 +44,12 @@ const save = async (request, h) => {
       { path: 'khachThueID' },
       { path: 'phongID', populate: ['khuPhongID', 'tinhTrangPhongID', 'loaiPhongID'] }
     ])
-    Mail.SenMail(hopdong, khachThue.email)
+    let options = {
+      content: MailHopDong.mailHopDong(hopdong),
+      subject: 'Hợp Đồng Thuê Phòng Trọ',
+      text: 'Hợp Đồng Thuê Phòng Trọ'
+    }
+    Mail.SenMail(options, khachThue.email)
     return hopdong
   } catch (err) {
     return Boom.forbidden(err)

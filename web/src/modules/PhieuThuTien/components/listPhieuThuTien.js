@@ -41,7 +41,7 @@ export default {
       if (this.pagination.rowsPerPage == null ||
         this.pagination.totalItems == null
       ) return 0
-      return Math.ceil(this.dsPhieuThuTien.length / this.pagination.rowsPerPage)
+      return Math.ceil(this.dsPhong.length / this.pagination.rowsPerPage)
     },
     dsPhieuThuTien () {
       return this.$store.state.phieuthutien.dsPhieuThuTien
@@ -100,7 +100,7 @@ export default {
       }
       else
       {
-        this.selected = this.dsPhieuThuTien.slice()
+        this.selected = this.dsPhong.slice()
       }
     },
     changeSort (column) {
@@ -152,10 +152,23 @@ export default {
         for(let item of phieuThus) {
           date = moment(item.ngayLap).format('DD/MM/YYYY')
           if(date.substring(date.indexOf('/')) === today.substring(today.indexOf('/'))) {
-            phieuThu = {
-              label: item.tinhTrangPhieuThu,
-              value: 'r'
+            if(item.tinhTrangPhieuThu === 'chưa đóng') {
+              phieuThu = {
+                label: item.tinhTrangPhieuThu,
+                value: 'cd'
+              }
+            } else if(item.tinhTrangPhieuThu === 'đã đóng') {
+              phieuThu = {
+                label: item.tinhTrangPhieuThu,
+                value: 'dd'
+              }
+            } else {
+              phieuThu = {
+                label: item.tinhTrangPhieuThu,
+                value: 'qh'
+              }
             }
+            
             break
           }
         }

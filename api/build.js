@@ -292,6 +292,78 @@ exports.default = {
 
 /***/ }),
 
+/***/ "./app/lib/basemail/mailPhieuThuTien.js":
+/*!**********************************************!*\
+  !*** ./app/lib/basemail/mailPhieuThuTien.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const fs = __webpack_require__(/*! fs */ "fs");
+
+const moment = __webpack_require__(/*! moment */ "moment");
+
+const path = __webpack_require__(/*! path */ "path");
+
+const formatCurrency = function (currency) {
+  return currency.toLocaleString('it-IT', {
+    style: 'currency',
+    currency: 'VND'
+  });
+};
+
+const mailPhieuThuTien = function (data) {
+  let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'templatePhieuThu.html'));
+  content = String(content);
+  content = content.replace('{{MaPT}}', data._id);
+  content = content.replace('{{Thang}}', moment(data.ngayLap).format('MM/YYYY'));
+  content = content.replace('{{TenPhong}}', data.phongID.tenPhong);
+  content = content.replace('{{NgayLap}}', moment(data.ngayLap).format('DD/MM/YYYY'));
+
+  for (let item of data.dsCTPT) {
+    if (item.chiSoMoi && item.chiSoMoi > 0) {
+      content = content.replace('{{ChiSoCu}}', item.chiSoCu);
+      content = content.replace('{{ChiSoMoi}}', item.chiSoMoi);
+      content = content.replace('{{SoLuong}}', item.chiSoMoi - item.chiSoCu);
+      content = content.replace('{{GiaChiSo}}', formatCurrency(item.donGia));
+      content = content.replace('{{ThanhTienDV}}', formatCurrency((item.chiSoMoi - item.chiSoCu) * item.donGia));
+    } else {
+      content = content.replace('{{Gia}}', formatCurrency(item.donGia));
+      content = content.replace('{{ThanhTien}}', formatCurrency(item.donGia));
+    }
+  }
+
+  if (data.dsCTPT.length === 3) {
+    content = content.replace('{{Gia}}', '0');
+    content = content.replace('{{ThanhTien}}', '0');
+  }
+
+  let tongTien = data.dsCTPT.reduce((tongTien, x) => {
+    if (x.chiSoMoi && x.chiSoMoi > 0) {
+      tongTien += (x.chiSoMoi - x.chiSoCu) * x.donGia;
+    } else {
+      tongTien += x.donGia;
+    }
+
+    return tongTien;
+  }, 0);
+  content = content.replace('{{TongCong}}', formatCurrency(tongTien));
+  return content;
+};
+
+exports.default = {
+  mailPhieuThuTien
+};
+
+/***/ }),
+
 /***/ "./app/lib/basemail/sendMail.js":
 /*!**************************************!*\
   !*** ./app/lib/basemail/sendMail.js ***!
@@ -306,15 +378,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _mailHopDong = __webpack_require__(/*! ./mailHopDong */ "./app/lib/basemail/mailHopDong.js");
-
-var _mailHopDong2 = _interopRequireDefault(_mailHopDong);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 const nodemailer = __webpack_require__(/*! nodemailer */ "nodemailer");
 
-const SenMail = async (data, email) => {
+const SenMail = async (options, email) => {
   let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -328,11 +394,11 @@ const SenMail = async (data, email) => {
     }
   });
   let mailOptions = {
-    from: '<toan210597ntu@gmail.com>',
+    from: '"Phòng Trọ Cô Mai" <toan210597ntu@gmail.com>',
     to: email,
-    subject: "Hợp Đồng Thuê Phòng Trọ",
-    text: "Hợp Đồng Thuê Phòng Trọ",
-    html: _mailHopDong2.default.mailHopDong(data)
+    subject: options.subject,
+    text: options.text,
+    html: options.content
   };
   await transporter.sendMail(mailOptions, function (err, res) {
     if (err) {
@@ -1785,6 +1851,10 @@ var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./
 
 var _sendMail2 = _interopRequireDefault(_sendMail);
 
+var _mailHopDong = __webpack_require__(/*! ../../../lib/basemail/mailHopDong.js */ "./app/lib/basemail/mailHopDong.js");
+
+var _mailHopDong2 = _interopRequireDefault(_mailHopDong);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong');
@@ -1839,8 +1909,13 @@ const save = async (request, h) => {
       path: 'phongID',
       populate: ['khuPhongID', 'tinhTrangPhongID', 'loaiPhongID']
     }]);
+    let options = {
+      content: _mailHopDong2.default.mailHopDong(hopdong),
+      subject: 'Hợp Đồng Thuê Phòng Trọ',
+      text: 'Hợp Đồng Thuê Phòng Trọ'
+    };
 
-    _sendMail2.default.SenMail(hopdong, khachThue.email);
+    _sendMail2.default.SenMail(options, khachThue.email);
 
     return hopdong;
   } catch (err) {
@@ -3156,6 +3231,14 @@ var _moment = __webpack_require__(/*! moment */ "moment");
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _mailPhieuThuTien = __webpack_require__(/*! ../../../lib/basemail/mailPhieuThuTien.js */ "./app/lib/basemail/mailPhieuThuTien.js");
+
+var _mailPhieuThuTien2 = _interopRequireDefault(_mailPhieuThuTien);
+
+var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./app/lib/basemail/sendMail.js");
+
+var _sendMail2 = _interopRequireDefault(_sendMail);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhieuThuTien = _mongoose2.default.model('PhieuThuTien');
@@ -3165,6 +3248,8 @@ const Phong = _mongoose2.default.model('Phong');
 const CTPhieuThuTien = _mongoose2.default.model('CTPhieuThuTien');
 
 const CacKhoanThu = _mongoose2.default.model('CacKhoanThu');
+
+const HopDongThue = _mongoose2.default.model('HopDongThuePhong');
 
 const getAll = async (request, h) => {
   try {
@@ -3189,7 +3274,7 @@ const save = async (request, h) => {
       data.ngayLap = ngaylap;
       let getThangNam = (0, _moment2.default)(ngaylap).format('MMYYYY'); // ngày hết hạn là ngày 10 của tháng tiếp theo: số 11 ở cuối vì chênh lệch múi giờ sẽ giảm xuống 10
 
-      data.ngayHetHan = new Date(`${ngaylap.getFullYear()}-${ngaylap.getMonth() + 2}-11`); // mã phiểu thu gồm: PT + số phòng + số khu phòng + tháng và năm tạo
+      data.ngayHetHan = new Date(`${ngaylap.getFullYear()}-${ngaylap.getMonth() + 2 > 12 ? '01' : ngaylap.getMonth() + 2}-11`); // mã phiểu thu gồm: PT + số phòng + số khu phòng + tháng và năm tạo
 
       data._id = `PTP${soPhong[1]}KV${soKhuPhong[2]}${getThangNam}`;
       data.tinhTrangPhieuThu = 'chưa đóng';
@@ -3258,7 +3343,30 @@ const save = async (request, h) => {
       item = Object.assign(item, data);
     }
 
-    return await item.save();
+    let phieuthu = await item.save();
+    let phieuthuMail = await PhieuThuTien.findById({
+      _id: phieuthu._id
+    }).populate(['phongID', 'dsCTPT']); // lấy ra hợp đồng của phòng có phiếu thu và lọc ra email khách thuê phòng này để gởi mail
+
+    let hopDong = await HopDongThue.find({
+      phongID: phieuthuMail.phongID
+    }).populate('khachThueID');
+    let mailKhachThues = hopDong.map(hd => hd.khachThueID.email);
+    let stringEmail = "";
+
+    for (let str of mailKhachThues) {
+      stringEmail += str + ', ';
+    }
+
+    let options = {
+      content: _mailPhieuThuTien2.default.mailPhieuThuTien(phieuthuMail),
+      subject: phieuthuMail.tinhTrangPhieuThu === 'chưa đóng' ? 'Phiếu Báo Hóa Đơn' : 'Phiếu Thanh Toán',
+      text: phieuthuMail.tinhTrangPhieuThu === 'chưa đóng' ? 'Phiếu Báo Hóa Đơn' : 'Phiếu Thanh Toán'
+    };
+
+    _sendMail2.default.SenMail(options, stringEmail);
+
+    return phieuthu;
   } catch (err) {
     return _boom2.default.forbidden(err);
   }

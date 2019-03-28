@@ -64,7 +64,7 @@
             <td class="text-xs-center">{{ props.item.soDien}} </td>
             <td class="text-xs-center">{{ props.item.soNuoc}}</td>
             <td class="text-xs-center">
-              <v-chip  :color="$options.filters.checkPhieuThu(props.item.dsPhieuThu).value == 'c'? 'info':($options.filters.checkPhieuThu(props.item.dsPhieuThu).value == 'r'?'deep-orange darken-1':'success')" text-color="white">{{ $options.filters.checkPhieuThu(props.item.dsPhieuThu).label}}</v-chip>
+              <v-chip  :color="$options.filters.checkPhieuThu(props.item.dsPhieuThu).value == 'c'? 'info':($options.filters.checkPhieuThu(props.item.dsPhieuThu).value == 'cd'?'amber':($options.filters.checkPhieuThu(props.item.dsPhieuThu).value == 'dd')?'green accent-4':'deep-orange darken-1')" text-color="white">{{ $options.filters.checkPhieuThu(props.item.dsPhieuThu).label}}</v-chip>
             </td>
             <td class="justify-center text-xs-left">
              <v-layout row justify-center>    

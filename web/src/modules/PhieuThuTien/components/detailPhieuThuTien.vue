@@ -52,7 +52,7 @@
               <td class="text-xs-left">{{ props.item._id }}</td>
               <td class="text-xs-left">{{ props.item.ngayLap | formatDate }}</td>
               <td class="text-xs-left">{{ props.item.ngayHetHan | formatDate }}</td>
-              <td class="text-xs-left"><v-chip :color="props.item.tinhTrangPhieuThu === 'chưa đóng'?'amber':(props.item.tinhTrangPhieuThu === 'đã đóng'?'green accent-4':'red accent-3')" class="white--text">{{ props.item.tinhTrangPhieuThu }}</v-chip></td>
+              <td class="text-xs-left"><v-chip :color="props.item.tinhTrangPhieuThu === 'chưa đóng'?'amber':(props.item.tinhTrangPhieuThu === 'đã đóng'?'green accent-4':'deep-orange darken-1')" class="white--text">{{ props.item.tinhTrangPhieuThu }}</v-chip></td>
               <td class="text-xs-left">
                 <v-btn color="indigo" outline flat small depressed @click="ViewDetail(props.item)" >Xem Chi Tiết</v-btn>                 
               </td>
@@ -66,8 +66,8 @@
             <v-card-title primary-title>
               <div class="headline">Thông tin chi tiết phiếu tháng {{tenThang}}</div>
               <v-spacer></v-spacer>
-              <v-btn color="success" outline  >Thanh Toán <v-icon right dark>fas fa-dollar-sign</v-icon></v-btn>
-              <v-btn color="info" outline>Gửi mail <v-icon dark right>email</v-icon></v-btn>
+              <v-btn color="success" :disabled="disabled" @click="ThanhToan" style="text-transform: none;" outline  >Thanh Toán <v-icon right dark>fas fa-dollar-sign</v-icon></v-btn>
+              <v-btn color="info" @click="SendMail" style="text-transform: none;" outline>Gửi Mail <v-icon dark right>email</v-icon></v-btn>
             </v-card-title>
             <v-card-text v-if="phong.dsPhieuThu">
               <v-layout row wrap>
@@ -128,8 +128,8 @@
                 </v-layout>
                 <v-divider style="margin-top:5px;"></v-divider>
               </v-card>
-              <v-layout row justify-end style="padding-top: 10px; padding-right: 177px;">
-                <div>Tổng tiền:</div>
+              <v-layout row justify-end style="padding-top: 10px; padding-right: 53px;">
+                <div>Tổng tiền: {{tongTien | formatCurrentcy}}</div>
               </v-layout>
             </v-card-text>
           </v-card>

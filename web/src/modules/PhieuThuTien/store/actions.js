@@ -20,7 +20,14 @@ const addPhieuThuTien = async (context, payload) => {
   }
 }
 
+const thanhToan = async (context, payload) => {
+  let {data} = await axios.post('http://localhost:3003/api/phieuthutien', payload)
+  context.commit('updatePhieuThu', data)
+  return data
+}
+
 export default {
   getPhieuThuTiens,
-  addPhieuThuTien
+  addPhieuThuTien,
+  thanhToan
 }

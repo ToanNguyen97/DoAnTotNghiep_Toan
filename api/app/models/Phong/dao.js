@@ -1,5 +1,4 @@
 'use strict'
-
 module.exports = function (schema, options) {
   schema.statics.SearchMultiple = async function (payload) {
     let Model = this
