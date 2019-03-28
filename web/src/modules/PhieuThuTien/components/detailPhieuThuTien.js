@@ -110,7 +110,11 @@ export default {
       }
     },
     SendMail () {
-
+      if (this.phieuThuTT) {
+        this.$store.dispatch('sendMail', this.phieuThuTT._id).then( () => {
+          toast.Success('Đã gửi mail')
+        })
+      }
     }
   },
 }

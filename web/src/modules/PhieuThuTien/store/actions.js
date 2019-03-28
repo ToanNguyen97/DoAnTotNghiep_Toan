@@ -11,7 +11,6 @@ const getPhieuThuTiens = async (context) => {
 
 const addPhieuThuTien = async (context, payload) => {
   try {
-    console.log('payload',payload)
     let {data} = await axios.post('http://localhost:3003/api/phieuthutien', payload)
     context.commit('addPhieuThuTien', data)
     return data
@@ -26,8 +25,13 @@ const thanhToan = async (context, payload) => {
   return data
 }
 
+const sendMail = async (context, idPT) => {
+  return  await axios.get(`http://localhost:3003/api/sendmailphieuthutien/${idPT}`)
+}
+
 export default {
   getPhieuThuTiens,
   addPhieuThuTien,
-  thanhToan
+  thanhToan,
+  sendMail
 }

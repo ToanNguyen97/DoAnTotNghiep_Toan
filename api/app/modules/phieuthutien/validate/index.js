@@ -14,6 +14,11 @@ const phieuThuTienVal = {
     options: {
       allowUnknown: true
     }
+  },
+  sendmail: {
+    params: {
+      id: Joi.string()
+    }
   }
 }
 

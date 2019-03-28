@@ -98,7 +98,29 @@ const save = async (request, h) => {
   }
 }
 
+const sendMail = async (request, h) => {
+  try {
+    let phieuthuMail = await PhieuThuTien.findById({_id: request.params.id}).populate(['phongID','dsCTPT'])
+    // lấy ra hợp đồng của phòng có phiếu thu và lọc ra email khách thuê phòng này để gởi mail
+    let hopDong = await HopDongThue.find({phongID: phieuthuMail.phongID}).populate('khachThueID')
+    let mailKhachThues = hopDong.map(hd => hd.khachThueID.email)
+    let stringEmail = ""
+    for(let str of mailKhachThues) {
+      stringEmail += str + ', '
+    }
+    let options = {
+      content: MailPhieuThuTien.mailPhieuThuTien(phieuthuMail),
+      subject: 'Thông Tin Phiếu Thu Cần Xem',
+      text: 'Thông Tin Phiếu Thu Cần Xem'
+    }
+    Mail.SenMail(options, stringEmail)
+    return true
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
 export default {
   getAll,
-  save
+  save,
+  sendMail
 }

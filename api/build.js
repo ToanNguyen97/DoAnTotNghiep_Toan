@@ -313,10 +313,7 @@ const moment = __webpack_require__(/*! moment */ "moment");
 const path = __webpack_require__(/*! path */ "path");
 
 const formatCurrency = function (currency) {
-  return currency.toLocaleString('it-IT', {
-    style: 'currency',
-    currency: 'VND'
-  });
+  return currency.toLocaleString();
 };
 
 const mailPhieuThuTien = function (data) {
@@ -326,6 +323,7 @@ const mailPhieuThuTien = function (data) {
   content = content.replace('{{Thang}}', moment(data.ngayLap).format('MM/YYYY'));
   content = content.replace('{{TenPhong}}', data.phongID.tenPhong);
   content = content.replace('{{NgayLap}}', moment(data.ngayLap).format('DD/MM/YYYY'));
+  content = content.replace('{{ngayHetHan}}', moment(data.ngayHetHan).format('DD/MM/YYYY'));
 
   for (let item of data.dsCTPT) {
     if (item.chiSoMoi && item.chiSoMoi > 0) {
@@ -3372,9 +3370,40 @@ const save = async (request, h) => {
   }
 };
 
+const sendMail = async (request, h) => {
+  try {
+    let phieuthuMail = await PhieuThuTien.findById({
+      _id: request.params.id
+    }).populate(['phongID', 'dsCTPT']); // lấy ra hợp đồng của phòng có phiếu thu và lọc ra email khách thuê phòng này để gởi mail
+
+    let hopDong = await HopDongThue.find({
+      phongID: phieuthuMail.phongID
+    }).populate('khachThueID');
+    let mailKhachThues = hopDong.map(hd => hd.khachThueID.email);
+    let stringEmail = "";
+
+    for (let str of mailKhachThues) {
+      stringEmail += str + ', ';
+    }
+
+    let options = {
+      content: _mailPhieuThuTien2.default.mailPhieuThuTien(phieuthuMail),
+      subject: 'Thông Tin Phiếu Thu Cần Xem',
+      text: 'Thông Tin Phiếu Thu Cần Xem'
+    };
+
+    _sendMail2.default.SenMail(options, stringEmail);
+
+    return true;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   getAll,
-  save
+  save,
+  sendMail
 };
 
 /***/ }),
@@ -3446,6 +3475,25 @@ exports.default = [{
     }
   }
 }, {
+  method: 'GET',
+  path: '/sendmailphieuthutien/{id}',
+  handler: _index2.default.sendMail,
+  config: {
+    tags: ['api'],
+    validate: _index4.default.sendmail,
+    description: "gửi mail hóa đơn",
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
   method: 'POST',
   path: '/phieuthutien',
   handler: _index2.default.save,
@@ -3497,6 +3545,11 @@ const phieuThuTienVal = {
     },
     options: {
       allowUnknown: true
+    }
+  },
+  sendmail: {
+    params: {
+      id: Joi.string()
     }
   }
 };

@@ -6,7 +6,7 @@ const moment = require('moment')
 const path = require('path')
 
 const formatCurrency = function (currency) {
-  return currency.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+  return currency.toLocaleString()
 }
 
 const mailPhieuThuTien = function (data) {
@@ -16,6 +16,7 @@ const mailPhieuThuTien = function (data) {
   content = content.replace('{{Thang}}', moment(data.ngayLap).format('MM/YYYY'))
   content = content.replace('{{TenPhong}}', data.phongID.tenPhong)  
   content = content.replace('{{NgayLap}}',moment(data.ngayLap).format('DD/MM/YYYY'))
+  content = content.replace('{{ngayHetHan}}',moment(data.ngayHetHan).format('DD/MM/YYYY'))
   for(let item of data.dsCTPT) {
     if(item.chiSoMoi && item.chiSoMoi >0) {
       content = content.replace('{{ChiSoCu}}', item.chiSoCu)

@@ -127,7 +127,7 @@ export default {
       this.phieuThuTienSelect = {phongID: item._id, tenPhong, anhChinh, soDien, soNuoc}
     },
     ResetPage () {
-      this.idKhuPhong = null
+      this.idKhuPhong = ''
       this.$store.dispatch('phong/getKhuPhongs').then( () => {
         this.idKhuPhong = this.dsKhuPhong[0]
       })
@@ -149,6 +149,9 @@ export default {
       else {
         let today = moment(Date.now()).format('DD/MM/YYYY')
         let date = ''
+        /* xem trong danh dách phiếu thu của phòng được chọn có phiếu thu tháng này hay chưa
+        - lưu ý do đang test nên k cho điều kiện là đúng ngày 28 mới lập khi n vào làm thì test
+        */
         for(let item of phieuThus) {
           date = moment(item.ngayLap).format('DD/MM/YYYY')
           if(date.substring(date.indexOf('/')) === today.substring(today.indexOf('/'))) {

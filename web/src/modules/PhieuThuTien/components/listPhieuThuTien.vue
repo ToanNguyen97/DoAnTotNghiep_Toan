@@ -68,7 +68,7 @@
             </td>
             <td class="justify-center text-xs-left">
              <v-layout row justify-center>    
-                <v-btn color="success"  outline flat small depressed @click="OpenThem(props.item)">Ghi Điện Nước</v-btn>
+                <v-btn color="success" :disabled="$options.filters.checkPhieuThu(props.item.dsPhieuThu).value == 'c'?false:true" outline flat small depressed @click="OpenThem(props.item)">Ghi Điện Nước</v-btn>
                 <v-btn color="indigo" outline flat small depressed :to="`/chi-tiet-phieu-thu-tien/p.${props.item._id}.html`" >Xem Chi Tiết</v-btn>                 
             </v-layout>   
           </td>
