@@ -21,7 +21,7 @@ export default {
       headers: [
         { text: 'Mã Số Hợp Đồng',value: '_id' },
         { text: 'Họ Tên Khách Thuê', value: 'khachThueID' },
-        { text: 'Tên Phòng', value: 'phongID' },
+        { text: 'Tên Phòng', value: 'tenPhong' },
         { text: 'Ngày Lập', value: 'ngayLap' },
         { text: 'Ngày Kết Thúc', value: 'ngayKetThuc' },
         { text: 'Thao Tác', value: '' }

@@ -1870,8 +1870,10 @@ const save = async (request, h) => {
 
     if (item) {
       item = Object.assign(item, data);
+      await item.save();
     } else {
-      item = new HopDongThuePhong(data); // sau khi lập hợp đồng thì thêm phòng đó vào khách thuê và sửa tình trạng khách từ chưa thuê sang đã thuê
+      item = new HopDongThuePhong(data);
+      await item.save(); // sau khi lập hợp đồng thì thêm phòng đó vào khách thuê và sửa tình trạng khách từ chưa thuê sang đã thuê
 
       khachThue = await KhachThue.findById({
         _id: item.khachThueID
@@ -1888,19 +1890,31 @@ const save = async (request, h) => {
 
       let phong = await Phong.findById({
         _id: item.phongID
-      }).populate('tinhTrangPhongID');
+      }).populate('tinhTrangPhongID'); // nếu chưa thuê sẽ đổi thành cho ở ghép
 
       if (phong.tinhTrangPhongID.id === "5c88669ffcd238559ca25d13") {
-        phong.tinhTrangPhongID = "5c8866adfcd238559ca25d14";
-      } else if (phong.tinhTrangPhongID.id === "5c8866b6fcd238559ca25d15") // tạm thời chưa check số lượng == 4 =>  đã thuê else cho ở ghép
-        {
+        phong.tinhTrangPhongID = "5c8866b6fcd238559ca25d15";
+      } else if (phong.tinhTrangPhongID.id === "5c8866b6fcd238559ca25d15") {
+        // kiểm tra số người đang ở trong phòng có bằng 4 hay không, nếu bằng thì chuyển sang đã thuê, không thì cho ở ghép
+        let countHopDong = await HopDongThuePhong.find({
+          phongID: item.phongID
+        }).populate('khachThueID');
+        let countKhachCurrent = countHopDong.reduce((so, x) => {
+          if (x.khachThueID.tinhTrangKhachThue === 'Đang thuê') {
+            so += 1;
+          }
+
+          return so;
+        }, 0);
+
+        if (countKhachCurrent && countKhachCurrent === 4) {
           phong.tinhTrangPhongID = "5c8866adfcd238559ca25d14";
         }
+      }
 
       await phong.save();
     }
 
-    await item.save();
     let hopdong = await HopDongThuePhong.findById(item._id).populate([{
       path: 'khachThueID'
     }, {
