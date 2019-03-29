@@ -150,7 +150,7 @@ export default {
       if (this.pagination.rowsPerPage == null ||
         this.pagination.totalItems == null
       ) return 0
-      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
+      return Math.ceil(this.dsPhieuTraPhong.length / this.pagination.rowsPerPage)
     },
     dsPhieuTraPhong () {
       return this.$store.state.phieutraphong.dsPhieuTraPhong

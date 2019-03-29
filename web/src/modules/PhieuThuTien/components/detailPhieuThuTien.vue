@@ -6,26 +6,52 @@
     <v-layout row wrap>
       <v-flex xs12 sm6 md3>
          <v-card style="margin-left: 13px; margin-bottom:10px;">
-              <v-img v-if="phong && phong.anhChinh"
-                :src="`//localhost:3003/image/${phong.anhChinh}`"
-                height="200px"
-              >
-              </v-img>
-            <v-card-title primary-title>
-              <div>
-                <div class="headline">{{phong && phong.khuPhongID && phong.khuPhongID.tenKhuPhong}}: <span class="subheading">{{phong && phong.loaiPhongID && phong.loaiPhongID.tenLoaiPhong}}</span> </div>               
-              </div>
-            </v-card-title>
-            <v-card-text class="py-0" v-if="phong && phong.giaPhong">
-              <span >Giá phòng: {{phong.giaPhong | formatCurrentcy}}</span> <br>
-              <span>Số điện: {{ phong.soDien}} Kwh</span> <br>     
-              <span>Số nước: {{ phong.soNuoc}} Khối</span>     
-            </v-card-text>
-            <v-card-actions>
-              <v-btn flat>Share</v-btn>
-              <v-btn flat color="purple">Explore</v-btn>
-            </v-card-actions>
-          </v-card>
+          <v-img v-if="phong && phong.anhChinh"
+            :src="`//localhost:3003/image/${phong.anhChinh}`"               
+            height="200px"
+          >
+          <v-layout
+            align-end
+            fill-height
+            pa-3
+            dark
+            white--text
+          >
+            <div class="title font-weight-light">{{phong && phong.loaiPhongID && phong.loaiPhongID.tenLoaiPhong}}</div>
+          </v-layout>
+          </v-img>
+          <v-card-title style="padding:11px 0 11px 11px; ">
+            <v-layout row wrap>
+              <v-flex>
+                <span class="detailPT subheading black--text">{{phong && phong.khuPhongID && phong.khuPhongID.tenKhuPhong}}</span>
+              </v-flex>
+              <v-flex>
+                <v-rating
+                hover
+                half-increments
+                v-model="rating"
+                background-color="orange lighten-3"
+                color="orange"
+                ></v-rating>
+              </v-flex>
+            </v-layout>
+          </v-card-title>
+          <v-card-text class="py-0" v-if="phong && phong.giaPhong">
+            <v-text-field class="pb-1" hide-details :value="$options.filters.formatCurrentcy(phong.giaPhong)" label="Giá phòng" outline readonly></v-text-field>
+            <v-layout row wrap >
+              <v-flex md6>
+                <v-text-field append-icon="fas fa-bolt" hide-details class="pb-1" :value="phong.soDien" label="Số điện" outline readonly></v-text-field>
+              </v-flex>
+              <v-flex md6 pl-1>
+                <v-text-field append-icon="fas fa-tint" hide-details :value="phong.soNuoc" label="Số nước" outline readonly></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn flat>Share</v-btn>
+            <v-btn flat color="purple">Explore</v-btn>
+          </v-card-actions>
+        </v-card>
       </v-flex>
       <v-flex  xs12 sm6 md9 >
         <v-card style="margin-left: 13px; margin-bottom:10px;">

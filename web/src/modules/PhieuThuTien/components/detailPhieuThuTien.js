@@ -8,6 +8,7 @@ export default {
       pagination: {
         rowsPerPage:3
       },
+      rating:4,
       tongTien: 0,
       headers: [
         {
