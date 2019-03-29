@@ -97,6 +97,9 @@ export default {
      this.edit = true
      this.phongSelect = item
     },
+    GotoDetail (id) {
+      this.$router.push({path:`/thong-tin-chi-tiet-phong-${id}.html`})
+    },
     ResetPage () {
       this.$store.dispatch('phong/getPhongs')
     },

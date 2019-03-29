@@ -1272,6 +1272,11 @@ PhongSchema.virtual('dsPhieuThu', {
   localField: '_id',
   foreignField: 'phongID'
 });
+PhongSchema.virtual('dsHopDong', {
+  ref: 'HopDongThuePhong',
+  localField: '_id',
+  foreignField: 'phongID'
+});
 PhongSchema.plugin(_dao2.default);
 exports.default = _mongoose2.default.model('Phong', PhongSchema);
 
@@ -3788,6 +3793,12 @@ const getById = async (request, h) => {
     return await Phong.findById({
       _id: request.params.id
     }).populate(['loaiPhongID', 'khuPhongID', 'tinhTrangPhongID', {
+      path: 'dsHopDong',
+      populate: [{
+        path: 'khachThueID',
+        populate: ['loaiKhachThueID']
+      }]
+    }, {
       path: 'dsPhieuThu',
       populate: [{
         path: 'dsCTPT',

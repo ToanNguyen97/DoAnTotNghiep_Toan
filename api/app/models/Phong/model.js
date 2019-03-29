@@ -8,6 +8,11 @@ PhongSchema.virtual('dsPhieuThu',{
   foreignField: 'phongID'
 })
 
+PhongSchema.virtual('dsHopDong', {
+  ref:'HopDongThuePhong',
+  localField: '_id',
+  foreignField: 'phongID'
+})
 
 PhongSchema.plugin(PhongDao)
 
