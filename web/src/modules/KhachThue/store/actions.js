@@ -69,6 +69,16 @@ const timKiemKhachThue = async (context, payload) => {
     return err
   }
 }
+
+const traPhong = async (context, payload)=> {
+  try {
+    console.log(payload)
+    let {data} = await axios.put('http://localhost:3003/api/khachthue/'+ payload._id, payload)
+    return data
+  } catch (err) {
+    return err
+  }
+}
 export default {
   getKhachs,
   getLoaiKhachs,
@@ -76,5 +86,6 @@ export default {
   deleteKhachThue,
   deleteMultiKhachThue,
   timKiemKhachThue,
-  getKhachBySDT
+  getKhachBySDT,
+  traPhong
 }

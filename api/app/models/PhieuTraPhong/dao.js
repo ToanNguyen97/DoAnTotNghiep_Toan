@@ -1,12 +1,8 @@
 'use strict'
-
-import Mongoose from 'mongoose'
-const Schema = Mongoose.Schema
-
-const cacKhoanThuSchema = new Schema({ 
-  TenKhoanThu: {type: String, required: true},
-  GiaKhoanThu: {type: Number, required: true},
-  DVT: String
-})
-
-module.exports = Mongoose.model('CacKhoanThu', cacKhoanThuSchema)
+module.exports = function (schema, options) {
+  schema.statics.getPhongById = async function (idphong) {
+    let Model = this
+    let phieutraphong = await Model.find({phongID: idphong})
+    return phieutraphong[0]
+  } 
+}

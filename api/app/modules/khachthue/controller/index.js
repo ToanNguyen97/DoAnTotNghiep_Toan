@@ -83,10 +83,21 @@ const getByDT = async (request, h) => {
   }
 }
 
+const put = async (request, h) => {
+  try {
+    let khachThue = await KhachThue.findById({_id: request.params.id})
+    khachThue = Object.assign(khachThue,request.payload)
+    return await khachThue.save()
+  } catch (err) {
+    return Boom.forbidden()
+  }
+}
+
 export default {
   save,
   getAll,
   deleteKhachThue,
   search,
-  getByDT
+  getByDT,
+  put
 }

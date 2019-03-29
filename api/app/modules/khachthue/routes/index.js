@@ -68,6 +68,22 @@ export default [
     }
   },
   {
+    method: 'PUT',
+    path: '/khachthue/{id}',
+    handler: KhachThueController.put,
+    config: {
+      description: 'cập nhật tình trạng',
+      tags: ['api'],
+      validate: KhachThueVal.put,
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'DELETE',
     path:'/khachthue/{id}',
     handler: KhachThueController.deleteKhachThue,

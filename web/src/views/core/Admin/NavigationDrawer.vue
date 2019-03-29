@@ -101,14 +101,6 @@
             link:'/phieu-thu-tien-phong.html'           
           },
           {
-            action: 'signal_cellular_no_sim',
-            title: 'Phiếu Trả Phòng',
-            items: [
-              { title: 'Danh sách phiếu trả phòng', icon: 'visibility' },
-              { title: 'Lập phiếu trả phòng', icon: 'add'}
-            ]
-          },
-          {
             action: 'add_to_queue',
             title: 'Thống Kê',
             items: [

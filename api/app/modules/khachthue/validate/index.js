@@ -23,6 +23,29 @@ const khachThueVal = {
       allowUnknown: true
     }
   },
+  put: {
+    payload: {
+      _id: Joi.string().length(24),
+      hoKhachThue: Joi.string().required().max(30),
+      tenKhachThue: Joi.string().required().max(20),
+      anhDaiDien: Joi.string(),
+      ngaySinh: Joi.date().required(),
+      gioiTinh: Joi.boolean().required(),
+      soCMND: Joi.string().required().max(11),
+      soDienThoai: Joi.string().required().max(11),
+      hoTenNguoiThan: Joi.string().required().max(50),
+      diaChi: Joi.string().required().max(80),
+      loaiKhachThueID: Joi.ObjectId(),
+      tinhTrangKhachThue: Joi.string().required(),
+      email: Joi.string().email()
+    },
+    params: {
+      id: Joi.string().length(24)
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
   search: {
     params: {
       isReal: Joi.boolean()

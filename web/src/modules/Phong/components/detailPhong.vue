@@ -6,99 +6,149 @@
     <v-layout row wrap>
       <v-flex xs12 sm6 md3>
          <v-card style="margin-left: 13px; margin-bottom:10px;">
-              <v-img v-if="phong && phong.anhChinh"
-                :src="`//localhost:3003/image/${phong.anhChinh}`"
-                contain
-                height="200px"
-              >
-              </v-img>
-            <v-card-title primary-title>
-              <div>
-                <div class="headline">{{phong && phong.khuPhongID && phong.khuPhongID.tenKhuPhong}}: <span class="subheading">{{phong && phong.loaiPhongID && phong.loaiPhongID.tenLoaiPhong}}</span> </div>               
-              </div>
-            </v-card-title>
-            <v-card-text class="py-0" v-if="phong && phong.giaPhong">
-              <span >Giá phòng: {{phong.giaPhong | formatCurrentcy}}</span> <br>
-              <span>Số điện: {{ phong.soDien}} Kwh</span> <br>     
-              <span>Số nước: {{ phong.soNuoc}} Khối</span>     
-            </v-card-text>
-            <v-card-actions>
-              <v-btn flat>Share</v-btn>
-              <v-btn flat color="purple">Explore</v-btn>
-            </v-card-actions>
-          </v-card>
+          <v-img v-if="phong && phong.anhChinh"
+            :src="`//localhost:3003/image/${phong.anhChinh}`"               
+            height="200px"
+          >
+          <v-layout
+            align-end
+            fill-height
+            pa-3
+            dark
+            white--text
+          >
+            <div class="title font-weight-light">{{phong && phong.loaiPhongID && phong.loaiPhongID.tenLoaiPhong}}</div>
+          </v-layout>
+          </v-img>
+          <v-card-title style="padding:11px 0 11px 11px; ">
+            <v-layout row wrap>
+              <v-flex>
+                <span class="detailPT subheading black--text">{{phong && phong.khuPhongID && phong.khuPhongID.tenKhuPhong}}</span>
+              </v-flex>
+              <v-flex>
+                <v-rating
+                v-model="rating"
+                background-color="orange lighten-3"
+                color="orange"
+                ></v-rating>
+              </v-flex>
+            </v-layout>
+          </v-card-title>
+          <v-card-text class="py-0" v-if="phong && phong.giaPhong">
+            <v-text-field class="pb-1" hide-details :value="$options.filters.formatCurrentcy(phong.giaPhong)" label="Giá phòng" outline readonly></v-text-field>
+            <v-layout row wrap >
+              <v-flex md6>
+                <v-text-field append-icon="fas fa-bolt" hide-details class="pb-1" :value="phong.soDien" label="Số điện" outline readonly></v-text-field>
+              </v-flex>
+              <v-flex md6 pl-1>
+                <v-text-field append-icon="fas fa-tint" hide-details :value="phong.soNuoc" label="Số nước" outline readonly></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn flat>Share</v-btn>
+            <v-btn flat color="purple">Explore</v-btn>
+          </v-card-actions>
+        </v-card>
       </v-flex>
       <v-flex  xs12 sm6 md9 >
-        <v-card style="margin-left: 13px; margin-bottom:10px;">
-          <v-card-title>
-            <div class="headline">Danh sách khách đang ở</div> 
-            <v-spacer></v-spacer>
-            <v-text-field
-              style="width: 0px;"
-              v-model="search"
-              append-icon="search"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
-          <v-data-table v-if="phong && dsKhachThue && dsKhachThue.length >0"
-            :headers="headers"
-            :items="dsKhachThue"
-            :search="search"
-            hide-actions
-            :pagination.sync="pagination"
-          >
-            <template v-slot:items="props">
-              <td class="text-xs-left">{{ props.item.hoKhachThue}} {{ props.item.tenKhachThue}}</td>
-              <td class="text-xs-left"><v-img :src="`//localhost:3003/image/${props.item.anhDaiDien}`"></v-img></td>
-              <td class="text-xs-left">{{ props.item.ngayHetHan | formatDate }}</td>
-              <td class="text-xs-left"><v-chip :color="props.item.tinhTrangPhieuThu === 'chưa đóng'?'amber':(props.item.tinhTrangPhieuThu === 'đã đóng'?'green accent-4':'deep-orange darken-1')" class="white--text">{{ props.item.tinhTrangPhieuThu }}</v-chip></td>
-              <td class="text-xs-left">
-                <v-btn color="indigo" outline flat small depressed >Xem Chi Tiết</v-btn>                 
-              </td>
-            </template>
-          </v-data-table>
-          <div class="text-xs-center pt-2">
-            <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
-          </div>
-        </v-card>
-         <v-card style="margin-left: 13px; margin-bottom:10px;">
-            <v-card-title primary-title>
-              <div class="headline">Thông tin chi tiết phiếu tháng </div>
+        <v-tabs
+          v-model="active"
+          color="cyan"
+          dark
+          slider-color="yellow"
+          style="margin-left: 13px;">
+        <v-tab ripple >
+          Khách đang thuê
+        </v-tab>
+        <v-tab-item>
+          <v-card style=" margin-bottom:10px;">
+            <v-card-title>
+              <div class="headline">Danh sách khách đang ở</div> 
               <v-spacer></v-spacer>
-              <v-btn color="success" :disabled="disabled"  style="text-transform: none;" outline  >Thanh Toán <v-icon right dark>fas fa-dollar-sign</v-icon></v-btn>
-              <v-btn color="info" style="text-transform: none;" outline>Gửi Mail <v-icon dark right>email</v-icon></v-btn>
+              <v-text-field
+                style="width: 0px;"
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
             </v-card-title>
-            <v-card-text v-if="phong.dsPhieuThu">
-              <v-layout row wrap>
-                <v-flex xs4 sm4 md1>
-                  <div class="subheading pb-1" >Dịch vụ</div>
-                </v-flex>
-                <v-flex sm4 md2>
-                  <div class="subheading pb-1" style="text-align:center;">Chỉ số cũ</div>              
-                </v-flex>
-                <v-flex sm4 md2>
-                  <div class="subheading pb-1" style="text-align:center;">Chỉ số mới</div>             
-                </v-flex>
-                <v-flex sm4 md1>
-                  <div class="subheading pb-1">Số lượng</div>             
-                </v-flex>
-                <v-flex sm4 md2>
-                  <div class="subheading pb-1" style="text-align:center;">Đơn giá</div>
-                </v-flex>
-                <v-flex xs4 sm4 md2>
-                  <div >
-                    <div class="subheading pb-1" style="text-align:center;">Đơn vị tính</div>
-                  </div>
-                </v-flex>
-                <v-flex sm4 md2>
-                  <div class="subheading pb-1" style="text-align:center;">Thành tiền</div>
-                </v-flex>              
-              </v-layout>
-
-            </v-card-text>
-          </v-card>
+            <v-data-table v-if="phong && dsKhachThue && dsKhachThue.length >0"
+              :headers="headers"
+              :items="dsKhachThue"
+              :search="search"
+              hide-actions
+            >
+              <template v-slot:items="props">
+                <td class="text-xs-left">{{ props.item.hoKhachThue}} {{ props.item.tenKhachThue}}</td>
+                <td class="text-xs-left"><v-img height=90 :src="`//localhost:3003/image/${props.item.anhDaiDien}`"></v-img></td>
+                <td class="text-xs-left"><v-chip :color="props.item.gioiTinh?'blue':'pink'" class="white--text">{{props.item.gioiTinh?'Nam':'Nữ'}}</v-chip></td>
+                <td class="text-xs-left">{{props.item.soDienThoai}}</td>
+                <td class="text-xs-left">{{props.item.diaChi}}</td>
+                <td class="text-xs-left">{{props.item.email}}</td>
+                <td class="text-xs-left">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn color="deep-orange" v-on="on" @click="TraPhong(props.item)" icon outline flat fab small depressed ><v-icon>fa fa-window-close</v-icon></v-btn> 
+                    </template>
+                    <span>Trả Phòng</span>
+                  </v-tooltip>
+                </td>
+              </template>
+            </v-data-table>
+          </v-card> 
+        </v-tab-item>
+        <v-tab ripple >
+          Khách từng ở
+        </v-tab>
+        <v-tab-item>
+          <v-card style=" margin-bottom:10px;">
+            <v-card-title>
+              <div class="headline">Danh sách khách từng ở</div> 
+              <v-spacer></v-spacer>
+              <v-text-field
+                style="width: 0px;"
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-card-title>
+            <v-data-table v-if="phong"
+              :headers="headers1"
+              :items="dsPhieuTraPhong"
+              :search="search1"
+              hide-actions
+              :pagination.sync="pagination"
+            >
+              <template v-slot:items="props">
+                <td class="text-xs-left">{{ props.item.khachThueID.hoKhachThue}} {{ props.item.khachThueID.tenKhachThue}}</td>
+                <td class="text-xs-left"><v-img height=90 :src="`//localhost:3003/image/${props.item.khachThueID.anhDaiDien}`"></v-img></td>
+                <td class="text-xs-left"><v-chip :color="props.item.khachThueID.gioiTinh?'blue':'pink'" class="white--text">{{props.item.khachThueID.gioiTinh?'Nam':'Nữ'}}</v-chip></td>
+                <td class="text-xs-left">{{props.item.khachThueID.soDienThoai}}</td>
+                <td class="text-xs-left">{{props.item.khachThueID.diaChi}}</td>
+                <td class="text-xs-left">{{props.item.khachThueID.email}}</td>
+                <td class="text-xs-left">{{props.item.ngayLap | formatDate}}</td>
+                <td class="text-xs-left">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn color="cyan" v-on="on" @click="TraPhong(props.item)" icon outline flat fab small depressed ><v-icon>fas fa-info-circle</v-icon></v-btn> 
+                    </template>
+                    <span>Trả Phòng</span>
+                  </v-tooltip>
+                </td>
+              </template>
+            </v-data-table>
+            <div class="text-xs-center pt-2">
+              <v-pagination v-if="pagination.page" v-model="pagination.page" :length="pages"></v-pagination>
+            </div>
+          </v-card> 
+        </v-tab-item>
+        </v-tabs>
+             
       </v-flex>
     </v-layout>
     <v-layout row wrap>

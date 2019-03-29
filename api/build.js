@@ -215,6 +215,8 @@ const loader = exports.loader = async function (server) {
     __webpack_require__(/*! ../models/CTPhieuThuTien/model */ "./app/models/CTPhieuThuTien/model.js");
 
     __webpack_require__(/*! ../models/CacKhoanThu/model */ "./app/models/CacKhoanThu/model.js");
+
+    __webpack_require__(/*! ../models/PhieuTraPhong/model */ "./app/models/PhieuTraPhong/model.js");
     /* Load Modules */
 
 
@@ -229,6 +231,7 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/cackhoanthu */ "./app/modules/cackhoanthu/index.js"));
     modules.push(__webpack_require__(/*! ../modules/phieuthutien */ "./app/modules/phieuthutien/index.js"));
     modules.push(__webpack_require__(/*! ../modules/ctphieuthutien */ "./app/modules/ctphieuthutien/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/phieutraphong */ "./app/modules/phieutraphong/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -1173,6 +1176,102 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/models/PhieuTraPhong/dao.js":
+/*!*****************************************!*\
+  !*** ./app/models/PhieuTraPhong/dao.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (schema, options) {
+  schema.statics.getPhongById = async function (idphong) {
+    let Model = this;
+    let phieutraphong = await Model.find({
+      phongID: idphong
+    });
+    return phieutraphong[0];
+  };
+};
+
+/***/ }),
+
+/***/ "./app/models/PhieuTraPhong/model.js":
+/*!*******************************************!*\
+  !*** ./app/models/PhieuTraPhong/model.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/PhieuTraPhong/schema.js");
+
+var _dao = __webpack_require__(/*! ./dao */ "./app/models/PhieuTraPhong/dao.js");
+
+var _dao2 = _interopRequireDefault(_dao);
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const PhieuTraPhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+PhieuTraPhongSchema.plugin(_dao2.default);
+exports.default = _mongoose2.default.model('PhieuTraPhong', PhieuTraPhongSchema);
+
+/***/ }),
+
+/***/ "./app/models/PhieuTraPhong/schema.js":
+/*!********************************************!*\
+  !*** ./app/models/PhieuTraPhong/schema.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const schema = {
+  phongID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'Phong'
+  },
+  khachThueID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'KhachThue'
+  },
+  ngayLap: {
+    type: Date
+  }
+};
+const options = {
+  collection: 'PhieuTraPhong'
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
 /***/ "./app/models/Phong/dao.js":
 /*!*********************************!*\
   !*** ./app/models/Phong/dao.js ***!
@@ -1918,7 +2017,8 @@ const save = async (request, h) => {
       }
 
       await phong.save();
-    }
+    } // lấy hợp đồng để gởi mail
+
 
     let hopdong = await HopDongThuePhong.findById(item._id).populate([{
       path: 'khachThueID'
@@ -2246,12 +2346,25 @@ const getByDT = async (request, h) => {
   }
 };
 
+const put = async (request, h) => {
+  try {
+    let khachThue = await KhachThue.findById({
+      _id: request.params.id
+    });
+    khachThue = Object.assign(khachThue, request.payload);
+    return await khachThue.save();
+  } catch (err) {
+    return _boom2.default.forbidden();
+  }
+};
+
 exports.default = {
   save,
   getAll,
   deleteKhachThue,
   search,
-  getByDT
+  getByDT,
+  put
 };
 
 /***/ }),
@@ -2380,6 +2493,25 @@ exports.default = [{
     }
   }
 }, {
+  method: 'PUT',
+  path: '/khachthue/{id}',
+  handler: _index2.default.put,
+  config: {
+    description: 'cập nhật tình trạng',
+    tags: ['api'],
+    validate: _index4.default.put,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
   method: 'DELETE',
   path: '/khachthue/{id}',
   handler: _index2.default.deleteKhachThue,
@@ -2435,6 +2567,29 @@ const khachThueVal = {
       loaiKhachThueID: Joi.ObjectId(),
       tinhTrangKhachThue: Joi.string().required(),
       email: Joi.string().email()
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
+  put: {
+    payload: {
+      _id: Joi.string().length(24),
+      hoKhachThue: Joi.string().required().max(30),
+      tenKhachThue: Joi.string().required().max(20),
+      anhDaiDien: Joi.string(),
+      ngaySinh: Joi.date().required(),
+      gioiTinh: Joi.boolean().required(),
+      soCMND: Joi.string().required().max(11),
+      soDienThoai: Joi.string().required().max(11),
+      hoTenNguoiThan: Joi.string().required().max(50),
+      diaChi: Joi.string().required().max(80),
+      loaiKhachThueID: Joi.ObjectId(),
+      tinhTrangKhachThue: Joi.string().required(),
+      email: Joi.string().email()
+    },
+    params: {
+      id: Joi.string().length(24)
     },
     options: {
       allowUnknown: true
@@ -3573,6 +3728,277 @@ const phieuThuTienVal = {
   }
 };
 exports.default = { ...phieuThuTienVal
+};
+
+/***/ }),
+
+/***/ "./app/modules/phieutraphong/controller/index.js":
+/*!*******************************************************!*\
+  !*** ./app/modules/phieutraphong/controller/index.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const PhieuTraPhong = _mongoose2.default.model('PhieuTraPhong');
+
+const KhachThue = _mongoose2.default.model('KhachThue');
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = {};
+
+    if (!data._id) {
+      item = new PhieuTraPhong(data); // bắt đầu cập nhật khách thuê khi trả phòng nếu thuê 2 phòng trở lên thì trừ phòng này ra , còn k thì cập nhật trạng thái thành đã trả phòng
+
+      let khachThue = await KhachThue.findById({
+        _id: item.khachThueID
+      });
+
+      if (khachThue && khachThue.phongs && khachThue.phongs.length > 0) {
+        khachThue.phongs = khachThue.phongs.filter(key => String(key) != String(item.phongID));
+      }
+
+      if (khachThue.phongs && khachThue.phongs.length === 0) {
+        khachThue.tinhTrangKhachThue = 'Đã trả phòng';
+      }
+
+      await khachThue.save();
+    } else {
+      item = await PhieuTraPhong.findById({
+        _id: data._id
+      });
+      item = Object.assign(item, data);
+    }
+
+    await item.save();
+    let phieu = await PhieuTraPhong.findById({
+      _id: item._id
+    }).populate('khachThueID');
+    return phieu;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const getAll = async (request, h) => {
+  try {
+    return await PhieuTraPhong.find();
+  } catch (err) {
+    return _boom2.default.forbidden();
+  }
+};
+
+const getById = async (request, h) => {
+  try {
+    return (await PhieuTraPhong.findById({
+      _id: request.params._id
+    })) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const getByPhongId = async (request, h) => {
+  try {
+    return (await PhieuTraPhong.find({
+      phongID: request.params.idphong
+    }).populate('khachThueID')) || {};
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  save,
+  getAll,
+  getById,
+  getByPhongId
+};
+
+/***/ }),
+
+/***/ "./app/modules/phieutraphong/index.js":
+/*!********************************************!*\
+  !*** ./app/modules/phieutraphong/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index.js */ "./app/modules/phieutraphong/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'phieu-tra-phong-admin';
+
+/***/ }),
+
+/***/ "./app/modules/phieutraphong/routes/index.js":
+/*!***************************************************!*\
+  !*** ./app/modules/phieutraphong/routes/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index.js */ "./app/modules/phieutraphong/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/phieutraphong/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/phieutraphong',
+  handler: _index2.default.getAll,
+  config: {
+    tags: ['api'],
+    description: 'Lay toan bo phieu tra phong',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/phieutraphong/{id}',
+  handler: _index2.default.getById,
+  config: {
+    tags: ['api'],
+    description: 'Lay thong tin phieu tra phong',
+    validate: _index4.default.get,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/phieutraphongbyphong/{idphong}',
+  handler: _index2.default.getByPhongId,
+  config: {
+    tags: ['api'],
+    description: 'Lay thong tin phieu tra phong theo phong',
+    validate: _index4.default.getPhong,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/phieutraphong',
+  handler: _index2.default.save,
+  config: {
+    tags: ['api'],
+    description: 'them sua phieu tra phong',
+    validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/phieutraphong/validate/index.js":
+/*!*****************************************************!*\
+  !*** ./app/modules/phieutraphong/validate/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Joi = __webpack_require__(/*! joi */ "joi");
+
+Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
+const PhieuTraPhongVal = {
+  save: {
+    payload: {
+      phongID: Joi.ObjectId(),
+      khachThueID: Joi.ObjectId(),
+      ngayLap: Joi.date().required()
+    }
+  },
+  get: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  },
+  getPhong: {
+    params: {
+      idphong: Joi.ObjectId()
+    }
+  }
+};
+exports.default = { ...PhieuTraPhongVal
 };
 
 /***/ }),

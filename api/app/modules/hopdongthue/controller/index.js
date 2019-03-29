@@ -52,7 +52,7 @@ const save = async (request, h) => {
       }
       await phong.save()
     }
-
+    // lấy hợp đồng để gởi mail
     let hopdong = await HopDongThuePhong.findById(item._id).populate([
       { path: 'khachThueID' },
       { path: 'phongID', populate: ['khuPhongID', 'tinhTrangPhongID', 'loaiPhongID'] }
