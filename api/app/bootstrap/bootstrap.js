@@ -4,6 +4,7 @@ import { plugin } from 'mongoose';
 
 const mongo = require('../lib/mongo.js')
 const redis = require('../lib/redis.js')
+const auth = require('../lib/auth.js')
 const Inert = require('inert')
 const Vision = require('vision')
 const HapiCors = require('hapi-cors')
@@ -22,6 +23,7 @@ export const loader = async function (server) {
     /* Plugin lib */
     mongo,
     redis,
+    auth,
     Inert,
     Vision,
     {
@@ -55,6 +57,7 @@ export const loader = async function (server) {
      require('../models/CTPhieuThuTien/model')
      require('../models/CacKhoanThu/model')
      require('../models/PhieuTraPhong/model')
+     require('../models/User/model')
 
      /* Load Modules */
      let modules = []

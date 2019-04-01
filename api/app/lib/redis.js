@@ -10,6 +10,7 @@ exports.register = async function (server, options) {
   global.client = redis.createClient(settings)
 
   server.decorate('server', 'redis', global.client)
+  server.decorate('request', 'redis', global.client)
   server.expose('client', global.client)
 }
 

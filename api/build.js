@@ -217,6 +217,8 @@ const loader = exports.loader = async function (server) {
     __webpack_require__(/*! ../models/CacKhoanThu/model */ "./app/models/CacKhoanThu/model.js");
 
     __webpack_require__(/*! ../models/PhieuTraPhong/model */ "./app/models/PhieuTraPhong/model.js");
+
+    __webpack_require__(/*! ../models/User/model */ "./app/models/User/model.js");
     /* Load Modules */
 
 
@@ -1508,6 +1510,83 @@ const schema = {
 };
 const options = {
   collection: 'tinhtrangphongs'
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/models/User/model.js":
+/*!**********************************!*\
+  !*** ./app/models/User/model.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/User/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const userSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model(userSchema);
+
+/***/ }),
+
+/***/ "./app/models/User/schema.js":
+/*!***********************************!*\
+  !*** ./app/models/User/schema.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const schema = {
+  userName: {
+    type: String,
+    required: true,
+    max: 30
+  },
+  passWord: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    default: ''
+  },
+  status: {
+    type: Boolean,
+    default: true // true: active, false: inactive
+
+  },
+  roles: {
+    type: [{
+      type: String,
+      enum: ['user', 'staff', 'super-admin']
+    }],
+    default: ['user']
+  }
+};
+const options = {
+  collection: 'users',
+  timestamps: true,
+  virtuals: true
 };
 exports.schema = schema;
 exports.options = options;
@@ -4884,7 +4963,7 @@ exports.default = { ...tinhTrangPhongVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"bcrypt":"^3.0.4","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.3.1","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.0","lodash":"^4.17.11","moment":"^2.24.0","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","nodemailer":"^5.1.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","nodemailer":"^5.1.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 

@@ -27,6 +27,9 @@ config.web = {
     port: 6379,
     detect_buffers: true,
     prefix: Pack.name + ':'
+  },
+  jwt: {
+    secret: 'BbZJjyoXAdr8BUZUiKKARWimKfrSmQ6fv8kZ8OFfc'
   }
 }
 
