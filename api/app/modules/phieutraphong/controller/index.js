@@ -27,7 +27,20 @@ const save = async (request, h) => {
       */
       let phong = await Phong.findById({_id: item.phongID}).populate({path: 'dsHopDong', populate:[{path:'khachThueID'}]})
       let countKhach = phong.dsHopDong.filter(item => {
-        return item.khachThueID.phongs.includes(item.phongID)
+        if(item.khachThueID.phongs && item.khachThueID.phongs.length > 0) {
+          let a = false
+          for(let i of item.khachThueID.phongs) {
+            if(String(i) === String(item.phongID)) {
+              a = true
+              break
+            }
+          }
+          if( a === true) {
+            return item
+          } else {
+            return null
+          }
+        }
       })
       if(countKhach && countKhach.length === 0)
       {

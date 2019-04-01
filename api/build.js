@@ -3518,12 +3518,31 @@ const save = async (request, h) => {
     let phieuthu = await item.save();
     let phieuthuMail = await PhieuThuTien.findById({
       _id: phieuthu._id
-    }).populate(['phongID', 'dsCTPT']); // lấy ra hợp đồng của phòng có phiếu thu và lọc ra email khách thuê phòng này để gởi mail
+    }).populate(['phongID', 'dsCTPT']); // lấy ra hợp đồng của phòng có phiếu thu và lọc ra email khách thuê đang ở phòng này để gởi mail
 
     let hopDong = await HopDongThue.find({
       phongID: phieuthuMail.phongID
     }).populate('khachThueID');
-    let mailKhachThues = hopDong.map(hd => hd.khachThueID.email);
+    let mailKhachThues = hopDong.filter(item => {
+      if (item.khachThueID.phongs && item.khachThueID.phongs.length > 0) {
+        let a = false;
+
+        for (let i of item.khachThueID.phongs) {
+          if (String(i) === String(item.phongID)) {
+            a = true;
+            break;
+          }
+        }
+
+        if (a === true) {
+          return item;
+        } else {
+          return null;
+        }
+      }
+    }).map(key => {
+      return key.khachThueID.email;
+    });
     let stringEmail = "";
 
     for (let str of mailKhachThues) {
@@ -3798,7 +3817,22 @@ const save = async (request, h) => {
         }]
       });
       let countKhach = phong.dsHopDong.filter(item => {
-        return item.khachThueID.phongs.includes(item.phongID);
+        if (item.khachThueID.phongs && item.khachThueID.phongs.length > 0) {
+          let a = false;
+
+          for (let i of item.khachThueID.phongs) {
+            if (String(i) === String(item.phongID)) {
+              a = true;
+              break;
+            }
+          }
+
+          if (a === true) {
+            return item;
+          } else {
+            return null;
+          }
+        }
       });
 
       if (countKhach && countKhach.length === 0) {
