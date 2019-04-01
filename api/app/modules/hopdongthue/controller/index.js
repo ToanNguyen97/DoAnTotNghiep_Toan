@@ -41,8 +41,12 @@ const save = async (request, h) => {
         // kiểm tra số người đang ở trong phòng có bằng 4 hay không, nếu bằng thì chuyển sang đã thuê, không thì cho ở ghép
         let countHopDong = await HopDongThuePhong.find({phongID: item.phongID}).populate('khachThueID')
         let countKhachCurrent = countHopDong.reduce((so,x) => {
-          if(x.khachThueID.tinhTrangKhachThue === 'Đang thuê') {
-            so += 1
+          if(x.khachThueID.phongs && x.khachThueID.phongs.length > 0) {
+            for(let i of x.khachThueID.phongs) {
+              if(String(i) === String(x.phongID)) {
+                return so +=1
+              }
+            }
           }
           return so
         }, 0)

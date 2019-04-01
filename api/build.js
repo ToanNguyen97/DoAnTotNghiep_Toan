@@ -2004,8 +2004,12 @@ const save = async (request, h) => {
           phongID: item.phongID
         }).populate('khachThueID');
         let countKhachCurrent = countHopDong.reduce((so, x) => {
-          if (x.khachThueID.tinhTrangKhachThue === 'Đang thuê') {
-            so += 1;
+          if (x.khachThueID.phongs && x.khachThueID.phongs.length > 0) {
+            for (let i of x.khachThueID.phongs) {
+              if (String(i) === String(x.phongID)) {
+                return so += 1;
+              }
+            }
           }
 
           return so;
