@@ -41,12 +41,15 @@ const login = async (request, h) => {
         let session = {
           valid: true,
           id: Aguid(),
-          expires: new Date().getTime() + 30 * 60 * 1000
+          expires: new Date().getTime() + 30 * 60 * 1000,
+          credentials
         }
         request.server.redis.set(session.id, JSON.stringify(session))
         let token = Jwt.sign(session, global.CONFIG.get('web.jwt.secret'))
         const response = h.response({auth: true, token, credentials, isValid})
         response.header("Authorization", token)
+        response.state("token", token, global.CONFIG.get('web.cookieOptions'))
+       // console.log('response',response)
         return response
       }
       else {
@@ -58,7 +61,17 @@ const login = async (request, h) => {
   }
 }
 
+const getUser = async (request, h) => {
+  try {
+    let userInfo = request.auth.credentials.credentials
+    return userInfo
+  } catch (err) {
+
+  }
+}
+
 export default {
   signin,
-  login
+  login,
+  getUser
 }

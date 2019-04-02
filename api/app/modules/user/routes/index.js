@@ -20,6 +20,22 @@ export default [
     }
   },
   {
+    method: 'GET',
+    path: '/get-current-user',
+    handler: UserController.getUser,
+    config: {
+      description: 'lay thong tin user',
+      validate: UserVal.getuser,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'POST',
     path: '/sigin',
     handler: UserController.signin,

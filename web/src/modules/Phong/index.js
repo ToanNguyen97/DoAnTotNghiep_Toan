@@ -4,7 +4,10 @@ export default [
   {
     path: '/danh-sach-phong.html',
     name: 'ListPhong',
-    component: ListPhong
+    component: ListPhong,
+    meta: {
+      roles: 'super-admin'
+    }
   },
   {
     path: '/thong-tin-chi-tiet-phong-:id.html',

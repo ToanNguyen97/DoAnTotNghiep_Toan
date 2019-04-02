@@ -4346,6 +4346,7 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
+    console.log(request);
     return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean();
   } catch (err) {
     return _boom2.default.forbidden(err);
@@ -5103,7 +5104,8 @@ const login = async (request, h) => {
         let session = {
           valid: true,
           id: Aguid(),
-          expires: new Date().getTime() + 30 * 60 * 1000
+          expires: new Date().getTime() + 30 * 60 * 1000,
+          credentials
         };
         request.server.redis.set(session.id, JSON.stringify(session));
         let token = Jwt.sign(session, global.CONFIG.get('web.jwt.secret'));
@@ -5114,6 +5116,8 @@ const login = async (request, h) => {
           isValid
         });
         response.header("Authorization", token);
+        response.state("token", token, global.CONFIG.get('web.cookieOptions')); // console.log('response',response)
+
         return response;
       } else {
         return {
@@ -5129,9 +5133,17 @@ const login = async (request, h) => {
   }
 };
 
+const getUser = async (request, h) => {
+  try {
+    let userInfo = request.auth.credentials.credentials;
+    return userInfo;
+  } catch (err) {}
+};
+
 exports.default = {
   signin,
-  login
+  login,
+  getUser
 };
 
 /***/ }),
@@ -5192,6 +5204,25 @@ exports.default = [{
     auth: false,
     description: 'check login',
     validate: _index4.default.login,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/get-current-user',
+  handler: _index2.default.getUser,
+  config: {
+    description: 'lay thong tin user',
+    validate: _index4.default.getuser,
     tags: ['api'],
     plugins: {
       'hapi-swagger': {
