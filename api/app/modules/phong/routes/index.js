@@ -1,12 +1,28 @@
 import PhongController from '../controller/index.js'
 import PhongVal from '../validate/index.js'
-
+import Boom from 'boom'
 export default [
   {
     method: 'GET',
     path: '/phong',
     handler: PhongController.getAll,
     config: {
+      pre: [{
+        method: function check(request, h) {
+          try {
+            let roles = request.auth.credentials.credentials.roles
+            console.log(roles)
+            if(!roles.includes('super-admin')){
+              return false
+            }
+            else {
+              return true
+            }
+          } catch (err) {
+            return Boom.forbidden(err)
+          }          
+        }
+      }],
       description: 'lay danh sach phong',
       tags: ['api'],
       plugins: {

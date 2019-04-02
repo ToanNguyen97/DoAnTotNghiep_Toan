@@ -11,8 +11,7 @@ const notAuthenticate = (to, from, next) => {
 
 const Authenticated = (to, from, next) => {
   let isAuthenticated = !!authStore.state.token
-  if(isAuthenticated) {
-   // if(to.meta.match)
+  if(isAuthenticated) {    
     next()
   } else {
     next('/login')

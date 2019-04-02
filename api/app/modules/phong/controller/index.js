@@ -94,7 +94,12 @@ const save = async (request, h) => {
 const getAll = async (request, h) => {
   try {
     console.log(request)
-    return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean()
+    if(request.pre.check) {
+      return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean()
+    }
+    else {
+      return Boom.forbidden(err)
+    }
   } catch (err) {
     return Boom.forbidden(err)
   }

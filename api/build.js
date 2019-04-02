@@ -4347,7 +4347,12 @@ const save = async (request, h) => {
 const getAll = async (request, h) => {
   try {
     console.log(request);
-    return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean();
+
+    if (request.pre.check) {
+      return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean();
+    } else {
+      return _boom2.default.forbidden(err);
+    }
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -4509,6 +4514,10 @@ var _index3 = __webpack_require__(/*! ../validate/index.js */ "./app/modules/pho
 
 var _index4 = _interopRequireDefault(_index3);
 
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = [{
@@ -4516,6 +4525,22 @@ exports.default = [{
   path: '/phong',
   handler: _index2.default.getAll,
   config: {
+    pre: [{
+      method: function check(request, h) {
+        try {
+          let roles = request.auth.credentials.credentials.roles;
+          console.log(roles);
+
+          if (!roles.includes('super-admin')) {
+            return false;
+          } else {
+            return true;
+          }
+        } catch (err) {
+          return _boom2.default.forbidden(err);
+        }
+      }
+    }],
     description: 'lay danh sach phong',
     tags: ['api'],
     plugins: {

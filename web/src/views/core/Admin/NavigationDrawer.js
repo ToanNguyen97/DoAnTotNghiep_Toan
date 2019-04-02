@@ -79,7 +79,7 @@ export default {
       this.$router.push({path: path})
     },
     showDashboard () {
-      if(this.permission &&  this.permission.includes('super-admin'))
+      if(this.permission && this.permission.includes('super-admin'))
       {
         return true
       }
