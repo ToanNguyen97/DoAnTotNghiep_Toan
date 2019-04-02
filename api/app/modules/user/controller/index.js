@@ -1,12 +1,11 @@
 import Mongoose, {Schema} from 'mongoose'
-import { request } from 'http';
 const Bcrypt = require('bcrypt')
 const Boom = require('boom')
 const User = Mongoose.model('User')
 const Jwt = require('jsonwebtoken')
 const Aguid = require('aguid')
-SALT_LENGTH= 10
-const sigin = async (request, h) => {
+const SALT_LENGTH= 10
+const signin = async (request, h) => {
   try {
     let data = request.payload
     let listUsers = await User.find()
@@ -14,7 +13,7 @@ const sigin = async (request, h) => {
       item.userName = data.userName
     })
     if(userNotDuplicate && userNotDuplicate.length === 0) {
-      let newpass = Bcrypt.hashSync(data.passWord,10)
+      let newpass = Bcrypt.hashSync(data.passWord,SALT_LENGTH)
       let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, roles: data.roles}
       // tao token
       let token = Jwt.sign(user, global.CONFIG.get('web.jwt.secret'))
@@ -41,7 +40,7 @@ const login = async (request, h) => {
         const credentials = {userName: data.userName, email: data.email, roles: data.roles, status: data.status}
         let session = {
           valid: true,
-          id: aguid(),
+          id: Aguid(),
           expires: new Date().getTime() + 30 * 60 * 1000
         }
         request.server.redis.set(session.id, JSON.stringify(session))
@@ -51,7 +50,7 @@ const login = async (request, h) => {
         return response
       }
       else {
-        return {credentials: null, isValid: false}
+        return {credentials: {userName: data.userName}, isValid: false}
       }
     }
   } catch (err) {
@@ -60,6 +59,6 @@ const login = async (request, h) => {
 }
 
 export default {
-  sigin,
+  signin,
   login
 }

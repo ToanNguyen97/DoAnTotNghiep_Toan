@@ -10,6 +10,9 @@ exports.register = async (server, options) => {
       } catch (err) {
         return err
       }
+    },
+    config: {
+      auth: false
     }
   })
 }

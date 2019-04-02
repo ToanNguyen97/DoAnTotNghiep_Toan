@@ -9,7 +9,6 @@ const Inert = require('inert')
 const Vision = require('vision')
 const HapiCors = require('hapi-cors')
 const HapiSwagger = require('hapi-swagger')
-const HapiAuth2 = require ('hapi-auth-jwt2')
 const RouteImage = require('../lib/routeimage')
 export const loader = async function (server) {
   const Pack = require('./../../package')
@@ -30,7 +29,6 @@ export const loader = async function (server) {
       plugin: HapiSwagger,
       options: swaggerOptions
     },
-    HapiAuth2,
     RouteImage,
     {
       plugin: HapiCors,
@@ -72,6 +70,7 @@ export const loader = async function (server) {
      modules.push(require('../modules/phieuthutien'))
      modules.push(require('../modules/ctphieuthutien'))
      modules.push(require('../modules/phieutraphong'))
+     modules.push(require('../modules/user'))
      
      if (modules.length) {
        let options = {}

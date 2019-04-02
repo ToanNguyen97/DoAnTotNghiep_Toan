@@ -157,6 +157,8 @@ const mongo = __webpack_require__(/*! ../lib/mongo.js */ "./app/lib/mongo.js");
 
 const redis = __webpack_require__(/*! ../lib/redis.js */ "./app/lib/redis.js");
 
+const auth = __webpack_require__(/*! ../lib/auth.js */ "./app/lib/auth.js");
+
 const Inert = __webpack_require__(/*! inert */ "inert");
 
 const Vision = __webpack_require__(/*! vision */ "vision");
@@ -164,8 +166,6 @@ const Vision = __webpack_require__(/*! vision */ "vision");
 const HapiCors = __webpack_require__(/*! hapi-cors */ "hapi-cors");
 
 const HapiSwagger = __webpack_require__(/*! hapi-swagger */ "hapi-swagger");
-
-const HapiAuth2 = __webpack_require__(/*! hapi-auth-jwt2 */ "hapi-auth-jwt2");
 
 const RouteImage = __webpack_require__(/*! ../lib/routeimage */ "./app/lib/routeimage.js");
 
@@ -180,10 +180,10 @@ const loader = exports.loader = async function (server) {
   };
   await server.register([
   /* Plugin lib */
-  mongo, redis, Inert, Vision, {
+  mongo, redis, auth, Inert, Vision, {
     plugin: HapiSwagger,
     options: swaggerOptions
-  }, HapiAuth2, RouteImage, {
+  }, RouteImage, {
     plugin: HapiCors,
     options: {
       origins: ['*'],
@@ -234,6 +234,7 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/phieuthutien */ "./app/modules/phieuthutien/index.js"));
     modules.push(__webpack_require__(/*! ../modules/ctphieuthutien */ "./app/modules/ctphieuthutien/index.js"));
     modules.push(__webpack_require__(/*! ../modules/phieutraphong */ "./app/modules/phieutraphong/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/user */ "./app/modules/user/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -248,6 +249,59 @@ const loader = exports.loader = async function (server) {
     }
   });
 };
+
+/***/ }),
+
+/***/ "./app/lib/auth.js":
+/*!*************************!*\
+  !*** ./app/lib/auth.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const AuthJwt2 = __webpack_require__(/*! hapi-auth-jwt2 */ "hapi-auth-jwt2");
+
+exports.register = async function (server, options) {
+  const validate = async function (decoded, request) {
+    const redisClient = server.redis;
+    let result = await redisClient.getAsync(decoded.id);
+
+    if (result) {
+      let session = JSON.parse(result);
+
+      if (session.valid === true) {
+        return {
+          isValid: true
+        };
+      }
+
+      return {
+        isValid: false
+      };
+    }
+
+    return {
+      isValid: false
+    };
+  };
+
+  await server.register(AuthJwt2);
+  server.auth.strategy('jwt', 'jwt', {
+    key: global.CONFIG.get('web.jwt.secret'),
+    validate,
+    verifyOptions: {
+      ignoreExpiration: true,
+      algorithms: ['HS256']
+    }
+  });
+  server.auth.default('jwt');
+};
+
+exports.name = 'app-auth-jwt2';
+exports.dependencies = ['app-redis'];
 
 /***/ }),
 
@@ -477,6 +531,7 @@ exports.register = async function (server, options) {
   let settings = global.CONFIG.get('web.redisOptions');
   global.client = redis.createClient(settings);
   server.decorate('server', 'redis', global.client);
+  server.decorate('request', 'redis', global.client);
   server.expose('client', global.client);
 };
 
@@ -505,6 +560,9 @@ exports.register = async (server, options) => {
       } catch (err) {
         return err;
       }
+    },
+    config: {
+      auth: false
     }
   });
 };
@@ -1539,7 +1597,7 @@ var _schema = __webpack_require__(/*! ./schema */ "./app/models/User/schema.js")
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const userSchema = new _mongoose.Schema(_schema.schema, _schema.options);
-exports.default = _mongoose2.default.model(userSchema);
+exports.default = _mongoose2.default.model('User', userSchema);
 
 /***/ }),
 
@@ -4956,6 +5014,259 @@ exports.default = { ...tinhTrangPhongVal
 
 /***/ }),
 
+/***/ "./app/modules/user/controller/index.js":
+/*!**********************************************!*\
+  !*** ./app/modules/user/controller/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const Bcrypt = __webpack_require__(/*! bcrypt */ "bcrypt");
+
+const Boom = __webpack_require__(/*! boom */ "boom");
+
+const User = _mongoose2.default.model('User');
+
+const Jwt = __webpack_require__(/*! jsonwebtoken */ "jsonwebtoken");
+
+const Aguid = __webpack_require__(/*! aguid */ "aguid");
+
+const SALT_LENGTH = 10;
+
+const signin = async (request, h) => {
+  try {
+    let data = request.payload;
+    let listUsers = await User.find();
+    let userNotDuplicate = listUsers.filter(item => {
+      item.userName = data.userName;
+    });
+
+    if (userNotDuplicate && userNotDuplicate.length === 0) {
+      let newpass = Bcrypt.hashSync(data.passWord, SALT_LENGTH);
+      let user = {
+        userName: data.userName,
+        passWord: newpass,
+        email: data.email,
+        status: data.status,
+        roles: data.roles // tao token
+
+      };
+      let token = Jwt.sign(user, global.CONFIG.get('web.jwt.secret'));
+      let userRegisted = await User.create(user);
+      return {
+        auth: true,
+        token: token,
+        userRegisted
+      };
+    } else {
+      return Boom.badRequest('Lỗi lúc thêm rồi!');
+    }
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+const login = async (request, h) => {
+  try {
+    let data = await User.findOne({
+      userName: request.payload.userName
+    });
+
+    if (data === null) {
+      return {
+        credentials: null,
+        isValid: false
+      };
+    } else {
+      let isValid = await Bcrypt.compare(request.payload.passWord, data.passWord);
+
+      if (isValid) {
+        const credentials = {
+          userName: data.userName,
+          email: data.email,
+          roles: data.roles,
+          status: data.status
+        };
+        let session = {
+          valid: true,
+          id: Aguid(),
+          expires: new Date().getTime() + 30 * 60 * 1000
+        };
+        request.server.redis.set(session.id, JSON.stringify(session));
+        let token = Jwt.sign(session, global.CONFIG.get('web.jwt.secret'));
+        const response = h.response({
+          auth: true,
+          token,
+          credentials,
+          isValid
+        });
+        response.header("Authorization", token);
+        return response;
+      } else {
+        return {
+          credentials: {
+            userName: data.userName
+          },
+          isValid: false
+        };
+      }
+    }
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+exports.default = {
+  signin,
+  login
+};
+
+/***/ }),
+
+/***/ "./app/modules/user/index.js":
+/*!***********************************!*\
+  !*** ./app/modules/user/index.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index.js */ "./app/modules/user/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'auth-app';
+
+/***/ }),
+
+/***/ "./app/modules/user/routes/index.js":
+/*!******************************************!*\
+  !*** ./app/modules/user/routes/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/user/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/user/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'POST',
+  path: '/login',
+  handler: _index2.default.login,
+  config: {
+    auth: false,
+    description: 'check login',
+    validate: _index4.default.login,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/sigin',
+  handler: _index2.default.signin,
+  config: {
+    auth: false,
+    description: 'sigin account',
+    validate: _index4.default.signin,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/user/validate/index.js":
+/*!********************************************!*\
+  !*** ./app/modules/user/validate/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Joi = __webpack_require__(/*! joi */ "joi");
+
+Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
+const userVal = {
+  signin: {
+    payload: {
+      userName: Joi.string().required().max(30),
+      passWord: Joi.string().required(),
+      email: Joi.string().email(),
+      status: Joi.boolean().default(true),
+      roles: Joi.array().items(Joi.string().regex(/^(user|super-admin|staff)$/))
+    }
+  },
+  login: {
+    payload: {
+      userName: Joi.string().required().max(30),
+      passWord: Joi.string().required()
+    }
+  }
+};
+exports.default = { ...userVal
+};
+
+/***/ }),
+
 /***/ "./package.json":
 /*!**********************!*\
   !*** ./package.json ***!
@@ -4976,6 +5287,28 @@ module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ
 
 module.exports = __webpack_require__(/*! F:\DoAnTotNghiep\DoAnTotNghiep_Toan\api\app.js */"./app.js");
 
+
+/***/ }),
+
+/***/ "aguid":
+/*!************************!*\
+  !*** external "aguid" ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("aguid");
+
+/***/ }),
+
+/***/ "bcrypt":
+/*!*************************!*\
+  !*** external "bcrypt" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("bcrypt");
 
 /***/ }),
 
@@ -5108,6 +5441,17 @@ module.exports = require("joi");
 /***/ (function(module, exports) {
 
 module.exports = require("joi-objectid");
+
+/***/ }),
+
+/***/ "jsonwebtoken":
+/*!*******************************!*\
+  !*** external "jsonwebtoken" ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("jsonwebtoken");
 
 /***/ }),
 

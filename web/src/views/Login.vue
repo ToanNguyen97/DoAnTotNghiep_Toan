@@ -29,14 +29,13 @@
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field prepend-icon="person" name="Username" v-model="username" label="Login" type="text"></v-text-field>
+                  <v-text-field prepend-icon="person" name="Username" v-model="username" label="username" type="text"></v-text-field>
                   <v-text-field id="password" prepend-icon="lock" v-model="password" name="password" label="Password" type="password"></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" @click="Login">Login</v-btn>
-                <v-btn color="blue" :to="{name: 'Register'}">Register</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -47,34 +46,36 @@
 </template>
 
 <script>
+  import toast from '../plugins/toast.js'
   export default {
     data: () => ({
       drawer: null,
       username: '',
       password: ''
-    })
-    // props: {
-    //   source: String
-    // },
-    // methods: {
-    //   Login () {
-    //     let payload = {username: this.username, password: this.password}
-    //     this.$store.dispatch('Login', payload).then (res => {
-    //       if(res.data.isValid === true)
-    //       {
-    //         this.$router.push({path: '/admin'})
-    //       }
-    //       else if (res.data.credentials === null)
-    //       {
-    //         alert('Không tồn tại tài khoản này')
-    //       }
-    //       else {
-    //         alert('Mật khẩu không đúng!')
-    //       }
-    //     }).catch (error => {
-    //       alert(error + ' Lỗi')
-    //     })
-    //   }
-    // }
+    }),
+    props: {
+      source: String
+    },
+    methods: {
+      Login () {
+        let payload = {userName: this.username, passWord: this.password}
+        this.$store.dispatch('auth/login', payload).then(res => {          
+          if(res.isValid === true)
+          {
+            toast.Success(`Xin chào ${res.credentials.userName}!`)
+            this.$router.push({path: '/admin'})
+          }
+          else if (res.credentials === null)
+          {
+            toast.Error(`Tài khoản ${this.username} không tồn tại`)
+          }
+          else {
+            toast.Info(`Mật khẩu không đúng!`)
+          }
+        }).catch (error => {
+          alert(error + ' Lỗi')
+        })
+      }
+    }
   }
 </script>
