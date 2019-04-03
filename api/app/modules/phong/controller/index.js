@@ -93,12 +93,12 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    console.log(request)
-    if(request.pre.check) {
+
+    if(request.pre.testPre) {
       return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean()
     }
     else {
-      return Boom.forbidden(err)
+      return h.response({message:'Not allowed'})
     }
   } catch (err) {
     return Boom.forbidden(err)
@@ -172,11 +172,28 @@ const searchMultiple = async (request, h) => {
   }
 }
 
+const testPre = (request, h) => {
+  try {
+    let getRolesAllow = ['super-admin','staff']
+    let roles = request.auth.credentials.credentials.roles
+    if(!getRolesAllow.some(item => roles.includes(item)))
+    {
+      return true
+    }
+    else {
+      return false
+    }
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
 export default {
   save,
   getById,
   getAll,
   update,
   deletePhong,
-  searchMultiple
+  searchMultiple,
+  testPre
 }

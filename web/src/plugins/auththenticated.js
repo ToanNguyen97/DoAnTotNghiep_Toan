@@ -1,5 +1,4 @@
 import authStore from '../modules/User/store/index'
-
 // check route khi gởi request, một số route không cần auth
 const notAuthenticate = (to, from, next) => {
   let isAuthenticated = !!authStore.token

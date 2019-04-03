@@ -41,7 +41,11 @@ export default {
   },
   async created () {
     this.loading = true
-   await this.$store.dispatch('phong/getPhongs')
+   await this.$store.dispatch('phong/getPhongs').then( res => {
+     if(res === false) {
+       this.$router.push({path:'/404.html'})
+     }
+   })
   },
   computed: {
     pages () {

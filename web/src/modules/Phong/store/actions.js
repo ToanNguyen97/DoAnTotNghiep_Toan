@@ -3,7 +3,12 @@ import axios from 'axios'
 const getPhongs = async (context) => {
   try {
     let {data} = await axios.get('http://localhost:3003/api/phong')
-    context.commit('getListPhong', data)
+    if(data.message !== 'Not allowed') {
+      context.commit('getListPhong', data)
+      return true
+    }else {
+      return false
+    }
   } catch (err)  {
     return err
   }

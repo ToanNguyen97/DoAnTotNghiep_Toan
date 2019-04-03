@@ -1,4 +1,4 @@
-import NavigationDrawer from '@/views/core/Admin/NavigationDrawer'
+import NavigationDrawer from '@/views/core/Admin/NavigationDrawer.vue'
 
 export default {
   components: {

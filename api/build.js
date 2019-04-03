@@ -4346,12 +4346,12 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    console.log(request);
-
-    if (request.pre.check) {
+    if (request.pre.testPre) {
       return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean();
     } else {
-      return _boom2.default.forbidden(err);
+      return h.response({
+        message: 'Not allowed'
+      });
     }
   } catch (err) {
     return _boom2.default.forbidden(err);
@@ -4457,13 +4457,29 @@ const searchMultiple = async (request, h) => {
   }
 };
 
+const testPre = (request, h) => {
+  try {
+    let getRolesAllow = ['super-admin', 'staff'];
+    let roles = request.auth.credentials.credentials.roles;
+
+    if (!getRolesAllow.some(item => roles.includes(item))) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   save,
   getById,
   getAll,
   update,
   deletePhong,
-  searchMultiple
+  searchMultiple,
+  testPre
 };
 
 /***/ }),
@@ -4514,10 +4530,6 @@ var _index3 = __webpack_require__(/*! ../validate/index.js */ "./app/modules/pho
 
 var _index4 = _interopRequireDefault(_index3);
 
-var _boom = __webpack_require__(/*! boom */ "boom");
-
-var _boom2 = _interopRequireDefault(_boom);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = [{
@@ -4526,20 +4538,8 @@ exports.default = [{
   handler: _index2.default.getAll,
   config: {
     pre: [{
-      method: function check(request, h) {
-        try {
-          let roles = request.auth.credentials.credentials.roles;
-          console.log(roles);
-
-          if (!roles.includes('super-admin')) {
-            return false;
-          } else {
-            return true;
-          }
-        } catch (err) {
-          return _boom2.default.forbidden(err);
-        }
-      }
+      method: _index2.default.testPre,
+      assign: 'testPre'
     }],
     description: 'lay danh sach phong',
     tags: ['api'],

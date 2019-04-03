@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Client from './views/Client.vue'
 import Admin from './views/Admin.vue'
+import Page404 from './views/core/Admin/page404.vue'
 import Login from './views/Login.vue'
 //import LoginRoutes from './modules/User/index.js'
 import PhongRoutes from './modules/Phong/index.js'
@@ -20,6 +21,11 @@ export default new Router({
       name: 'Login',
       component: Login,
       beforeEnter: Authenticated.notAuthenticate
+    },
+    { 
+      path:'/404.html',
+      name:'page404',
+      component: Page404
     },
     {
       path: '/admin',
