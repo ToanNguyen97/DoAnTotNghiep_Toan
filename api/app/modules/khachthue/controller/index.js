@@ -76,7 +76,7 @@ const search = async (request, h) => {
 
 const getByDT = async (request, h) => {
   try {
-    console.log('vao roi')
+
     return await KhachThue.find({soDienThoai: request.params.sdt}).populate('loaiKhachThueID') || Boom.notFound()
   } catch (err) {
     return Boom.forbidden(err)

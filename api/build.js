@@ -221,6 +221,10 @@ const loader = exports.loader = async function (server) {
     __webpack_require__(/*! ../models/User/model */ "./app/models/User/model.js");
 
     __webpack_require__(/*! ../models/NhanVien/model */ "./app/models/NhanVien/model.js");
+
+    __webpack_require__(/*! ../lib/services/translateCharacter.js */ "./app/lib/services/translateCharacter.js");
+
+    __webpack_require__(/*! ../lib/services/checkQuyen.js */ "./app/lib/services/checkQuyen.js");
     /* Load Modules */
 
 
@@ -571,6 +575,114 @@ exports.register = async (server, options) => {
 };
 
 exports.name = 'route-image';
+
+/***/ }),
+
+/***/ "./app/lib/services/checkQuyen.js":
+/*!****************************************!*\
+  !*** ./app/lib/services/checkQuyen.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const isRoles = (request, h) => {
+  try {
+    let getRolesAllow = ['chủ trọ', 'nhân viên'];
+    let roles = request.auth.credentials.credentials.roles;
+
+    if (getRolesAllow.includes(roles)) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+const isRolesCustomer = (request, h) => {
+  try {
+    let roles = request.auth.credentials.credentials.roles;
+
+    if (roles === 'khách thuê') {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {}
+};
+
+const isRolesAdmin = (request, h) => {
+  try {
+    let roles = request.auth.credentials.credentials.roles;
+
+    if (roles === 'chủ trọ') {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {}
+};
+
+exports.default = {
+  isRoles,
+  isRolesCustomer,
+  isRolesAdmin
+};
+
+/***/ }),
+
+/***/ "./app/lib/services/translateCharacter.js":
+/*!************************************************!*\
+  !*** ./app/lib/services/translateCharacter.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = translateCharacter;
+
+function translateCharacter(input) {
+  if (input == undefined || input == '') return ''; // đổi chữ hoa thành chữ thường
+
+  var slug = input.toLowerCase(); // đổi ký tự có dấu thành không dấu
+
+  slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/gi, 'a');
+  slug = slug.replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/gi, 'e');
+  slug = slug.replace(/i|í|ì|ỉ|ị|ĩ/gi, 'i');
+  slug = slug.replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ộ|ổ|ỗ|ơ|ớ|ờ|ợ|ở|ỡ/gi, 'o');
+  slug = slug.replace(/ú|ù|ụ|ủ|ũ|ư|ứ|ừ|ự|ử|ữ/gi, 'u');
+  slug = slug.replace(/ý|ỳ|ỵ|ỷ|ỹ/gi, 'y');
+  slug = slug.replace(/đ/gi, 'd'); // xóa ký tự đặc biệt
+
+  slug = slug.replace(/\`|\~|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|\_/gi, ''); // đổi ký tự khoảng trắng thành dấu gạch ngang
+
+  slug = slug.replace(/ /gi, ''); // đổi nhiều ký tự gạch ngang liên tiếp thành 1 ký tự gạch ngang
+  // Phòng trường hợp người nhập quá nhiều ký tự trắng
+
+  slug = slug.replace(/\-\-\-\-\-\-\-/gi, '');
+  slug = slug.replace(/\-\-\-\-\-\-/gi, '');
+  slug = slug.replace(/\-\-\-\-\-/gi, '');
+  slug = slug.replace(/\-\-\-\-/gi, '');
+  slug = slug.replace(/\-\-\-/gi, '');
+  slug = slug.replace(/\-\-/gi, ''); // xóa ký tự gạch ngang ở đầu và cuối
+
+  slug = '@' + slug + '@';
+  slug = slug.replace(/\@\-|\-\@|\@/gi, '');
+  return slug;
+}
 
 /***/ }),
 
@@ -1718,6 +1830,10 @@ exports.default = _mongoose2.default.model('User', userSchema);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
 const schema = {
   userName: {
     type: String,
@@ -1738,11 +1854,16 @@ const schema = {
 
   },
   roles: {
-    type: [{
-      type: String,
-      enum: ['user', 'staff', 'super-admin']
-    }],
-    default: ['user']
+    type: String,
+    enum: ['khách thuê', 'nhân viên', 'chủ trọ']
+  },
+  nhanVienID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'NhanVien'
+  },
+  khachThueID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'KhachThue'
   }
 };
 const options = {
@@ -2198,6 +2319,14 @@ var _mailHopDong = __webpack_require__(/*! ../../../lib/basemail/mailHopDong.js 
 
 var _mailHopDong2 = _interopRequireDefault(_mailHopDong);
 
+var _translateCharacter = __webpack_require__(/*! ../../../lib/services/translateCharacter.js */ "./app/lib/services/translateCharacter.js");
+
+var _translateCharacter2 = _interopRequireDefault(_translateCharacter);
+
+var _index = __webpack_require__(/*! ../../user/controller/index.js */ "./app/modules/user/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong');
@@ -2230,7 +2359,17 @@ const save = async (request, h) => {
 
       khachThue.phongs = khachThue.phongs.filter(key => key != String(item.phongID));
       khachThue.phongs = [...khachThue.phongs, ...[item.phongID]];
-      khachThue.tinhTrangKhachThue = "Đang thuê";
+      khachThue.tinhTrangKhachThue = "Đang thuê"; // tạo tài khoản sử dụng cho khách và tạm thời kích hoạt tài khoản, sau này check mail mới kích hoạt
+
+      let user = {
+        userName: (0, _translateCharacter2.default)(`${khachThue.hoKhachThue}${khachThue.tenKhachThue}${khachThue.soDienThoai}`),
+        passWord: khachThue.soDienThoai,
+        email: khachThue.email,
+        status: true,
+        roles: 'khách thuê',
+        khachThueID: khachThue._id
+      };
+      await _index2.default.createAccountKT(user);
       await khachThue.save(); // cập nhật tình trạng phòng đã thuê
 
       let phong = await Phong.findById({
@@ -2582,7 +2721,6 @@ const search = async (request, h) => {
 
 const getByDT = async (request, h) => {
   try {
-    console.log('vao roi');
     return (await KhachThue.find({
       soDienThoai: request.params.sdt
     }).populate('loaiKhachThueID')) || _boom2.default.notFound();
@@ -3644,6 +3782,14 @@ var _boom = __webpack_require__(/*! boom */ "boom");
 
 var _boom2 = _interopRequireDefault(_boom);
 
+var _translateCharacter = __webpack_require__(/*! ../../../lib/services/translateCharacter.js */ "./app/lib/services/translateCharacter.js");
+
+var _translateCharacter2 = _interopRequireDefault(_translateCharacter);
+
+var _index = __webpack_require__(/*! ../../user/controller/index.js */ "./app/modules/user/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const fs = __webpack_require__(/*! fs */ "fs");
@@ -3652,43 +3798,59 @@ const NhanVien = _mongoose2.default.model('NhanVien');
 
 const save = async (request, h) => {
   try {
-    let data = request.payload;
-    let item = {};
+    if (request.pre.isRoles) {
+      let data = request.payload;
+      let item = {};
 
-    if (!data._id) {
-      let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
-      fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
-        return err;
-      });
-      data.anhDaiDien = data.anhDaiDien.name;
-      item = new NhanVien(data);
-    } else {
-      if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
-        item = await NhanVien.findById({
-          _id: data._id
-        });
-        data.anhDaiDien = item.anhDaiDien;
-        item = Object.assign(item, data);
-      } else {
+      if (!data._id) {
         let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
         fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
           return err;
         });
         data.anhDaiDien = data.anhDaiDien.name;
-        item = await NhanVien.findById({
-          _id: data._id
-        });
-        item = Object.assign(item, data);
+        item = new NhanVien(data); // chỗ này chưa check trường hợp nếu nhân viên đó vừa là khách thì tài khoản sẽ trùng??
+
+        let user = {
+          userName: (0, _translateCharacter2.default)(`${item.hoNhanVien}${item.tenNhanVien}${item.soDienThoai}`),
+          passWord: item.soDienThoai,
+          email: item.email,
+          status: item.status,
+          roles: item.ChucVu,
+          nhanVienID: item._id
+        };
+        await _index2.default.createAccountNV(user);
+      } else {
+        if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
+          item = await NhanVien.findById({
+            _id: data._id
+          });
+          data.anhDaiDien = item.anhDaiDien;
+          item = Object.assign(item, data);
+        } else {
+          let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
+          fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+            return err;
+          });
+          data.anhDaiDien = data.anhDaiDien.name;
+          item = await NhanVien.findById({
+            _id: data._id
+          });
+          item = Object.assign(item, data);
+        }
       }
+
+      await item.save();
+
+      let nhanVien = (await NhanVien.findById({
+        _id: item._id
+      })) || _boom2.default.notFound();
+
+      return nhanVien;
+    } else {
+      return h.response({
+        message: 'Not allowed'
+      });
     }
-
-    await item.save();
-
-    let nhanVien = (await NhanVien.findById({
-      _id: item._id
-    })) || _boom2.default.notFound();
-
-    return nhanVien;
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -3696,7 +3858,13 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    return (await NhanVien.find()) || _boom2.default.notFound();
+    if (request.pre.isRoles) {
+      return (await NhanVien.find()) || _boom2.default.notFound();
+    } else {
+      return h.response({
+        message: 'Not allowed'
+      });
+    }
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -3755,6 +3923,10 @@ var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/nhanvi
 
 var _index4 = _interopRequireDefault(_index3);
 
+var _checkQuyen = __webpack_require__(/*! ../../../lib/services/checkQuyen.js */ "./app/lib/services/checkQuyen.js");
+
+var _checkQuyen2 = _interopRequireDefault(_checkQuyen);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = [{
@@ -3762,6 +3934,10 @@ exports.default = [{
   path: '/nhanvien',
   handler: _index2.default.getAll,
   config: {
+    pre: [{
+      method: _checkQuyen2.default.isRolesAdmin,
+      assign: 'isRoles'
+    }],
     tags: ['api'],
     description: 'lay danh sach nhan vien',
     plugins: {
@@ -3780,6 +3956,10 @@ exports.default = [{
   path: '/nhanvien',
   handler: _index2.default.save,
   config: {
+    pre: [{
+      method: _checkQuyen2.default.isRolesAdmin,
+      assign: 'isRoles'
+    }],
     description: 'them va sua nhan vien',
     tags: ['api'],
     validate: _index4.default.save,
@@ -3928,7 +4108,13 @@ const HopDongThue = _mongoose2.default.model('HopDongThuePhong');
 
 const getAll = async (request, h) => {
   try {
-    return await PhieuThuTien.find().populate('phongID');
+    if (request.pre.isRoles) {
+      return await PhieuThuTien.find().populate('phongID');
+    } else {
+      return h.response({
+        message: 'Not allowed'
+      });
+    }
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -4150,6 +4336,10 @@ var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/phieut
 
 var _index4 = _interopRequireDefault(_index3);
 
+var _checkQuyen = __webpack_require__(/*! ../../../lib/services/checkQuyen */ "./app/lib/services/checkQuyen.js");
+
+var _checkQuyen2 = _interopRequireDefault(_checkQuyen);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = [{
@@ -4157,6 +4347,10 @@ exports.default = [{
   path: '/phieuthutien',
   handler: _index2.default.getAll,
   config: {
+    pre: [{
+      method: _checkQuyen2.default.isRoles,
+      assign: 'isRoles'
+    }],
     tags: ['api'],
     description: "lay danh sach phieu thu",
     plugins: {
@@ -4708,7 +4902,7 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    if (request.pre.testPre) {
+    if (request.pre.isRoles) {
       return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean();
     } else {
       return h.response({
@@ -4735,8 +4929,6 @@ const update = async (request, h) => {
       let anh = item.replace(/^data(.*?)base64,/, "");
       anhChiTiet64.push(anh);
     }
-
-    console.log(anhChiTiet.name);
 
     for (let i = 0; i < anhChiTiet.name.length; i++) {
       fs.writeFile(`app/lib/images/${anhChiTiet.name[i]}`, anhChiTiet64[i], 'base64', function (err) {
@@ -4817,22 +5009,8 @@ const searchMultiple = async (request, h) => {
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
-};
+}; // check quyền truy cập
 
-const testPre = (request, h) => {
-  try {
-    let getRolesAllow = ['super-admin', 'staff'];
-    let roles = request.auth.credentials.credentials.roles;
-
-    if (getRolesAllow.some(item => roles.includes(item))) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (err) {
-    return _boom2.default.forbidden(err);
-  }
-};
 
 exports.default = {
   save,
@@ -4840,8 +5018,7 @@ exports.default = {
   getAll,
   update,
   deletePhong,
-  searchMultiple,
-  testPre
+  searchMultiple
 };
 
 /***/ }),
@@ -4892,6 +5069,10 @@ var _index3 = __webpack_require__(/*! ../validate/index.js */ "./app/modules/pho
 
 var _index4 = _interopRequireDefault(_index3);
 
+var _checkQuyen = __webpack_require__(/*! ../../../lib/services/checkQuyen.js */ "./app/lib/services/checkQuyen.js");
+
+var _checkQuyen2 = _interopRequireDefault(_checkQuyen);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = [{
@@ -4900,8 +5081,8 @@ exports.default = [{
   handler: _index2.default.getAll,
   config: {
     pre: [{
-      method: _index2.default.testPre,
-      assign: 'testPre'
+      method: _checkQuyen2.default.isRoles,
+      assign: 'isRoles'
     }],
     description: 'lay danh sach phong',
     tags: ['api'],
@@ -5467,11 +5648,87 @@ const signin = async (request, h) => {
   }
 };
 
+const createAccountNV = async data => {
+  try {
+    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo roles
+    let listUsers = await User.find({
+      roles: 'nhân viên'
+    });
+    let userNotDuplicate = listUsers.filter(item => {
+      item.userName = data.userName;
+    });
+
+    if (userNotDuplicate && userNotDuplicate.length === 0) {
+      let newpass = Bcrypt.hashSync(data.passWord, SALT_LENGTH);
+      let user = {
+        userName: data.userName,
+        passWord: newpass,
+        email: data.email,
+        status: data.status,
+        roles: data.roles,
+        nhanVienID: data.nhanVienID
+      };
+      let userRegisted = await User.create(user);
+      return userRegisted;
+    } else {
+      return Boom.badRequest('Lỗi lúc thêm rồi!');
+    }
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
+const createAccountKT = async data => {
+  try {
+    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo roles
+    let listUsers = await User.find({
+      roles: 'khách thuê'
+    });
+    let userNotDuplicate = listUsers.filter(item => {
+      item.userName = data.userName;
+    });
+
+    if (userNotDuplicate && userNotDuplicate.length === 0) {
+      let newpass = Bcrypt.hashSync(data.passWord, SALT_LENGTH);
+      let user = {
+        userName: data.userName,
+        passWord: newpass,
+        email: data.email,
+        status: data.status,
+        roles: data.roles,
+        khachThueID: data.khachThueID
+      };
+      let userRegisted = await User.create(user);
+      return userRegisted;
+    } else {
+      return Boom.badRequest('Lỗi lúc thêm rồi!');
+    }
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+};
+
 const login = async (request, h) => {
   try {
     let data = await User.findOne({
       userName: request.payload.userName
-    });
+    }); // check xem tài khoản này của khach hay của nhan vien
+
+    let userInfo = {};
+
+    if (data && data.nhanVienID) {
+      data = await User.findById({
+        _id: data._id
+      }).populate('nhanVienID');
+      userInfo = data.nhanVienID;
+    }
+
+    if (data && data.khachThueID) {
+      data = await User.findById({
+        _id: data._id
+      }).populate('khachThueID');
+      userInfo = data.khachThueID;
+    }
 
     if (data === null) {
       return {
@@ -5486,7 +5743,8 @@ const login = async (request, h) => {
           userName: data.userName,
           email: data.email,
           roles: data.roles,
-          status: data.status
+          status: data.status,
+          userInfo
         };
         let session = {
           valid: true,
@@ -5530,7 +5788,9 @@ const getUser = async (request, h) => {
 exports.default = {
   signin,
   login,
-  getUser
+  getUser,
+  createAccountNV,
+  createAccountKT
 };
 
 /***/ }),
@@ -5670,7 +5930,7 @@ const userVal = {
       passWord: Joi.string().required(),
       email: Joi.string().email(),
       status: Joi.boolean().default(true),
-      roles: Joi.array().items(Joi.string().regex(/^(user|super-admin|staff)$/))
+      roles: Joi.string()
     }
   },
   login: {

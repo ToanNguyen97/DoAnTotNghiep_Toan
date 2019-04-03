@@ -15,18 +15,19 @@
       <v-toolbar flat class="transparent">
         <v-list class="pa-0">
           <v-list-tile avatar>
-            <v-list-tile-avatar>
-              <img src="https://scontent.fdad3-2.fna.fbcdn.net/v/t1.0-9/51668716_409788743163726_5283625250930556928_n.jpg?_nc_cat=104&_nc_oc=AQkQIuzMfnnz38Kj24cqTrKEuezZlStqfvqj0We_adO3uhmPrg-LtrKNiQcApweFc3g&_nc_ht=scontent.fdad3-2.fna&oh=e09662684de02af3643d20364e57e7be&oe=5CE92585">
+            <v-list-tile-avatar v-if="User ">
+              <img :src="`//localhost:3003/image/${ User.anhDaiDien}`">
             </v-list-tile-avatar>
-            <v-list-tile-content>
-              <v-list-tile-title>Dương Thị Bích Vân</v-list-tile-title>
+            <v-list-tile-content >
+              <v-list-tile-title v-if="User  && User.hoNhanVien">{{User.hoNhanVien}} {{User.tenNhanVien}}</v-list-tile-title>
+              <v-list-tile-title class="black--text" v-if="User  && User.hoKhachThue">{{User.hoKhachThue}} {{User.tenKhachThue}}</v-list-tile-title>
             </v-list-tile-content>
-          </v-list-tile>
+          </v-list-tile>  
         </v-list>
       </v-toolbar>
       <v-list class="pt-0" dense>
         <hr class="white"/>
-        <v-list-tile v-if="showDashboard()" :to="'/danh-sach-khach-thue.html'" >
+        <v-list-tile v-if="showDashboard()" :to="'/tong-quan.html'" >
            <v-list-tile-action>
             <v-icon>insert_chart_outlined</v-icon>
           </v-list-tile-action>

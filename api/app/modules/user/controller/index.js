@@ -8,6 +8,7 @@ const SALT_LENGTH= 10
 const signin = async (request, h) => {
   try {
     let data = request.payload
+
     let listUsers = await User.find()
     let userNotDuplicate = listUsers.filter(item => {
       item.userName = data.userName
@@ -27,17 +28,69 @@ const signin = async (request, h) => {
     return Boom.forbidden(err)
   }
 }
+const createAccountNV = async (data) => {
+  try {
+    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo roles
+    let listUsers = await User.find({roles: 'nhân viên'})
+    let userNotDuplicate = listUsers.filter(item => {
+      item.userName = data.userName
+    })
+    if(userNotDuplicate && userNotDuplicate.length === 0) {
+      let newpass = Bcrypt.hashSync(data.passWord,SALT_LENGTH)
+      let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, roles: data.roles, nhanVienID:data.nhanVienID}
+      let userRegisted = await User.create(user)
+      return userRegisted
+    }
+    else {
+      return Boom.badRequest('Lỗi lúc thêm rồi!')
+    }
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
+const createAccountKT = async (data) => {
+  try {
+    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo roles
+    let listUsers = await User.find({roles: 'khách thuê'})
+    let userNotDuplicate = listUsers.filter(item => {
+      item.userName = data.userName
+    })
+    if(userNotDuplicate && userNotDuplicate.length === 0) {
+      let newpass = Bcrypt.hashSync(data.passWord,SALT_LENGTH)
+      let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, roles: data.roles, khachThueID:data.khachThueID}
+      let userRegisted = await User.create(user)
+      return userRegisted
+    }
+    else {
+      return Boom.badRequest('Lỗi lúc thêm rồi!')
+    }
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
 
 const login = async (request, h) => {
   try {
     let data = await User.findOne({userName: request.payload.userName})
+
+    // check xem tài khoản này của khach hay của nhan vien
+    let userInfo = {}
+    if(data && data.nhanVienID) {
+      data = await User.findById({_id:data._id}).populate('nhanVienID')
+      userInfo = data.nhanVienID
+    }
+    if(data && data.khachThueID) {
+      data = await User.findById({_id:data._id}).populate('khachThueID')
+      userInfo= data.khachThueID
+    }
     if(data === null) {
       return {credentials: null, isValid: false}
     }
     else {
       let isValid = await Bcrypt.compare(request.payload.passWord, data.passWord)
       if(isValid) {
-        const credentials = {userName: data.userName, email: data.email, roles: data.roles, status: data.status}
+        const credentials = {userName: data.userName, email: data.email, roles: data.roles, status: data.status, userInfo}
         let session = {
           valid: true,
           id: Aguid(),
@@ -73,5 +126,7 @@ const getUser = async (request, h) => {
 export default {
   signin,
   login,
-  getUser
+  getUser,
+  createAccountNV,
+  createAccountKT
 }

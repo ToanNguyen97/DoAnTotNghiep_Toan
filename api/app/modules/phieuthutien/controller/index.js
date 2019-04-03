@@ -10,7 +10,11 @@ const CacKhoanThu = Mongoose.model('CacKhoanThu')
 const HopDongThue = Mongoose.model('HopDongThuePhong')
 const getAll = async (request, h) => {
   try {
-    return await PhieuThuTien.find().populate('phongID')
+    if(request.pre.isRoles) {
+      return await PhieuThuTien.find().populate('phongID')
+    } else {
+      return h.response({message:'Not allowed'})
+    }
   } catch (err) {
     return Boom.forbidden(err)
   }

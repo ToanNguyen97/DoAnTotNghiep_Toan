@@ -93,8 +93,7 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-
-    if(request.pre.testPre) {
+    if(request.pre.isRoles) {
       return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean()
     }
     else {
@@ -120,7 +119,7 @@ const update = async (request, h) => {
       let anh = item.replace(/^data(.*?)base64,/, "")
       anhChiTiet64.push(anh)
     }
-    console.log(anhChiTiet.name)
+
     for(let i=0; i < anhChiTiet.name.length; i++)
     {
       fs.writeFile(`app/lib/images/${anhChiTiet.name[i]}`, anhChiTiet64[i], 'base64', function(err) {
@@ -172,21 +171,7 @@ const searchMultiple = async (request, h) => {
   }
 }
 
-const testPre = (request, h) => {
-  try {
-    let getRolesAllow = ['super-admin','staff']
-    let roles = request.auth.credentials.credentials.roles
-    if(getRolesAllow.some(item => roles.includes(item)))
-    {
-      return true
-    }
-    else {
-      return false
-    }
-  } catch (err) {
-    return Boom.forbidden(err)
-  }
-}
+// check quyền truy cập
 
 export default {
   save,
@@ -194,6 +179,5 @@ export default {
   getAll,
   update,
   deletePhong,
-  searchMultiple,
-  testPre
+  searchMultiple
 }

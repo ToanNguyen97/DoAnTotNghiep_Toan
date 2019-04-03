@@ -9,7 +9,7 @@ const userVal = {
       passWord: Joi.string().required(),
       email: Joi.string().email(),
       status: Joi.boolean().default(true),
-      roles: Joi.array().items(Joi.string().regex(/^(user|super-admin|staff)$/))
+      roles: Joi.string()
     }
   },
   login: {

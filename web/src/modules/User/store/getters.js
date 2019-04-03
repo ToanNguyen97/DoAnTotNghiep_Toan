@@ -7,7 +7,10 @@ const isAuthenticated =  state => {
 }
 const authStatus = state => state.status
 
+const auth = state => state.user
+
 export default {
   isAuthenticated,
-  authStatus
+  authStatus,
+  auth
 }

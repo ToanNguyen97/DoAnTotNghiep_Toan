@@ -57,6 +57,8 @@ export const loader = async function (server) {
      require('../models/PhieuTraPhong/model')
      require('../models/User/model')
      require('../models/NhanVien/model')
+     require('../lib/services/translateCharacter.js')
+     require('../lib/services/checkQuyen.js')
 
      /* Load Modules */
      let modules = []

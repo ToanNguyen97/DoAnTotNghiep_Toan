@@ -26,12 +26,13 @@
       <v-card>
         <v-list>
           <v-list-tile avatar>
-            <v-list-tile-avatar>
-              <img src="https://scontent.fdad3-2.fna.fbcdn.net/v/t1.0-9/51668716_409788743163726_5283625250930556928_n.jpg?_nc_cat=104&_nc_oc=AQkQIuzMfnnz38Kj24cqTrKEuezZlStqfvqj0We_adO3uhmPrg-LtrKNiQcApweFc3g&_nc_ht=scontent.fdad3-2.fna&oh=e09662684de02af3643d20364e57e7be&oe=5CE92585" alt="John">
+            <v-list-tile-avatar v-if="user && user.userInfo">
+              <img :src="`//localhost:3003/image/${ user.userInfo.anhDaiDien}`" alt="ảnh">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title>{{user.userName}}</v-list-tile-title>
-              <v-list-tile-sub-title>Dương Thị Bích Vân</v-list-tile-sub-title>
+              <v-list-tile-title v-if="user && user.roles && user.roles">{{user.roles}} </v-list-tile-title>
+              <v-list-tile-sub-title v-if="user && user.userInfo && user.userInfo.hoNhanVien">{{user.userInfo.hoNhanVien}} {{user.userInfo.tenNhanVien}}</v-list-tile-sub-title>
+              <v-list-tile-sub-title v-if="user && user.userInfo && user.userInfo.hoKhachThue">{{user.userInfo.hoKhachThue}} {{user.userInfo.tenKhachThue}}</v-list-tile-sub-title>
             </v-list-tile-content>
             <v-list-tile-action>
               <v-btn
@@ -64,7 +65,7 @@
     </div>
     
   </v-toolbar>
-  <NavigationDrawer @input="input" v-if="user" :permission="user && user.roles" :mini="mini" :check="check" />
+  <NavigationDrawer @input="input" v-if="user" :permission="user && user.roles" :User="user && user.userInfo" :mini="mini" :check="check" />
   <!-- <v-navigation-drawer v-model="drawer" >
     <p>test</p>
   </v-navigation-drawer> -->

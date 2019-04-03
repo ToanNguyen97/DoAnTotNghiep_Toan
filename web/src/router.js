@@ -9,6 +9,7 @@ import PhongRoutes from './modules/Phong/index.js'
 import KhachThueRoutes from './modules/KhachThue/index.js'
 import HopDongThuePhongRoutes from './modules/HopDongThuePhong/index.js'
 import PhieuThuTienRoutes from './modules/PhieuThuTien/index.js'
+import Dashboard from './modules/Dashboard/index.js'
 import NhanVienRoutes from './modules/NhanVien/index.js'
 import LayoutKhachThue from './modules/LayoutKhach/index.js'
 import Authenticated from './plugins/auththenticated.js'
@@ -33,7 +34,7 @@ export default new Router({
       path: '/admin',
       name: 'Admin',
       component: Admin,
-      children: [...PhongRoutes, ...KhachThueRoutes, ...HopDongThuePhongRoutes, ...PhieuThuTienRoutes,...NhanVienRoutes,...LayoutKhachThue],
+      children: [...Dashboard, ...PhongRoutes, ...KhachThueRoutes, ...HopDongThuePhongRoutes, ...PhieuThuTienRoutes,...NhanVienRoutes,...LayoutKhachThue],
       beforeEnter: Authenticated.Authenticated
     },
     {

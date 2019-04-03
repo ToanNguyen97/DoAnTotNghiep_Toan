@@ -1,12 +1,16 @@
 import PhieuThuTienController from '../controller/index'
 import PhieuThuTienVal from '../validate/index'
-
+import checkRoles from '../../../lib/services/checkQuyen'
 export default [
   {
     method: 'GET',
     path: '/phieuthutien',
     handler: PhieuThuTienController.getAll,
     config: {
+      pre: [{
+        method: checkRoles.isRoles,
+        assign: 'isRoles'
+      }],
       tags: ['api'],
       description: "lay danh sach phieu thu",
       plugins: {

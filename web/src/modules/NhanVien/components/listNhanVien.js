@@ -36,7 +36,11 @@ export default {
   },
   created() {
     this.loading = false
-    this.$store.dispatch('nhanvien/getNhanViens')
+    this.$store.dispatch('nhanvien/getNhanViens').then(res => {
+      if(res === false) {
+        this.$router.push({path:'/404.html'})
+      }
+    })
   },
   computed: {
     pages () {

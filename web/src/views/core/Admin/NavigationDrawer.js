@@ -1,6 +1,7 @@
 export default {
   props: {
-    permission:Array,
+    permission:"",
+    User: Object,
     mini: {
       type: Boolean      
     },
@@ -44,63 +45,63 @@ export default {
       this.$router.push({path: path})
     },
     showDashboard () {
-      if(this.permission && this.permission.includes('super-admin'))
+      if(this.permission && this.permission === "chủ trọ")
       {
         return true
       }
       return false
     },
     showRoom () {
-      if(this.permission && this.permission.includes('super-admin'))
+      if((this.permission && this.permission === "chủ trọ") || (this.permission && this.permission === "nhân viên"))
       {
         return true
       }
       return false
     },
     showCustomer () {
-      if(this.permission && this.permission.includes('super-admin'))
+      if((this.permission && this.permission === "chủ trọ") || (this.permission && this.permission === "nhân viên"))
       {
         return true
       }
       return false
     },
     showContract () {
-      if(this.permission && this.permission.includes('super-admin'))
+      if((this.permission && this.permission === "chủ trọ") || (this.permission && this.permission === "nhân viên"))
       {
         return true
       }
       return false
     },
     showBill () {
-      if(this.permission && this.permission.includes('super-admin'))
+      if((this.permission && this.permission === "chủ trọ") || (this.permission && this.permission === "nhân viên"))
       {
         return true
       }
       return false
     },
     showStatistical () {
-      if(this.permission && this.permission.includes('super-admin'))
+      if(this.permission && this.permission === "chủ trọ")
       {
         return true
       }
       return false
     },
     showSetUp () {
-      if(this.permission && this.permission.includes('super-admin'))
+      if(this.permission && this.permission === "chủ trọ")
       {
         return true
       }
       return false
     },
     showLayoutKhach () {
-      if(this.permission && this.permission.includes('user'))
+      if(this.permission && this.permission === "khách thuê")
       {
         return true
       }
       return false
     },
     showNhanVien () {
-      if(this.permission && this.permission.includes('super-admin'))
+      if(this.permission && this.permission === "chủ trọ")
       {
         return true
       }

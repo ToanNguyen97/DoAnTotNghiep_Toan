@@ -21,9 +21,9 @@ export default {
       valid: true,
       changeAnh: false,
       dsAuth: [
-        { ten: 'user'},
-        { ten: 'staff'},
-        { ten: 'admin'}
+        { ten: 'khách thuê'},
+        { ten: 'nhân viên'},
+        { ten: 'chủ trọ'}
       ],
       formData: {
         gioiTinh: true
@@ -85,9 +85,14 @@ export default {
       {
         this.formData.anhDaiDien = {name: "", file64: ""}
       }
-      this.$store.dispatch('nhanvien/save', this.formData).then(() => {
-        toast.Success('Thành Công!')
-        this.Huy()
+      this.$store.dispatch('nhanvien/save', this.formData).then(res => {
+        if(res === false) {
+          this.$router.push({path:'/404.html'})
+        }
+        else {
+          toast.Success('Thành Công!')
+          this.Huy()
+        } 
       }).catch( () => {
         toast.Error('Lỗi!')  
       })

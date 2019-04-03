@@ -2,8 +2,13 @@ import axios from 'axios'
 
 const getPhieuThuTiens = async (context) => {
   try {
-    let {data} = await axios.get('http://localhost:3003/api/phieuthutien')
-    context.commit('getListPhieuThuTien', data)
+    let {data} = await axios.get('http://localhost:3003/api/phieuthutien')    
+    if(data.message !== 'Not allowed') {
+      context.commit('getListPhieuThuTien', data)
+      return true
+    }else {
+      return false
+    }
   } catch (err) {
     return err
   }

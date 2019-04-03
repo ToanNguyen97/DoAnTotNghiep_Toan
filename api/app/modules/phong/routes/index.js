@@ -1,6 +1,6 @@
 import PhongController from '../controller/index.js'
 import PhongVal from '../validate/index.js'
-
+import checkRoles from '../../../lib/services/checkQuyen.js'
 export default [
   {
     method: 'GET',
@@ -8,8 +8,8 @@ export default [
     handler: PhongController.getAll,
     config: {
       pre: [{
-        method: PhongController.testPre,
-        assign: 'testPre'
+        method: checkRoles.isRoles,
+        assign: 'isRoles'
       }],
       description: 'lay danh sach phong',
       tags: ['api'],

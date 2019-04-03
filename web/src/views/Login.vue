@@ -62,8 +62,17 @@
         this.$store.dispatch('auth/login', payload).then(res => {          
           if(res.isValid === true)
           {
-            toast.Success(`Xin chào ${res.credentials.userName}!`)
-            this.$router.push({path: '/admin'})
+            toast.Success(`Xin chào ${res.credentials.roles}: ${res.credentials.userInfo.tenNhanVien || res.credentials.userInfo.tenKhachThue}`)
+            if(res.credentials.roles === 'chủ trọ') {
+              this.$router.push({path: '/tong-quan.html'})
+            }
+            else if(res.credentials.roles === 'nhân viên') {
+              this.$router.push({path: '/danh-sach-phong.html'})
+            }
+            else {
+              this.$router.push({path: '/thong-tin-khach-thue.html'})
+            }
+            
           }
           else if (res.credentials === null)
           {

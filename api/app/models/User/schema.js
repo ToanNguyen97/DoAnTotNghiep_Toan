@@ -1,4 +1,5 @@
 'use strict'
+import {Schema} from 'mongoose'
 
 const schema = {
   userName: {
@@ -19,11 +20,16 @@ const schema = {
     default: true // true: active, false: inactive
   },
   roles: {
-    type: [{
-      type: String,
-      enum: [ 'user', 'staff', 'super-admin' ]
-    }],
-    default: ['user']
+    type: String,
+    enum: [ 'khách thuê', 'nhân viên', 'chủ trọ' ]
+  },
+  nhanVienID: {
+    type: Schema.Types.ObjectId,
+    ref: 'NhanVien'
+  },
+  khachThueID: {
+    type: Schema.Types.ObjectId,
+    ref: 'KhachThue'
   }
 }
 

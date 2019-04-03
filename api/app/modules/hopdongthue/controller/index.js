@@ -4,6 +4,8 @@ import Mongoose from 'mongoose'
 import Boom from 'boom'
 import Mail from '../../../lib/basemail/sendMail.js'
 import MailHopDong from '../../../lib/basemail/mailHopDong.js'
+import formatCharacter from '../../../lib/services/translateCharacter.js'
+import User from '../../user/controller/index.js'
 const HopDongThuePhong = Mongoose.model('HopDongThuePhong')
 const KhachThue = Mongoose.model('KhachThue')
 const Phong = Mongoose.model('Phong')
@@ -29,6 +31,16 @@ const save = async (request, h) => {
       khachThue.phongs = khachThue.phongs.filter(key => key != String(item.phongID))
       khachThue.phongs = [...khachThue.phongs, ...[item.phongID]]
       khachThue.tinhTrangKhachThue = "Đang thuê"
+      // tạo tài khoản sử dụng cho khách và tạm thời kích hoạt tài khoản, sau này check mail mới kích hoạt
+      let user = {
+        userName: formatCharacter(`${khachThue.hoKhachThue}${khachThue.tenKhachThue}${khachThue.soDienThoai}`),
+        passWord: khachThue.soDienThoai,
+        email: khachThue.email,
+        status: true,
+        roles: 'khách thuê',
+        khachThueID: khachThue._id
+      }
+      await User.createAccountKT(user)
       await khachThue.save()
       // cập nhật tình trạng phòng đã thuê
       let phong = await Phong.findById({_id: item.phongID}).populate('tinhTrangPhongID')
