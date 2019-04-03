@@ -219,6 +219,8 @@ const loader = exports.loader = async function (server) {
     __webpack_require__(/*! ../models/PhieuTraPhong/model */ "./app/models/PhieuTraPhong/model.js");
 
     __webpack_require__(/*! ../models/User/model */ "./app/models/User/model.js");
+
+    __webpack_require__(/*! ../models/NhanVien/model */ "./app/models/NhanVien/model.js");
     /* Load Modules */
 
 
@@ -235,6 +237,7 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/ctphieuthutien */ "./app/modules/ctphieuthutien/index.js"));
     modules.push(__webpack_require__(/*! ../modules/phieutraphong */ "./app/modules/phieutraphong/index.js"));
     modules.push(__webpack_require__(/*! ../modules/user */ "./app/modules/user/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/nhanvien */ "./app/modules/nhanvien/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -1145,6 +1148,107 @@ const schema = {
 };
 const options = {
   collections: 'loaiphongs'
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/models/NhanVien/model.js":
+/*!**************************************!*\
+  !*** ./app/models/NhanVien/model.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema */ "./app/models/NhanVien/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const nhanVienSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('NhanVien', nhanVienSchema);
+
+/***/ }),
+
+/***/ "./app/models/NhanVien/schema.js":
+/*!***************************************!*\
+  !*** ./app/models/NhanVien/schema.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const schema = {
+  hoNhanVien: {
+    type: String,
+    required: true,
+    max: 30
+  },
+  tenNhanVien: {
+    type: String,
+    required: true,
+    max: 20
+  },
+  anhDaiDien: {
+    type: String,
+    required: true
+  },
+  ngaySinh: {
+    type: Date,
+    required: true
+  },
+  gioiTinh: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+  soCMND: {
+    type: String,
+    required: true,
+    max: 11
+  },
+  soDienThoai: {
+    type: String,
+    max: 11
+  },
+  hoTenNguoiThan: {
+    type: String,
+    max: 50
+  },
+  diaChi: {
+    type: String,
+    required: true,
+    max: 80
+  },
+  ChucVu: {
+    type: String,
+    required: true,
+    max: 30
+  },
+  email: String,
+  status: {
+    type: Boolean,
+    default: true
+  }
+};
+const options = {
+  collection: 'nhanviens'
 };
 exports.schema = schema;
 exports.options = options;
@@ -3518,6 +3622,264 @@ exports.default = { ...LoaiPhongVal
 
 /***/ }),
 
+/***/ "./app/modules/nhanvien/controller/index.js":
+/*!**************************************************!*\
+  !*** ./app/modules/nhanvien/controller/index.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const fs = __webpack_require__(/*! fs */ "fs");
+
+const NhanVien = _mongoose2.default.model('NhanVien');
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = {};
+
+    if (!data._id) {
+      let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
+      fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+        return err;
+      });
+      data.anhDaiDien = data.anhDaiDien.name;
+      item = new NhanVien(data);
+    } else {
+      if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
+        item = await NhanVien.findById({
+          _id: data._id
+        });
+        data.anhDaiDien = item.anhDaiDien;
+        item = Object.assign(item, data);
+      } else {
+        let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
+        fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+          return err;
+        });
+        data.anhDaiDien = data.anhDaiDien.name;
+        item = await NhanVien.findById({
+          _id: data._id
+        });
+        item = Object.assign(item, data);
+      }
+    }
+
+    await item.save();
+
+    let nhanVien = (await NhanVien.findById({
+      _id: item._id
+    })) || _boom2.default.notFound();
+
+    return nhanVien;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const getAll = async (request, h) => {
+  try {
+    return (await NhanVien.find()) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  save,
+  getAll
+};
+
+/***/ }),
+
+/***/ "./app/modules/nhanvien/index.js":
+/*!***************************************!*\
+  !*** ./app/modules/nhanvien/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index.js */ "./app/modules/nhanvien/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = "nhan-vien-app";
+
+/***/ }),
+
+/***/ "./app/modules/nhanvien/routes/index.js":
+/*!**********************************************!*\
+  !*** ./app/modules/nhanvien/routes/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index */ "./app/modules/nhanvien/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/nhanvien/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/nhanvien',
+  handler: _index2.default.getAll,
+  config: {
+    tags: ['api'],
+    description: 'lay danh sach nhan vien',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/nhanvien',
+  handler: _index2.default.save,
+  config: {
+    description: 'them va sua nhan vien',
+    tags: ['api'],
+    validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/nhanvien/validate/index.js":
+/*!************************************************!*\
+  !*** ./app/modules/nhanvien/validate/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const Joi = __webpack_require__(/*! joi */ "joi");
+
+Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
+const nhanVienVal = {
+  save: {
+    payload: {
+      _id: Joi.string().length(24),
+      hoNhanVien: Joi.string().required().max(30),
+      tenNhanVien: Joi.string().required().max(20),
+      anhDaiDien: Joi.object(),
+      ngaySinh: Joi.date().required(),
+      gioiTinh: Joi.boolean().required(),
+      soCMND: Joi.string().required().max(11),
+      soDienThoai: Joi.string().required().max(11),
+      hoTenNguoiThan: Joi.string().required().max(50),
+      diaChi: Joi.string().required().max(80),
+      ChucVu: Joi.string().required().max(30),
+      email: Joi.string().email(),
+      status: Joi.boolean().default(true)
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
+  put: {
+    payload: {
+      _id: Joi.string().length(24),
+      hoNhanVien: Joi.string().required().max(30),
+      tenNhanVien: Joi.string().required().max(20),
+      anhDaiDien: Joi.string(),
+      ngaySinh: Joi.date().required(),
+      gioiTinh: Joi.boolean().required(),
+      soCMND: Joi.string().required().max(11),
+      soDienThoai: Joi.string().required().max(11),
+      hoTenNguoiThan: Joi.string().required().max(50),
+      diaChi: Joi.string().required().max(80),
+      ChucVu: Joi.string().required().max(30),
+      email: Joi.string().email(),
+      status: Joi.boolean().default(true)
+    },
+    params: {
+      id: Joi.string().length(24)
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
+  get: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  },
+  delete: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  },
+  getByDT: {
+    params: {
+      sdt: Joi.string().required()
+    }
+  }
+};
+exports.default = { ...nhanVienVal
+};
+
+/***/ }),
+
 /***/ "./app/modules/phieuthutien/controller/index.js":
 /*!******************************************************!*\
   !*** ./app/modules/phieuthutien/controller/index.js ***!
@@ -4462,7 +4824,7 @@ const testPre = (request, h) => {
     let getRolesAllow = ['super-admin', 'staff'];
     let roles = request.auth.credentials.credentials.roles;
 
-    if (!getRolesAllow.some(item => roles.includes(item))) {
+    if (getRolesAllow.some(item => roles.includes(item))) {
       return true;
     } else {
       return false;

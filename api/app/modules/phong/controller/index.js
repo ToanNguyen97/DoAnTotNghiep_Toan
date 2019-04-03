@@ -176,7 +176,7 @@ const testPre = (request, h) => {
   try {
     let getRolesAllow = ['super-admin','staff']
     let roles = request.auth.credentials.credentials.roles
-    if(!getRolesAllow.some(item => roles.includes(item)))
+    if(getRolesAllow.some(item => roles.includes(item)))
     {
       return true
     }

@@ -26,33 +26,74 @@
       </v-toolbar>
       <v-list class="pt-0" dense>
         <hr class="white"/>
-        <v-list-tile v-if="showDashboard()">
-          <v-list-tile-content>
-            <v-list-tile-title >Hien thi</v-list-tile-title>
-          </v-list-tile-content>
-          <v-list-tile-action>
-            <v-icon >chat_bubble</v-icon>
+        <v-list-tile v-if="showDashboard()" :to="'/danh-sach-khach-thue.html'" >
+           <v-list-tile-action>
+            <v-icon>insert_chart_outlined</v-icon>
           </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Biểu Đồ</v-list-tile-title>
+          </v-list-tile-content>        
+        </v-list-tile>
+        <v-list-tile v-if="showRoom()" :to="'/danh-sach-phong.html'" >
+           <v-list-tile-action>
+            <v-icon>account_balance</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Phòng Trọ</v-list-tile-title>
+          </v-list-tile-content>        
+        </v-list-tile>
+        <v-list-tile v-if="showCustomer()" :to="'/danh-sach-khach-thue.html'" >
+           <v-list-tile-action>
+            <v-icon>people_outline</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Khách Thuê</v-list-tile-title>
+          </v-list-tile-content>        
+        </v-list-tile>
+        <v-list-tile v-if="showContract()" :to="'/danh-sach-hop-dong-thue-phong.html'" >
+           <v-list-tile-action>
+            <v-icon>event_note</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Hợp Đồng</v-list-tile-title>
+          </v-list-tile-content>        
+        </v-list-tile>
+        <v-list-tile v-if="showBill()" :to="'/phieu-thu-tien-phong.html'" >
+           <v-list-tile-action>
+            <v-icon>monetization_on</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Phiếu Thu Tiền</v-list-tile-title>
+          </v-list-tile-content>        
+        </v-list-tile>
+        <v-list-tile v-if="showLayoutKhach()" :to="'/thong-tin-khach-thue.html'" >
+           <v-list-tile-action>
+            <v-icon>far fa-address-card</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Thông tin cá nhân</v-list-tile-title>
+          </v-list-tile-content>        
+        </v-list-tile>
+        <v-list-tile v-if="showNhanVien()" :to="'/danh-sach-nhan-vien.html'" >
+           <v-list-tile-action>
+            <v-icon>fas fa-users</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Danh sách nhân viên</v-list-tile-title>
+          </v-list-tile-content>        
         </v-list-tile>
         <v-list-group
-            v-for="item in menus"
-            :key="item.title"
-            v-model="item.active"
-            :prepend-icon="item.action"
-            
-          >
-            <template v-slot:activator>
-              <v-list-tile :to="item.link">
-                <v-list-tile-content>
-                  <v-list-tile-title class="fonttext">{{ item.title }}</v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-            </template>
-            <v-list-tile
-              v-for="subItem in item.items"
-              :key="subItem.title"
-              :to="subItem.link"         
-            >
+          prepend-icon="add_to_queue"
+          v-if="showStatistical()"
+        >
+          <template v-slot:activator>
+            <v-list-tile >
+              <v-list-tile-content>
+                <v-list-tile-title class="fonttext">Thống Kê</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
+            <v-list-tile v-for="subItem in itemsTK" :key="subItem.title"  :to="subItem.link">
             <v-list-tile-content>
                 <template slot="activator">
                   <v-list-tile-title class="colortext">{{subItem.title }}</v-list-tile-title>
@@ -63,7 +104,30 @@
                 <v-icon dark>{{ subItem.icon }}</v-icon>
               </v-list-tile-action>
             </v-list-tile>
-          </v-list-group>
+        </v-list-group>
+        <v-list-group
+          v-if="showSetUp()"
+          prepend-icon="settings"
+        >
+          <template v-slot:activator>
+            <v-list-tile >
+              <v-list-tile-content>
+                <v-list-tile-title class="fonttext">Cấu hình</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </template>
+            <v-list-tile v-for="subItem in itemsSetup" :key="subItem.title"  :to="subItem.link">
+            <v-list-tile-content>
+                <template slot="activator">
+                  <v-list-tile-title class="colortext">{{subItem.title }}</v-list-tile-title>
+                </template>
+                <span>{{ subItem.title }}</span>                                       
+            </v-list-tile-content>
+              <v-list-tile-action>
+                <v-icon dark>{{ subItem.icon }}</v-icon>
+              </v-list-tile-action>
+            </v-list-tile>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
   </div>
