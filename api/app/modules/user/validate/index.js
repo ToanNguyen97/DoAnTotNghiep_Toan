@@ -17,6 +17,11 @@ const userVal = {
       userName: Joi.string().required().max(30),
       passWord: Joi.string().required()
     }
+  },
+  backup: {
+    payload: {
+      namefolder: Joi.string().required()
+    }
   }
 }
 

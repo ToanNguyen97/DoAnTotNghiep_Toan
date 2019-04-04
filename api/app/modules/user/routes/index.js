@@ -51,5 +51,39 @@ export default [
         }
       }
     }
+  },
+  {
+    method: 'POST',
+    path: '/backup',
+    handler: UserController.backup,
+    config: {
+      auth: false,
+      description: 'sao lưu',
+      validate: UserVal.backup,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
+    path: '/restore',
+    handler: UserController.restore,
+    config: {
+      auth: false,
+      description: 'phục hồi',
+      validate: UserVal.backup,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
   }
 ]

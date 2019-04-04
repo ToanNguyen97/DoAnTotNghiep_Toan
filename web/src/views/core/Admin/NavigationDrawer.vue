@@ -97,7 +97,7 @@
             <v-list-tile v-for="subItem in itemsTK" :key="subItem.title"  :to="subItem.link">
             <v-list-tile-content>
                 <template slot="activator">
-                  <v-list-tile-title class="colortext">{{subItem.title }}</v-list-tile-title>
+                  <v-list-tile-title  class="colortext">{{subItem.title }}</v-list-tile-title>
                 </template>
                 <span>{{ subItem.title }}</span>                                       
             </v-list-tile-content>
@@ -117,20 +117,32 @@
               </v-list-tile-content>
             </v-list-tile>
           </template>
-            <v-list-tile v-for="subItem in itemsSetup" :key="subItem.title"  :to="subItem.link">
+            <v-list-tile @click="openBackup()" >
             <v-list-tile-content>
                 <template slot="activator">
-                  <v-list-tile-title class="colortext">{{subItem.title }}</v-list-tile-title>
+                  <v-list-tile-title  class="colortext">Sao lưu</v-list-tile-title>
                 </template>
-                <span>{{ subItem.title }}</span>                                       
+                <span>Sao lưu</span>                                       
             </v-list-tile-content>
               <v-list-tile-action>
-                <v-icon dark>{{ subItem.icon }}</v-icon>
+                <v-icon dark>settings_power</v-icon>
+              </v-list-tile-action>
+            </v-list-tile>
+            <v-list-tile @click="openRestore()" >
+            <v-list-tile-content>
+                <template slot="activator">
+                  <v-list-tile-title  class="colortext">Phục hồi</v-list-tile-title>
+                </template>
+                <span>Phục hồi</span>                                       
+            </v-list-tile-content>
+              <v-list-tile-action>
+                <v-icon dark>settings_backup_restore</v-icon>
               </v-list-tile-action>
             </v-list-tile>
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
+    <popupBackup v-model="open" :restore="isRestore"/>
   </div>
 </template>
 

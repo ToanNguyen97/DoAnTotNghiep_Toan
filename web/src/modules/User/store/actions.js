@@ -38,8 +38,19 @@ const getUser = async ({commit}) => {
   }
 }
 
+const backup = async (context,namefolder) => {
+  let {data} = await axios.post('http://localhost:3003/api/backup',{namefolder})
+  return data
+}
+
+const restore = async (context, namefolder) => {
+  let {data} = await axios.post('http://localhost:3003/api/restore',{namefolder})
+  return data
+}
 export default {
   login,
   logout,
-  getUser
+  getUser,
+  backup,
+  restore
 }

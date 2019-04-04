@@ -4,6 +4,8 @@ const Boom = require('boom')
 const User = Mongoose.model('User')
 const Jwt = require('jsonwebtoken')
 const Aguid = require('aguid')
+const cmd = require('node-cmd')
+const moment = require('moment')
 const SALT_LENGTH= 10
 const signin = async (request, h) => {
   try {
@@ -119,14 +121,36 @@ const getUser = async (request, h) => {
     let userInfo = request.auth.credentials.credentials
     return userInfo
   } catch (err) {
-
+    return err
   }
 }
 
+// sao luu 
+const backup = async (request, h) => {
+  try {
+    let filename = 'QuanLyPhongTro-'+request.payload.namefolder + '-' + moment(new Date()).format('DD-MM-YYYY')
+    cmd.run(`mongodump --out F:/DoAnTotNghiep/${request.payload.namefolder}/${filename} --db QuanLyPhongTro_57130724`);
+    return true
+  } catch (err) {
+    return err
+  }
+}
+
+// phục hồi
+const restore = async (request, h) => {
+  try {
+    cmd.run(`mongorestore --port 27017 F:/DoAnTotNghiep/Backup/${request.payload.namefolder}`)
+    return true
+  } catch (err) {
+    return err
+  }
+}
 export default {
   signin,
   login,
   getUser,
   createAccountNV,
-  createAccountKT
+  createAccountKT,
+  backup,
+  restore
 }

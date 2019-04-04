@@ -5613,6 +5613,10 @@ const Jwt = __webpack_require__(/*! jsonwebtoken */ "jsonwebtoken");
 
 const Aguid = __webpack_require__(/*! aguid */ "aguid");
 
+const cmd = __webpack_require__(/*! node-cmd */ "node-cmd");
+
+const moment = __webpack_require__(/*! moment */ "moment");
+
 const SALT_LENGTH = 10;
 
 const signin = async (request, h) => {
@@ -5782,7 +5786,30 @@ const getUser = async (request, h) => {
   try {
     let userInfo = request.auth.credentials.credentials;
     return userInfo;
-  } catch (err) {}
+  } catch (err) {
+    return err;
+  }
+}; // sao luu 
+
+
+const backup = async (request, h) => {
+  try {
+    let filename = 'QuanLyPhongTro-' + request.payload.namefolder + '-' + moment(new Date()).format('DD-MM-YYYY');
+    cmd.run(`mongodump --out F:/DoAnTotNghiep/${request.payload.namefolder}/${filename} --db QuanLyPhongTro_57130724`);
+    return true;
+  } catch (err) {
+    return err;
+  }
+}; // phục hồi
+
+
+const restore = async (request, h) => {
+  try {
+    cmd.run(`mongorestore --port 27017 F:/DoAnTotNghiep/Backup/${request.payload.namefolder}`);
+    return true;
+  } catch (err) {
+    return err;
+  }
 };
 
 exports.default = {
@@ -5790,7 +5817,9 @@ exports.default = {
   login,
   getUser,
   createAccountNV,
-  createAccountKT
+  createAccountKT,
+  backup,
+  restore
 };
 
 /***/ }),
@@ -5902,6 +5931,46 @@ exports.default = [{
       }
     }
   }
+}, {
+  method: 'POST',
+  path: '/backup',
+  handler: _index2.default.backup,
+  config: {
+    auth: false,
+    description: 'sao lưu',
+    validate: _index4.default.backup,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/restore',
+  handler: _index2.default.restore,
+  config: {
+    auth: false,
+    description: 'phục hồi',
+    validate: _index4.default.backup,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
 }];
 
 /***/ }),
@@ -5938,6 +6007,11 @@ const userVal = {
       userName: Joi.string().required().max(30),
       passWord: Joi.string().required()
     }
+  },
+  backup: {
+    payload: {
+      namefolder: Joi.string().required()
+    }
   }
 };
 exports.default = { ...userVal
@@ -5952,7 +6026,7 @@ exports.default = { ...userVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","nodemailer":"^5.1.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongodb-backup":"^1.6.9","mongodb-restore":"^1.6.2","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","node-cmd":"^3.0.0","nodemailer":"^5.1.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 
@@ -6174,6 +6248,17 @@ module.exports = require("mongoose");
 /***/ (function(module, exports) {
 
 module.exports = require("mongoose-paginate");
+
+/***/ }),
+
+/***/ "node-cmd":
+/*!***************************!*\
+  !*** external "node-cmd" ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("node-cmd");
 
 /***/ }),
 

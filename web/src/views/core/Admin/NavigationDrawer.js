@@ -1,4 +1,8 @@
+import popupBackup from './popupBackup.vue'
 export default {
+  components:{
+    popupBackup
+  },
   props: {
     permission:"",
     User: Object,
@@ -17,13 +21,11 @@ export default {
         { title: 'Thống kê phiếu thu', icon: 'monetization_on' },
         { title: 'Thống kê phiếu trả phòng', icon: 'signal_cellular_no_sim' },
       ],
-      itemsSetup: [
-        { title: 'Sao lưu', icon: 'settings_power', color:'yellow' },
-        { title: 'Phục hồi', icon: 'settings_backup_restore' }
-      ],  
       drawer: true,
       isOpenMini: true,
-      right: null
+      right: null,
+      open: false,
+      isRestore: false
     }
   },  
   watch: {
@@ -41,6 +43,14 @@ export default {
   },
 
   methods: {
+    openBackup () {
+      this.open = true
+      this.isRestore = false
+    },
+    openRestore () {
+      this.open = true,
+      this.isRestore = true
+    },
     goToItem (path) {
       this.$router.push({path: path})
     },
