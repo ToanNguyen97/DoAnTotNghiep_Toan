@@ -125,7 +125,7 @@ const getUser = async (request, h) => {
   }
 }
 
-// sao luu 
+// sao luu tesst sao luu
 const backup = async (request, h) => {
   try {
     let filename = 'QuanLyPhongTro-'+request.payload.namefolder + '-' + moment(new Date()).format('DD-MM-YYYY')
