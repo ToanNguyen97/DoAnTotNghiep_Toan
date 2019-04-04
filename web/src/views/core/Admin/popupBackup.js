@@ -41,11 +41,13 @@ export default {
         if(this.restore === false) {
           this.$store.dispatch('auth/backup', this.namefolder).then(() => {
             toast.Success('Sao lưu thành công!')
+            this.Huy()
           })
         }
         else if(this.restore === true) {
           this.$store.dispatch('auth/restore', this.namefolder).then(() => {
             toast.Success('Phục hồi thành công!')
+            this.Huy()
           })
         }       
       }
