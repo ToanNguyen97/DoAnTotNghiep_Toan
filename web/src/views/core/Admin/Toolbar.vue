@@ -47,11 +47,15 @@
         </v-list>
         <v-divider></v-divider>
         <v-list>
-          <v-list-tile v-for="item in items" :key="item.name">
-            <v-list-tile-action>
-               <v-icon left>{{item.icon}}</v-icon> 
+          <v-list-tile class="pl-2">
+            <v-list-tile-action >
+              <v-btn flat color="pink" ><v-icon color="pink" left>fas fa-user-edit</v-icon>Cập nhật cá nhân</v-btn>
             </v-list-tile-action>
-            <router-link :to="item.path" style="text-decoration:none;"><v-list-tile-title>{{item.name}}</v-list-tile-title></router-link>
+          </v-list-tile>
+          <v-list-tile class="pl-2">
+            <v-list-tile-action >
+              <v-btn flat color="green accent-4" @click="OpenPopupUser" ><v-icon color="green accent-4" left>fas fa-user-shield</v-icon>Cập nhật tài khoản</v-btn>
+            </v-list-tile-action>
           </v-list-tile>
           <v-divider></v-divider>
           <div style="display:flex;justify-content:center;">
@@ -66,9 +70,7 @@
     
   </v-toolbar>
   <NavigationDrawer @input="input" v-if="user" :permission="user && user.roles" :User="user && user.userInfo" :mini="mini" :check="check" />
-  <!-- <v-navigation-drawer v-model="drawer" >
-    <p>test</p>
-  </v-navigation-drawer> -->
+  <popupUser v-model="openPopUser"/>
 </nav>
 </template>
 

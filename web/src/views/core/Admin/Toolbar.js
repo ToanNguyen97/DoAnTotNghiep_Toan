@@ -1,22 +1,21 @@
 import NavigationDrawer from '@/views/core/Admin/NavigationDrawer.vue'
+import popupUser from '@/views/core/Admin/popupEditUser.vue'
 
 export default {
   components: {
-    NavigationDrawer
+    NavigationDrawer,
+    popupUser
   },
   data () {
     return {
       user: {},
+      openPopUser:false,
       fav: true,
       menu: false,
       hints: true,
       mini: true,
       check: true,
       icon: 'format_list_bulleted',
-      items: [
-        {name: 'About me', icon: 'people', path: '/about'},
-        {name: 'Cập nhật', icon: 'edit', path: '/login'},
-      ]
     }
   },
   created() {
@@ -46,6 +45,9 @@ export default {
       this.$store.dispatch('auth/logout').then(() => {
         this.$router.push({path:'/login'})
       })
+    },
+    OpenPopupUser () {
+      this.openPopUser = true
     }
   }
 }
