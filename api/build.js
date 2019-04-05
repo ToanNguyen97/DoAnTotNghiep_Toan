@@ -4109,7 +4109,7 @@ const HopDongThue = _mongoose2.default.model('HopDongThuePhong');
 const getAll = async (request, h) => {
   try {
     if (request.pre.isRoles) {
-      return await PhieuThuTien.find().populate('phongID');
+      return await PhieuThuTien.find().populate(['phongID', 'dsCTPT']).lean();
     } else {
       return h.response({
         message: 'Not allowed'
