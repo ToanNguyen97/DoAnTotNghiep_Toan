@@ -75,6 +75,14 @@
             <v-list-tile-title class="fonttext">Thông tin cá nhân</v-list-tile-title>
           </v-list-tile-content>        
         </v-list-tile>
+        <v-list-tile v-if="showLayoutKhach()" :to="'/thong-tin-phong-dang-thue.html'" >
+           <v-list-tile-action>
+            <v-icon>fas fa-store-alt</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Thông tin phòng thuê</v-list-tile-title>
+          </v-list-tile-content>        
+        </v-list-tile>
         <v-list-tile v-if="showNhanVien()" :to="'/danh-sach-nhan-vien.html'" >
            <v-list-tile-action>
             <v-icon>fas fa-users</v-icon>
@@ -107,7 +115,7 @@
             </v-list-tile>
         </v-list-group>
         <v-list-group
-         
+         v-if="showSetUp()"
           prepend-icon="settings"
         >
           <template v-slot:activator>

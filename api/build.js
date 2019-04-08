@@ -5775,8 +5775,7 @@ const login = async (request, h) => {
           isValid
         });
         response.header("Authorization", token);
-        response.state("token", token, global.CONFIG.get('web.cookieOptions')); // console.log('response',response)
-
+        response.state("token", token, global.CONFIG.get('web.cookieOptions'));
         return response;
       } else {
         return {
@@ -5806,7 +5805,6 @@ const editUser = async (request, h) => {
   try {
     // chưa check trùng tài khoản
     let data = request.payload;
-    console.log(data);
     let user = {}; // nếu tài khoản cập nhật là khách
 
     if (data.khachThueID) {
@@ -5823,7 +5821,7 @@ const editUser = async (request, h) => {
           passWord: newpass,
           email: data.email,
           status: user.status,
-          roles: status.roles,
+          roles: user.roles,
           khachThueID: data.khachThueID
         };
         user = Object.assign(user, newUser);
@@ -5842,7 +5840,6 @@ const editUser = async (request, h) => {
 
 
     if (data.nhanVienID) {
-      console.log('vao day');
       user = await User.findOne({
         nhanVienID: data.nhanVienID
       });
@@ -5893,7 +5890,6 @@ const backup = async (request, h) => {
 
 const restore = async (request, h) => {
   try {
-    console.log(request.payload.namefolder);
     cmd.run(`mongorestore --port 27017 F:/DoAnTotNghiep/Backup/${request.payload.namefolder}`);
     return true;
   } catch (err) {
