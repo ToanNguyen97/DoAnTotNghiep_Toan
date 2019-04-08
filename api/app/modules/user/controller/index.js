@@ -125,6 +125,67 @@ const getUser = async (request, h) => {
   }
 }
 
+// cập nhật tài khoản
+
+const editUser = async (request, h) => {
+  try {
+    // chưa check trùng tài khoản
+    let data = request.payload
+    console.log(data)
+    let user = {}
+    // nếu tài khoản cập nhật là khách
+    if(data.khachThueID) {
+      user = await User.findOne({khachThueID: data.khachThueID})
+      let isPassword = await Bcrypt.compare(data.oldPass, user.passWord)
+      let newpass = Bcrypt.hashSync(data.newPass,SALT_LENGTH)
+      if(isPassword === true) {
+        let newUser = {
+          _id: user._id,
+          userName: data.userName,
+          passWord: newpass,
+          email: data.email,
+          status: user.status,
+          roles: status.roles,
+          khachThueID: data.khachThueID
+        }
+        user = Object.assign(user,newUser)
+        await user.save()
+        return {user,isPassword}
+      }
+      else {
+        return {user,isPassword}
+      }
+    }
+    // nếu tài khoản cập nhật là nhân viên
+    if(data.nhanVienID) {
+      console.log('vao day')
+      user = await User.findOne({nhanVienID: data.nhanVienID})
+      let isPassword = await Bcrypt.compare(data.oldPass, user.passWord)
+      let newpass = Bcrypt.hashSync(data.newPass,SALT_LENGTH)
+      if(isPassword === true) {
+        let newUser = {
+          _id: user._id,
+          userName: data.userName,
+          passWord: newpass,
+          email: data.email,
+          status: user.status,
+          roles: user.roles,
+          nhanVienID: data.nhanVienID
+        } 
+        user = Object.assign(user,newUser)
+        await user.save()
+        return {user,isPassword}
+      }
+      else {
+        return {user,isPassword}
+      }
+    }
+    return false
+  } catch (err) {
+    return err
+  }
+}
+
 // sao luu tesst sao luu
 const backup = async (request, h) => {
   try {
@@ -139,6 +200,7 @@ const backup = async (request, h) => {
 // phục hồi
 const restore = async (request, h) => {
   try {
+    console.log(request.payload.namefolder)
     cmd.run(`mongorestore --port 27017 F:/DoAnTotNghiep/Backup/${request.payload.namefolder}`)
     return true
   } catch (err) {
@@ -149,6 +211,7 @@ export default {
   signin,
   login,
   getUser,
+  editUser,
   createAccountNV,
   createAccountKT,
   backup,

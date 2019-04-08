@@ -22,6 +22,20 @@ const userVal = {
     payload: {
       namefolder: Joi.string().required()
     }
+  },
+  edit: {
+    payload: {
+      userName: Joi.string().required().max(30),
+      email: Joi.string().email().required(),
+      oldPass: Joi.string().required(),
+      newPass: Joi.string().required(),
+      xacNhan: Joi.string().required(),
+      khachThueID: Joi.string(),
+      nhanVienID: Joi.string()
+    },
+    options: {
+      allowUnknown: true
+    }
   }
 }
 

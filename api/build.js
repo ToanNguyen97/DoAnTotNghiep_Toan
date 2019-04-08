@@ -2333,6 +2333,8 @@ const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong');
 
 const KhachThue = _mongoose2.default.model('KhachThue');
 
+const User = _mongoose2.default.model('User');
+
 const Phong = _mongoose2.default.model('Phong'); //import translateCharacter from '../../../lib/services/translateCharacter.js'
 
 
@@ -2359,17 +2361,25 @@ const save = async (request, h) => {
 
       khachThue.phongs = khachThue.phongs.filter(key => key != String(item.phongID));
       khachThue.phongs = [...khachThue.phongs, ...[item.phongID]];
-      khachThue.tinhTrangKhachThue = "Đang thuê"; // tạo tài khoản sử dụng cho khách và tạm thời kích hoạt tài khoản, sau này check mail mới kích hoạt
+      khachThue.tinhTrangKhachThue = "Đang thuê"; // check xem khách này là có tài khoản hay chưa
 
-      let user = {
-        userName: (0, _translateCharacter2.default)(`${khachThue.hoKhachThue}${khachThue.tenKhachThue}${khachThue.soDienThoai}`),
-        passWord: khachThue.soDienThoai,
-        email: khachThue.email,
-        status: true,
-        roles: 'khách thuê',
+      let checkHasUser = await User.findOne({
         khachThueID: khachThue._id
-      };
-      await _index2.default.createAccountKT(user);
+      });
+
+      if (!checkHasUser) {
+        // tạo tài khoản sử dụng cho khách và tạm thời kích hoạt tài khoản, sau này check mail mới kích hoạt
+        let user = {
+          userName: (0, _translateCharacter2.default)(`${khachThue.hoKhachThue}${khachThue.tenKhachThue}${khachThue.soDienThoai}`),
+          passWord: khachThue.soDienThoai,
+          email: khachThue.email,
+          status: true,
+          roles: 'khách thuê',
+          khachThueID: khachThue._id
+        };
+        await _index2.default.createAccountKT(user);
+      }
+
       await khachThue.save(); // cập nhật tình trạng phòng đã thuê
 
       let phong = await Phong.findById({
@@ -5789,6 +5799,84 @@ const getUser = async (request, h) => {
   } catch (err) {
     return err;
   }
+}; // cập nhật tài khoản
+
+
+const editUser = async (request, h) => {
+  try {
+    // chưa check trùng tài khoản
+    let data = request.payload;
+    console.log(data);
+    let user = {}; // nếu tài khoản cập nhật là khách
+
+    if (data.khachThueID) {
+      user = await User.findOne({
+        khachThueID: data.khachThueID
+      });
+      let isPassword = await Bcrypt.compare(data.oldPass, user.passWord);
+      let newpass = Bcrypt.hashSync(data.newPass, SALT_LENGTH);
+
+      if (isPassword === true) {
+        let newUser = {
+          _id: user._id,
+          userName: data.userName,
+          passWord: newpass,
+          email: data.email,
+          status: user.status,
+          roles: status.roles,
+          khachThueID: data.khachThueID
+        };
+        user = Object.assign(user, newUser);
+        await user.save();
+        return {
+          user,
+          isPassword
+        };
+      } else {
+        return {
+          user,
+          isPassword
+        };
+      }
+    } // nếu tài khoản cập nhật là nhân viên
+
+
+    if (data.nhanVienID) {
+      console.log('vao day');
+      user = await User.findOne({
+        nhanVienID: data.nhanVienID
+      });
+      let isPassword = await Bcrypt.compare(data.oldPass, user.passWord);
+      let newpass = Bcrypt.hashSync(data.newPass, SALT_LENGTH);
+
+      if (isPassword === true) {
+        let newUser = {
+          _id: user._id,
+          userName: data.userName,
+          passWord: newpass,
+          email: data.email,
+          status: user.status,
+          roles: user.roles,
+          nhanVienID: data.nhanVienID
+        };
+        user = Object.assign(user, newUser);
+        await user.save();
+        return {
+          user,
+          isPassword
+        };
+      } else {
+        return {
+          user,
+          isPassword
+        };
+      }
+    }
+
+    return false;
+  } catch (err) {
+    return err;
+  }
 }; // sao luu tesst sao luu
 
 
@@ -5805,6 +5893,7 @@ const backup = async (request, h) => {
 
 const restore = async (request, h) => {
   try {
+    console.log(request.payload.namefolder);
     cmd.run(`mongorestore --port 27017 F:/DoAnTotNghiep/Backup/${request.payload.namefolder}`);
     return true;
   } catch (err) {
@@ -5816,6 +5905,7 @@ exports.default = {
   signin,
   login,
   getUser,
+  editUser,
   createAccountNV,
   createAccountKT,
   backup,
@@ -5933,6 +6023,25 @@ exports.default = [{
   }
 }, {
   method: 'POST',
+  path: '/editUser',
+  handler: _index2.default.editUser,
+  config: {
+    description: 'cập nhật tài khoản',
+    validate: _index4.default.edit,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
   path: '/backup',
   handler: _index2.default.backup,
   config: {
@@ -6011,6 +6120,20 @@ const userVal = {
   backup: {
     payload: {
       namefolder: Joi.string().required()
+    }
+  },
+  edit: {
+    payload: {
+      userName: Joi.string().required().max(30),
+      email: Joi.string().email().required(),
+      oldPass: Joi.string().required(),
+      newPass: Joi.string().required(),
+      xacNhan: Joi.string().required(),
+      khachThueID: Joi.string(),
+      nhanVienID: Joi.string()
+    },
+    options: {
+      allowUnknown: true
     }
   }
 };

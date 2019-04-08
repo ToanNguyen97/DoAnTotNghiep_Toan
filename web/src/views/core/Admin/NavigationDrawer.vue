@@ -107,7 +107,7 @@
             </v-list-tile>
         </v-list-group>
         <v-list-group
-          v-if="showSetUp()"
+         
           prepend-icon="settings"
         >
           <template v-slot:activator>

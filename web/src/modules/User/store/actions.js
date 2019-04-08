@@ -38,6 +38,21 @@ const getUser = async ({commit}) => {
   }
 }
 
+const editUser = async({commit}, payload) => {
+  try {
+    let {data} = await axios.post('http://localhost:3003/api/editUser',payload)
+    if(data.user && data.isPassword === true) {
+      localStorage.removeItem('token')
+      delete axios.defaults.headers.common['Authorization']
+      commit('auth_logout')
+    }
+    return data
+  } catch (err) {
+    return err
+  }
+}
+
+
 const backup = async (context,namefolder) => {
   let {data} = await axios.post('http://localhost:3003/api/backup',{namefolder})
   return data
@@ -51,6 +66,7 @@ export default {
   login,
   logout,
   getUser,
+  editUser,
   backup,
   restore
 }

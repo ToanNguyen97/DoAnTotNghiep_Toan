@@ -27,7 +27,9 @@ export default {
     getfolder() {
       let files = this.$refs['file'].files[0]
       let namePath = files.webkitRelativePath.split('/')
+      console.log('vao day')
       this.namefolder = namePath[0]
+      console.log(this.namefolder)
     },
     chooseFile () {
       this.$refs['file'].click()

@@ -54,6 +54,22 @@ export default [
   },
   {
     method: 'POST',
+    path: '/editUser',
+    handler: UserController.editUser,
+    config: {
+      description: 'cập nhật tài khoản',
+      validate: UserVal.edit,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
     path: '/backup',
     handler: UserController.backup,
     config: {

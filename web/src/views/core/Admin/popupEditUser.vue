@@ -9,7 +9,7 @@
         <v-text-field outline v-model="formData.userName" append-icon="fas fa-id-card-alt" label="Tên tài khoản"></v-text-field>
       </v-flex>
       <v-flex md12>
-        <v-text-field outline v-model="formData.email" append-icon="email" label="Email"></v-text-field>
+        <v-text-field outline readonly v-model="formData.email" append-icon="email" label="Email"></v-text-field>
       </v-flex>
       <v-flex md12 v-if="!changePass">
          <v-checkbox
@@ -38,7 +38,7 @@
       </v-scale-transition>
     </v-card-text>
     <v-card-actions class="justify-center">
-      <v-btn color="success">Lưu</v-btn>
+      <v-btn color="success" @click="Luu">Lưu</v-btn>
       <v-btn color="amber" @click="Huy" dark>Đóng</v-btn>
     </v-card-actions>
   </v-card>
