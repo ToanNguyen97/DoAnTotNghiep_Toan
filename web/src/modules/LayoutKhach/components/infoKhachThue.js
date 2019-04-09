@@ -9,6 +9,7 @@ export default {
     }
   },
   created() {
+    this.infoKhach = this.$store.state.layoutkhach.khachThue
   },
   computed: {
     userInfo () {
@@ -22,6 +23,7 @@ export default {
     userInfo () {
       if(this.userInfo && this.userInfo._id) {
         this.infoKhach = _.cloneDeep(this.userInfo)
+        this.$store.dispatch('layoutkhach/getDetailKhach', this.infoKhach._id)
       }
     }
   },

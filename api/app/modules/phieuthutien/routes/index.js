@@ -38,6 +38,22 @@ export default [
     }
   },
   {
+    method: 'GET',
+    path: '/hoan-tat-thanh-toan-paypal',
+    handler: PhieuThuTienController.hoanTatPayPal,
+    config: {
+      tags: ['api'],
+      auth:false,
+      description: "hoàn tất giao dịch",
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'POST',
     path: '/phieuthutien',
     handler: PhieuThuTienController.save,
@@ -45,6 +61,22 @@ export default [
       tags: ['api'],
       description: 'them hoac sua phieu thu',
       validate: PhieuThuTienVal.save,
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
+    path: '/phieuthutien-thanhtoan',
+    handler: PhieuThuTienController.thanhToanPayPal,
+    config: {
+      tags: ['api'],
+      description: 'thanh toan paypal',
+      validate: PhieuThuTienVal.thanhtoan,
       plugins: {
         'hapi-swagger': {
           responses: {'400': {'description': 'Bad Request'}},

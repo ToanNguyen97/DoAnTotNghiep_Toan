@@ -1,13 +1,20 @@
-import Mongoose, { Schema } from 'mongoose'
+import Mongoose, { Schema, Promise } from 'mongoose'
 import Boom from 'boom'
 import moment from 'moment'
 import MailPhieuThuTien from '../../../lib/basemail/mailPhieuThuTien.js'
 import Mail from '../../../lib/basemail/sendMail.js'
+const paypal = require('paypal-rest-sdk')
+paypal.configure({
+  'mode': 'sandbox', //sandbox or live
+  'client_id': global.CONFIG.get('web.paypal.clientId'),
+  'client_secret': global.CONFIG.get('web.paypal.secretPayPal')
+});
 const PhieuThuTien = Mongoose.model('PhieuThuTien')
 const Phong = Mongoose.model('Phong')
 const CTPhieuThuTien = Mongoose.model('CTPhieuThuTien')
 const CacKhoanThu = Mongoose.model('CacKhoanThu')
 const HopDongThue = Mongoose.model('HopDongThuePhong')
+let TotalCTPT = 0
 const getAll = async (request, h) => {
   try {
     if(request.pre.isRoles) {
@@ -141,8 +148,101 @@ const sendMail = async (request, h) => {
     return Boom.forbidden(err)
   }
 }
+
+const thanhToanPayPal = async (request, h) => {
+  try {
+    let phieuthu = request.payload.phieuthuInfo
+    let name = `Phiếu thu tiền ${moment(phieuthu.ngayLap).format('DD/MM/YYYY')}`
+    let namePhong = phieuthu._id.substring(2,9)
+    let tongTien = phieuthu.dsCTPT.reduce((tongTien, x) => {
+      if(x.chiSoMoi && x.chiSoMoi >0) {
+        tongTien += (x.chiSoMoi - x.chiSoCu)* x.donGia
+      } else {
+        tongTien += x.donGia
+      }
+      return tongTien
+    },0)
+    let convertUSD = (tongTien/23000).toFixed(2) // tạm thời quy ước 1 đô 22000
+    TotalCTPT = convertUSD
+    var create_payment_json = {
+      "intent": "sale",
+      "payer": {
+          "payment_method": "paypal"
+      },
+      "redirect_urls": {
+          "return_url": "http://localhost:8080/success",
+          "cancel_url": "http://localhost:8080/cancel"
+      },
+      "transactions": [{
+          "item_list": {
+              "items": [{
+                  "name": name,
+                  "sku": phieuthu._id,
+                  "price": convertUSD,
+                  "currency": "USD",
+                  "quantity": 1
+              }]
+          },
+          "amount": {
+              "currency": "USD",
+              "total": convertUSD
+          },
+          "description": `Thanh toán hóa đơn ${namePhong}`
+      }]
+    }
+    return await processPaypal(create_payment_json)
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
+const processPaypal = (create_payment_json) => {
+  return new Promise(resolve => {
+    paypal.payment.create(create_payment_json, function (error, payment) {
+      if (error) {
+          throw error;
+      } else {
+          for(let i = 0; i < payment.links.length; i++) {
+            if(payment.links[i].rel === 'approval_url') {
+              return resolve(payment.links[i].href)
+            }
+          }
+      }
+    })
+  })
+}
+
+const hoanTatPayPal = async (request, h) => {
+  try {
+    const payerId = request.query.PayerID
+    const paymentId = request.query.paymentId
+    const execute_payment_json = {
+      "payer_id": payerId,
+      "transactions": [{
+          "amount": {
+              "currency": "USD",
+              "total": TotalCTPT
+          }
+      }]
+    };
+    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+      if (error) {
+          console.log(error.response);
+          throw error;
+      } else {
+          console.log("Success");
+      }
+    });
+    return true
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
 export default {
   getAll,
   save,
-  sendMail
+  sendMail,
+  thanhToanPayPal,
+  hoanTatPayPal
 }

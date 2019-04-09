@@ -31,6 +31,10 @@ config.web = {
   jwt: {
     secret: 'BbZJjyoXAdr8BUZUiKKARWimKfrSmQ6fv8kZ8OFfc'
   },
+  paypal: {
+    clientId: 'ARwGwhxb0Az-yi33FoBZzZRE6SAiGnIt5-VxcRJhLMXl4t_rDbKi4YLIJadR_6dH1q6W4DpmOoBjcvSw',
+    secretPayPal: 'EGHbYdkjuc889C3oadHkDSLyRNhxLP--VHd4KLnc0P3G-NzbTNNUZvvvxve3fpbJ6caC-TBeIydEZ67g'
+  },
   cookieOptions: {
     ttl: 365 * 24 * 60 * 60 * 1000, // expires a year from today
     encoding: 'none', // we already used JWT to encode

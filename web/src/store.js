@@ -7,12 +7,14 @@ import PhieuThuTien from './modules/PhieuThuTien/store/index'
 import PhieuTraPhong from './modules/PhieuTraPhong/store/index'
 import NhanVien from './modules/NhanVien/store/index'
 import Auth from './modules/User/store/index'
+import layOutKhach from './modules/LayoutKhach/store/index'
 import axios from 'axios';
 //khi f5 thi gán token cho axios để request ok
 const token = localStorage.getItem('token')
 if(token) {
   axios.defaults.headers.common['Authorization'] = token
 }
+
 
 Vue.use(Vuex)
 
@@ -24,6 +26,7 @@ export default new Vuex.Store({
     phieuthutien: PhieuThuTien,
     phieutraphong: PhieuTraPhong,
     auth: Auth,
-    nhanvien: NhanVien
+    nhanvien: NhanVien,
+    layoutkhach: layOutKhach
   }
 })

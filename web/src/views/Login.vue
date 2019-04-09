@@ -70,7 +70,7 @@
               this.$router.push({path: '/danh-sach-phong.html'})
             }
             else {
-              this.$router.push({path: '/thong-tin-khach-thue.html'})
+              this.$router.push({path: '/thong-tin-phong-dang-thue.html'})
             }
             
           }

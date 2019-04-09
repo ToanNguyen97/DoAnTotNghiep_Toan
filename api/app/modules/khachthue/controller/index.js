@@ -3,7 +3,7 @@ import Mongoose from 'mongoose'
 import Boom from 'boom'
 const fs = require('fs')
 const KhachThue = Mongoose.model('KhachThue')
-
+const Phong = Mongoose.model('Phong')
 const save = async (request, h) => {
   try {
    let data = request.payload
@@ -76,8 +76,21 @@ const search = async (request, h) => {
 
 const getByDT = async (request, h) => {
   try {
-
     return await KhachThue.find({soDienThoai: request.params.sdt}).populate('loaiKhachThueID') || Boom.notFound()
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
+const getByID = async (request, h) => {
+  try {
+    let khachThue =  await KhachThue.findById({_id: request.params.id}).populate('loaiKhachThueID') || Boom.notFound()
+    let dsPhong = []
+    for(let item of khachThue.phongs) {
+      let phong = await Phong.findById({_id:item}).populate(['loaiPhongID','khuPhongID','tinhTrangPhongID',{path: 'dsHopDong', populate:[{path:'khachThueID', populate:['loaiKhachThueID',]}]}, {path:'dsPhieuThu', populate:[{path:'dsCTPT', populate:['cacKhoanThuID']}]}]).lean()
+      dsPhong.push(phong)
+    }
+    return {khachThue,phong:dsPhong}
   } catch (err) {
     return Boom.forbidden(err)
   }
@@ -99,5 +112,6 @@ export default {
   deleteKhachThue,
   search,
   getByDT,
-  put
+  put,
+  getByID
 }

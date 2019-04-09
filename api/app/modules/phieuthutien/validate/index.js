@@ -19,6 +19,11 @@ const phieuThuTienVal = {
     params: {
       id: Joi.string()
     }
+  },
+  thanhtoan: {
+    payload: {
+      phieuthuInfo: Joi.object().required()
+    }
   }
 }
 

@@ -2651,6 +2651,8 @@ const fs = __webpack_require__(/*! fs */ "fs");
 
 const KhachThue = _mongoose2.default.model('KhachThue');
 
+const Phong = _mongoose2.default.model('Phong');
+
 const save = async (request, h) => {
   try {
     let data = request.payload;
@@ -2739,6 +2741,42 @@ const getByDT = async (request, h) => {
   }
 };
 
+const getByID = async (request, h) => {
+  try {
+    let khachThue = (await KhachThue.findById({
+      _id: request.params.id
+    }).populate('loaiKhachThueID')) || _boom2.default.notFound();
+
+    let dsPhong = [];
+
+    for (let item of khachThue.phongs) {
+      let phong = await Phong.findById({
+        _id: item
+      }).populate(['loaiPhongID', 'khuPhongID', 'tinhTrangPhongID', {
+        path: 'dsHopDong',
+        populate: [{
+          path: 'khachThueID',
+          populate: ['loaiKhachThueID']
+        }]
+      }, {
+        path: 'dsPhieuThu',
+        populate: [{
+          path: 'dsCTPT',
+          populate: ['cacKhoanThuID']
+        }]
+      }]).lean();
+      dsPhong.push(phong);
+    }
+
+    return {
+      khachThue,
+      phong: dsPhong
+    };
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 const put = async (request, h) => {
   try {
     let khachThue = await KhachThue.findById({
@@ -2757,7 +2795,8 @@ exports.default = {
   deleteKhachThue,
   search,
   getByDT,
-  put
+  put,
+  getByID
 };
 
 /***/ }),
@@ -2835,6 +2874,25 @@ exports.default = [{
   config: {
     tags: ['api'],
     validate: _index4.default.getByDT,
+    description: 'lay thong tin khach by so dien thoai',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/khachthue/id={id}',
+  handler: _index2.default.getByID,
+  config: {
+    tags: ['api'],
+    validate: _index4.default.get,
     description: 'lay thong tin khach by so dien thoai',
     plugins: {
       'hapi-swagger': {
@@ -4106,6 +4164,15 @@ var _sendMail2 = _interopRequireDefault(_sendMail);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+const paypal = __webpack_require__(/*! paypal-rest-sdk */ "paypal-rest-sdk");
+
+paypal.configure({
+  'mode': 'sandbox',
+  //sandbox or live
+  'client_id': global.CONFIG.get('web.paypal.clientId'),
+  'client_secret': global.CONFIG.get('web.paypal.secretPayPal')
+});
+
 const PhieuThuTien = _mongoose2.default.model('PhieuThuTien');
 
 const Phong = _mongoose2.default.model('Phong');
@@ -4115,6 +4182,8 @@ const CTPhieuThuTien = _mongoose2.default.model('CTPhieuThuTien');
 const CacKhoanThu = _mongoose2.default.model('CacKhoanThu');
 
 const HopDongThue = _mongoose2.default.model('HopDongThuePhong');
+
+let TotalCTPT = 0;
 
 const getAll = async (request, h) => {
   try {
@@ -4292,10 +4361,106 @@ const sendMail = async (request, h) => {
   }
 };
 
+const thanhToanPayPal = async (request, h) => {
+  try {
+    let phieuthu = request.payload.phieuthuInfo;
+    let name = `Phiếu thu tiền ${(0, _moment2.default)(phieuthu.ngayLap).format('DD/MM/YYYY')}`;
+
+    let namePhong = phieuthu._id.substring(2, 9);
+
+    let tongTien = phieuthu.dsCTPT.reduce((tongTien, x) => {
+      if (x.chiSoMoi && x.chiSoMoi > 0) {
+        tongTien += (x.chiSoMoi - x.chiSoCu) * x.donGia;
+      } else {
+        tongTien += x.donGia;
+      }
+
+      return tongTien;
+    }, 0);
+    let convertUSD = (tongTien / 23000).toFixed(2); // tạm thời quy ước 1 đô 22000
+
+    TotalCTPT = convertUSD;
+    var create_payment_json = {
+      "intent": "sale",
+      "payer": {
+        "payment_method": "paypal"
+      },
+      "redirect_urls": {
+        "return_url": "http://localhost:8080/success",
+        "cancel_url": "http://localhost:8080/cancel"
+      },
+      "transactions": [{
+        "item_list": {
+          "items": [{
+            "name": name,
+            "sku": phieuthu._id,
+            "price": convertUSD,
+            "currency": "USD",
+            "quantity": 1
+          }]
+        },
+        "amount": {
+          "currency": "USD",
+          "total": convertUSD
+        },
+        "description": `Thanh toán hóa đơn ${namePhong}`
+      }]
+    };
+    return await processPaypal(create_payment_json);
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const processPaypal = create_payment_json => {
+  return new _mongoose.Promise(resolve => {
+    paypal.payment.create(create_payment_json, function (error, payment) {
+      if (error) {
+        throw error;
+      } else {
+        for (let i = 0; i < payment.links.length; i++) {
+          if (payment.links[i].rel === 'approval_url') {
+            return resolve(payment.links[i].href);
+          }
+        }
+      }
+    });
+  });
+};
+
+const hoanTatPayPal = async (request, h) => {
+  try {
+    const payerId = request.query.PayerID;
+    const paymentId = request.query.paymentId;
+    const execute_payment_json = {
+      "payer_id": payerId,
+      "transactions": [{
+        "amount": {
+          "currency": "USD",
+          "total": TotalCTPT
+        }
+      }]
+    };
+    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+      if (error) {
+        console.log(error.response);
+        throw error;
+      } else {
+        console.log("Success");
+      }
+    });
+    return true;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   getAll,
   save,
-  sendMail
+  sendMail,
+  thanhToanPayPal,
+  hoanTatPayPal
 };
 
 /***/ }),
@@ -4394,6 +4559,25 @@ exports.default = [{
     }
   }
 }, {
+  method: 'GET',
+  path: '/hoan-tat-thanh-toan-paypal',
+  handler: _index2.default.hoanTatPayPal,
+  config: {
+    tags: ['api'],
+    auth: false,
+    description: "hoàn tất giao dịch",
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
   method: 'POST',
   path: '/phieuthutien',
   handler: _index2.default.save,
@@ -4401,6 +4585,25 @@ exports.default = [{
     tags: ['api'],
     description: 'them hoac sua phieu thu',
     validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/phieuthutien-thanhtoan',
+  handler: _index2.default.thanhToanPayPal,
+  config: {
+    tags: ['api'],
+    description: 'thanh toan paypal',
+    validate: _index4.default.thanhtoan,
     plugins: {
       'hapi-swagger': {
         responses: {
@@ -4450,6 +4653,11 @@ const phieuThuTienVal = {
   sendmail: {
     params: {
       id: Joi.string()
+    }
+  },
+  thanhtoan: {
+    payload: {
+      phieuthuInfo: Joi.object().required()
     }
   }
 };
@@ -6145,7 +6353,7 @@ exports.default = { ...userVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongodb-backup":"^1.6.9","mongodb-restore":"^1.6.2","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","node-cmd":"^3.0.0","nodemailer":"^5.1.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongodb-backup":"^1.6.9","mongodb-restore":"^1.6.2","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","node-cmd":"^3.0.0","nodemailer":"^5.1.1","paypal-rest-sdk":"^1.8.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 
@@ -6400,6 +6608,17 @@ module.exports = require("nodemailer");
 /***/ (function(module, exports) {
 
 module.exports = require("path");
+
+/***/ }),
+
+/***/ "paypal-rest-sdk":
+/*!**********************************!*\
+  !*** external "paypal-rest-sdk" ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("paypal-rest-sdk");
 
 /***/ }),
 
