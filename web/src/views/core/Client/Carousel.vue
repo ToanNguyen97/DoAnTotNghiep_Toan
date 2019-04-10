@@ -1,17 +1,17 @@
 <template>
-  <v-carousel  hide-delimiters >
-    <v-carousel-item
-      v-for="(item,i) in items"
-      :key="i"
-      :src="item.src"
-      reverse-transition="fade"
-      
-    ></v-carousel-item>
-  </v-carousel>
+  <div >
+    <v-img style="height:100vh;" :src="require('@/assets/banner.jpg')">
+      <MenuTop />
+    </v-img>
+  </div>
 </template>
 
 <script>
+import MenuTop from './MenuTop.vue'
 export default {
+  components: {
+    MenuTop
+  },
   data () {
     return {
       items: [
@@ -33,15 +33,5 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  #example-custom-transition
-    .fade
-      &-enter-active, &-leave-active, &-leave-to
-        transition: .3s ease-out
-        position: absolute
-        top: 0
-        left: 0
-
-      &-enter, &-leave, &-leave-to
-        opacity: 0
+<style scoped >
 </style>
