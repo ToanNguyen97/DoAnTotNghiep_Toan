@@ -1,7 +1,18 @@
 import moment from 'moment'
+import popupDetailCT from '../core/popupDetailPT.vue'
+import popupComment from '../core/popupComment.vue'
+
 export default {
+  components: {
+    popupDetailCT,
+    popupComment
+  },
   data () {
     return {
+      detailSelected: {},
+      isopen:false,
+      isopenComment: false,
+      idPhongComment: '',
       tab: null,
       rating: 4,
       search: '',
@@ -79,6 +90,14 @@ export default {
         window.open(res, '_blank')
         this.loading = false
       })
+    },
+    ViewDetail (item) {
+      this.isopen = true
+      this.detailSelected = item
+    },
+    OpenComment (item) {
+      this.isopenComment = true
+      this.idPhongComment = item._id
     }
   },
 }

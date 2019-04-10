@@ -26,7 +26,7 @@ const getAll = async (request, h) => {
     return Boom.forbidden(err)
   }
 }
-
+// hàm lập phiếu thu và kèm theo là sửa phiếu thu
 const save = async (request, h) => {
   try {
     let data = request.payload
@@ -35,7 +35,7 @@ const save = async (request, h) => {
       let phong = await Phong.findById({_id: data.phongID}).populate('khuPhongID')
       let soKhuPhong = phong.khuPhongID.tenKhuPhong.split(' ')
       let soPhong = phong.tenPhong.split(' ')
-      let ngaylap = new Date(data.ngayLap)
+      let ngaylap = new Date(data.ngayLap)//'04-28-2019')
       data.ngayLap = ngaylap    
       let getThangNam = moment(ngaylap).format('MMYYYY')   
       // ngày hết hạn là ngày 10 của tháng tiếp theo: số 11 ở cuối vì chênh lệch múi giờ sẽ giảm xuống 10
@@ -91,7 +91,7 @@ const save = async (request, h) => {
     let phieuthu =  await item.save()
     let phieuthuMail = await PhieuThuTien.findById({_id: phieuthu._id}).populate(['phongID','dsCTPT'])
     // lấy ra hợp đồng của phòng có phiếu thu và lọc ra email khách thuê đang ở phòng này để gởi mail
-    let hopDong = await HopDongThue.find({phongID: phieuthuMail.phongID}).populate('khachThueID')
+    /*let hopDong = await HopDongThue.find({phongID: phieuthuMail.phongID}).populate('khachThueID')
     let mailKhachThues = hopDong.filter(item => {
       if(item.khachThueID.phongs && item.khachThueID.phongs.length > 0) {
         let a = false
@@ -114,41 +114,44 @@ const save = async (request, h) => {
     let stringEmail = ""
     for(let str of mailKhachThues) {
       stringEmail += str + ', '
-    }
+    }*/
     let options = {
       content: MailPhieuThuTien.mailPhieuThuTien(phieuthuMail),
       subject: phieuthuMail.tinhTrangPhieuThu === 'chưa đóng'? 'Phiếu Báo Hóa Đơn': 'Phiếu Thanh Toán',
       text: phieuthuMail.tinhTrangPhieuThu === 'chưa đóng'? 'Phiếu Báo Hóa Đơn': 'Phiếu Thanh Toán'
     }
+    let stringEmail = await GetEmailOfKhach(phieuthuMail.phongID)
     Mail.SenMail(options, stringEmail)
     return phieuthu
   } catch (err) {
     return Boom.forbidden(err)
   }
 }
-
+// hàm gới mail thông tin của 1 phiếu thu
 const sendMail = async (request, h) => {
   try {
     let phieuthuMail = await PhieuThuTien.findById({_id: request.params.id}).populate(['phongID','dsCTPT'])
-    // lấy ra hợp đồng của phòng có phiếu thu và lọc ra email khách thuê phòng này để gởi mail
-    let hopDong = await HopDongThue.find({phongID: phieuthuMail.phongID}).populate('khachThueID')
-    let mailKhachThues = hopDong.map(hd => hd.khachThueID.email)
-    let stringEmail = ""
-    for(let str of mailKhachThues) {
-      stringEmail += str + ', '
-    }
+   
+    // let hopDong = await HopDongThue.find({phongID: phieuthuMail.phongID}).populate('khachThueID')
+    // let mailKhachThues = hopDong.map(hd => hd.khachThueID.email)
+    // let stringEmail = ""
+    // for(let str of mailKhachThues) {
+    //   stringEmail += str + ', '
+    // }
     let options = {
       content: MailPhieuThuTien.mailPhieuThuTien(phieuthuMail),
       subject: 'Thông Tin Phiếu Thu Cần Xem',
       text: 'Thông Tin Phiếu Thu Cần Xem'
     }
+     // lấy ra email của phòng có phiếu thu và lọc ra email khách thuê đang ở phòng này để gởi mail
+    let stringEmail = await GetEmailOfKhach(phieuthuMail.phongID)
     Mail.SenMail(options, stringEmail)
     return true
   } catch (err) {
     return Boom.forbidden(err)
   }
 }
-
+// hàm lấy thông tin để thanh toán qua paypal
 const thanhToanPayPal = async (request, h) => {
   try {
     let phieuthu = request.payload.phieuthuInfo
@@ -195,7 +198,7 @@ const thanhToanPayPal = async (request, h) => {
     return Boom.forbidden(err)
   }
 }
-
+// hàm chuyển link đến trang paypal
 const processPaypal = (create_payment_json) => {
   return new Promise(resolve => {
     paypal.payment.create(create_payment_json, function (error, payment) {
@@ -211,7 +214,7 @@ const processPaypal = (create_payment_json) => {
     })
   })
 }
-
+// hàm hoàn tất thanh toán qua paypal
 const hoanTatPayPal = async (request, h) => {
   try {
     const payerId = request.query.PayerID
@@ -225,18 +228,61 @@ const hoanTatPayPal = async (request, h) => {
           }
       }]
     };
-    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+    paypal.payment.execute(paymentId, execute_payment_json, async function (error, payment) {
       if (error) {
-          console.log(error.response);
           throw error;
-      } else {
+      } 
+      else {
           console.log("Success");
+          let phieuthuId = payment.transactions.pop().item_list.items.pop().sku
+          let phieuthu = await PhieuThuTien.findById({_id: phieuthuId}).populate(['phongID','dsCTPT'])
+          if(phieuthu) {
+            phieuthu.tinhTrangPhieuThu = 'đã đóng'
+            let {phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu} = phieuthu
+            await PhieuThuTien.findByIdAndUpdate({_id:phieuthu._id}, {phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu})      
+          }
+          let options = {
+            content: MailPhieuThuTien.mailPhieuThuTien(phieuthu),
+            subject: 'Thanh toán qua PayPal',
+            text: 'Thanh toán qua PayPal'
+          }
+           // lấy ra email của phòng có phiếu thu và lọc ra email khách thuê đang ở phòng này để gởi mail
+          let stringEmail = await GetEmailOfKhach(phieuthu.phongID)
+          Mail.SenMail(options, stringEmail)
       }
     });
     return true
   } catch (err) {
     return Boom.forbidden(err)
   }
+}
+// hàm lọc ra những email của khách đang ở phòng để nhận mail
+const GetEmailOfKhach = async (phongID) => {
+  let hopDong = await HopDongThue.find({phongID: phongID}).populate('khachThueID')
+  let mailKhachThues = hopDong.filter(item => {
+    if(item.khachThueID.phongs && item.khachThueID.phongs.length > 0) {
+      let a = false
+      for( let i of item.khachThueID.phongs) {
+        if(String(i) === String(item.phongID)) {
+          a = true
+          break
+        }
+      }
+      if( a === true) {
+        return item
+      }
+      else {
+        return null
+      }
+    }
+  }).map(key => {
+    return key.khachThueID.email
+  })
+  let stringEmail = ""
+  for(let str of mailKhachThues) {
+    stringEmail += str + ', '
+  }
+  return stringEmail
 }
 
 export default {

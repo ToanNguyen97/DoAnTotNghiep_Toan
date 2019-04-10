@@ -10,7 +10,7 @@
         <h2 class="thank-you">Hoàn tất giao dịch, Cảm ơn bạn!</h2>
       </v-flex>
       <p>Trước khi rời đi vui lòng kiểm tra số dư trong tài khoản PayPal của bạn!</p>
-       <a class="btn" href="/admin">BACK TO HOME</a>
+       <a class="btn" href="/thong-tin-phong-dang-thue.html">BACK TO HOME</a>
     </div>
   </div>
 </div>

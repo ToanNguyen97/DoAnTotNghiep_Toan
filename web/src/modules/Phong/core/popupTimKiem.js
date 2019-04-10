@@ -36,7 +36,7 @@ export default {
       this.$refs.form.reset()
     },
     TimKiem () {
-      this.$store.dispatch('timKiem', this.formData).then(res => {
+      this.$store.dispatch('phong/timKiem', this.formData).then(res => {
         this.Huy()
         toast.Info('Có '+ res.length + ' kết quả  đã được tìm thấy !')
       })
@@ -44,7 +44,7 @@ export default {
     Search (value) {
       this.isReal = value
       let payload = {isReal: this.isReal, formData: this.formData}
-      this.$store.dispatch('timKiem', payload).then(res => {
+      this.$store.dispatch('phong/timKiem', payload).then(res => {
         this.Huy()
         toast.Info('Có '+ res.length + ' kết quả  đã được tìm thấy !')
       })
@@ -53,9 +53,9 @@ export default {
   watch: {
     value (v) {
       if(v) {
-        this.$store.dispatch('getKhuPhongs')
-        this.$store.dispatch('getLoaiPhongs')
-        this.$store.dispatch('getTinhTrangPhongs')
+        this.$store.dispatch('phong/getKhuPhongs')
+        this.$store.dispatch('phong/getLoaiPhongs')
+        this.$store.dispatch('phong/getTinhTrangPhongs')
       }
     }
   },

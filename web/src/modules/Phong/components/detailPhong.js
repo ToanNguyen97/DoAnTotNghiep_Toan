@@ -108,12 +108,15 @@ export default {
           value: ''
         }
       ],
-      disabled: true
+      disabled: true,
+      urlComment: ''
     }
   },
+
   created () {
-   this.$store.dispatch('phong/getPhongById',this.$route.params.id).then( res => {
+   this.$store.dispatch('phong/getPhongById',this.$route.params.id).then( res => {  
      this.phong = res
+     this.urlComment = "http://localhost:8080/thong-tin-chi-tiet-phong-"+ this.$route.params.id +".html"
      if(this.phong && this.phong.dsHopDong && this.phong.dsHopDong.length > 0) {
        // lấy ra những hợp đồng có khách thuê của phòng này và lấy khách thuê đó
        this.dsKhachThue = this.phong.dsHopDong.filter(item => {

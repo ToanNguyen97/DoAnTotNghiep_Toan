@@ -46,8 +46,8 @@
             </v-layout>
           </v-card-text>
           <v-card-actions>
-            <v-btn flat>Share</v-btn>
-            <v-btn flat color="purple">Explore</v-btn>
+            <v-btn flat color="blue" ><v-icon dark>far fa-thumbs-up</v-icon></v-btn>
+            <v-btn flat color="purple"><v-icon dark>fas fa-share-alt</v-icon></v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -147,8 +147,17 @@
             </div>
           </v-card> 
         </v-tab-item>
-        </v-tabs>
-             
+        <v-tab ripple>
+          Bình Luận
+        </v-tab>
+          <v-tab-item>
+            <v-card>
+              <v-card-text style="text-align:center">
+                <div class="fb-comments" :data-href="urlComment" data-width="700" data-numposts="7"></div>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>   
       </v-flex>
     </v-layout>
     <v-layout row wrap>

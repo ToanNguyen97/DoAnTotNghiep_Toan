@@ -17,7 +17,6 @@ export default {
     }
   },
   methods: {
-    
   },
   watch: {
     userInfo () {

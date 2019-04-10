@@ -65,6 +65,7 @@
                     <v-card-actions>
                       <v-btn flat color="blue" ><v-icon dark>far fa-thumbs-up</v-icon></v-btn>
                       <v-btn flat color="purple"><v-icon dark>fas fa-share-alt</v-icon></v-btn>
+                      <v-btn flat color="red" @click="OpenComment(item)"><v-icon dark>far fa-comments</v-icon></v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-flex>
@@ -96,7 +97,7 @@
                         <td class="text-xs-left"><v-chip :color="props.item.tinhTrangPhieuThu === 'chưa đóng'?'amber':(props.item.tinhTrangPhieuThu === 'đã đóng'?'green accent-4':'deep-orange darken-1')" class="white--text">{{ props.item.tinhTrangPhieuThu }}</v-chip></td>
                         <td class="text-xs-left" >
                           <v-btn color="indigo" flat fab small depressed @click="ViewDetail(props.item)" ><v-icon >fas fa-eye</v-icon></v-btn>                 
-                          <v-btn color="cyan" flat fab small depressed :loading="loading" @click="ThanhToan(props.item)" ><v-icon dark large>fab fa-cc-paypal</v-icon></v-btn>                 
+                          <v-btn color="cyan" flat fab small :disabled="props.item.tinhTrangPhieuThu === 'đã đóng'?true:false" depressed :loading="loading" @click="ThanhToan(props.item)" ><v-icon dark large>fab fa-cc-paypal</v-icon></v-btn>                 
                         </td>
                       </template>
                     </v-data-table>
@@ -110,6 +111,8 @@
         </v-card>
       </v-tab-item>
     </v-tabs-items>
+    <popupDetailCT v-model="isopen" :DetailCTPT="detailSelected || {}" />
+    <popupComment v-model="isopenComment" :idPhong="idPhongComment || {}" />
   </div>
 </template>
 

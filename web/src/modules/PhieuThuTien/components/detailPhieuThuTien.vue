@@ -48,8 +48,8 @@
             </v-layout>
           </v-card-text>
           <v-card-actions>
-            <v-btn flat>Share</v-btn>
-            <v-btn flat color="purple">Explore</v-btn>
+            <v-btn flat color="blue" ><v-icon dark>far fa-thumbs-up</v-icon></v-btn>
+            <v-btn flat color="purple"><v-icon dark>fas fa-share-alt</v-icon></v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -88,77 +88,77 @@
             <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
           </div>
         </v-card>
-         <v-card style="margin-left: 13px; margin-bottom:10px;">
-            <v-card-title primary-title>
-              <div class="headline">Thông tin chi tiết phiếu tháng {{tenThang}}</div>
-              <v-spacer></v-spacer>
-              <v-btn color="success" :disabled="disabled" @click="ThanhToan" style="text-transform: none;" outline  >Thanh Toán <v-icon right dark>fas fa-dollar-sign</v-icon></v-btn>
-              <v-btn color="info" @click="SendMail" style="text-transform: none;" outline>Gửi Mail <v-icon dark right>email</v-icon></v-btn>
-            </v-card-title>
-            <v-card-text v-if="phong.dsPhieuThu">
-              <v-layout row wrap>
-                <v-flex xs4 sm4 md1>
-                  <div class="subheading pb-1" >Dịch vụ</div>
+        <v-card style="margin-left: 13px; margin-bottom:10px;">
+          <v-card-title primary-title>
+            <div class="headline">Thông tin chi tiết phiếu tháng {{tenThang}}</div>
+            <v-spacer></v-spacer>
+            <v-btn color="success" :disabled="disabled" @click="ThanhToan" style="text-transform: none;" outline  >Thanh Toán <v-icon right dark>fas fa-dollar-sign</v-icon></v-btn>
+            <v-btn color="info" @click="SendMail" style="text-transform: none;" outline>Gửi Mail <v-icon dark right>email</v-icon></v-btn>
+          </v-card-title>
+          <v-card-text v-if="phong.dsPhieuThu">
+            <v-layout row wrap>
+              <v-flex xs4 sm4 md1>
+                <div class="subheading pb-1" >Dịch vụ</div>
+              </v-flex>
+              <v-flex sm4 md2>
+                <div class="subheading pb-1" style="text-align:center;">Chỉ số cũ</div>              
+              </v-flex>
+              <v-flex sm4 md2>
+                <div class="subheading pb-1" style="text-align:center;">Chỉ số mới</div>             
+              </v-flex>
+              <v-flex sm4 md1>
+                <div class="subheading pb-1">Số lượng</div>             
+              </v-flex>
+              <v-flex sm4 md2>
+                <div class="subheading pb-1" style="text-align:center;">Đơn giá</div>
+              </v-flex>
+              <v-flex xs4 sm4 md2>
+                <div >
+                  <div class="subheading pb-1" style="text-align:center;">Đơn vị tính</div>
+                </div>
+              </v-flex>
+              <v-flex sm4 md2>
+                <div class="subheading pb-1" style="text-align:center;">Thành tiền</div>
+              </v-flex>              
+            </v-layout>
+            <v-divider style="margin-top:5px;"></v-divider>
+            <v-card flat v-for="phieuthu in dsCTPT" :key="phieuthu._id">
+              <v-layout row wrap  mt-1>                
+                <v-flex xs4 sm4 md1 style="padding-top: 6px;">
+                  <div >{{phieuthu.cacKhoanThuID.tenKhoanThu}}</div>
                 </v-flex>
-                <v-flex sm4 md2>
-                  <div class="subheading pb-1" style="text-align:center;">Chỉ số cũ</div>              
+                <v-flex sm4 md2 style="padding-top: 6px;">
+                  <div style="text-align:center;">{{phieuthu.chiSoCu}}</div>
                 </v-flex>
-                <v-flex sm4 md2>
-                  <div class="subheading pb-1" style="text-align:center;">Chỉ số mới</div>             
+                <v-flex sm4 md2 style="padding-top: 6px;">
+                  <div style="text-align:center;">{{phieuthu.chiSoMoi}}</div>
                 </v-flex>
-                <v-flex sm4 md1>
-                  <div class="subheading pb-1">Số lượng</div>             
+                <v-flex v-if="phieuthu.chiSoMoi" sm4 md1 style="padding-top: 6px;">
+                  <div >{{phieuthu.chiSoMoi - phieuthu.chiSoCu}}</div>
                 </v-flex>
-                <v-flex sm4 md2>
-                  <div class="subheading pb-1" style="text-align:center;">Đơn giá</div>
+                <v-flex v-else sm4 md1 style="padding-top: 6px;">
+                  <div >1</div>
+                </v-flex>
+                <v-flex sm4 md2 style="padding-top: 6px;">
+                  <div style="text-align:center;">{{phieuthu.donGia | formatCurrentcy}}</div>
                 </v-flex>
                 <v-flex xs4 sm4 md2>
-                  <div >
-                    <div class="subheading pb-1" style="text-align:center;">Đơn vị tính</div>
-                  </div>
+                  <div style="text-align:center;"><v-chip small color="info" class="white--text my-2`">{{phieuthu.cacKhoanThuID.donViTinh}}</v-chip></div>
                 </v-flex>
-                <v-flex sm4 md2>
-                  <div class="subheading pb-1" style="text-align:center;">Thành tiền</div>
-                </v-flex>              
+                <v-flex v-if="phieuthu.chiSoMoi > 0" sm4 md2 style="padding-top: 6px;">
+                  <div style="text-align:center;">{{(phieuthu.chiSoMoi - phieuthu.chiSoCu)*phieuthu.donGia | formatCurrentcy}}</div>
+                </v-flex>                
+                <v-flex v-else sm4 md2 style="padding-top: 6px;">
+                  <div style="text-align:center;">{{phieuthu.donGia | formatCurrentcy}}</div>
+                </v-flex>                
               </v-layout>
               <v-divider style="margin-top:5px;"></v-divider>
-              <v-card flat v-for="phieuthu in dsCTPT" :key="phieuthu._id">
-                <v-layout row wrap  mt-1>                
-                  <v-flex xs4 sm4 md1 style="padding-top: 6px;">
-                    <div >{{phieuthu.cacKhoanThuID.tenKhoanThu}}</div>
-                  </v-flex>
-                  <v-flex sm4 md2 style="padding-top: 6px;">
-                    <div style="text-align:center;">{{phieuthu.chiSoCu}}</div>
-                  </v-flex>
-                  <v-flex sm4 md2 style="padding-top: 6px;">
-                   <div style="text-align:center;">{{phieuthu.chiSoMoi}}</div>
-                  </v-flex>
-                  <v-flex v-if="phieuthu.chiSoMoi" sm4 md1 style="padding-top: 6px;">
-                   <div >{{phieuthu.chiSoMoi - phieuthu.chiSoCu}}</div>
-                  </v-flex>
-                  <v-flex v-else sm4 md1 style="padding-top: 6px;">
-                   <div >1</div>
-                  </v-flex>
-                  <v-flex sm4 md2 style="padding-top: 6px;">
-                   <div style="text-align:center;">{{phieuthu.donGia | formatCurrentcy}}</div>
-                  </v-flex>
-                  <v-flex xs4 sm4 md2>
-                    <div style="text-align:center;"><v-chip small color="info" class="white--text my-2`">{{phieuthu.cacKhoanThuID.donViTinh}}</v-chip></div>
-                  </v-flex>
-                  <v-flex v-if="phieuthu.chiSoMoi > 0" sm4 md2 style="padding-top: 6px;">
-                    <div style="text-align:center;">{{(phieuthu.chiSoMoi - phieuthu.chiSoCu)*phieuthu.donGia | formatCurrentcy}}</div>
-                  </v-flex>                
-                  <v-flex v-else sm4 md2 style="padding-top: 6px;">
-                    <div style="text-align:center;">{{phieuthu.donGia | formatCurrentcy}}</div>
-                  </v-flex>                
-                </v-layout>
-                <v-divider style="margin-top:5px;"></v-divider>
-              </v-card>
-              <v-layout row justify-end style="padding-top: 10px; padding-right: 53px;">
-                <div>Tổng tiền: {{tongTien | formatCurrentcy}}</div>
-              </v-layout>
-            </v-card-text>
-          </v-card>
+            </v-card>
+            <v-layout row justify-end style="padding-top: 10px; padding-right: 53px;">
+              <div>Tổng tiền: {{tongTien | formatCurrentcy}}</div>
+            </v-layout>
+          </v-card-text>
+        </v-card>
       </v-flex>
     </v-layout>
     <v-layout row wrap>
