@@ -20,7 +20,10 @@
       </v-flex>
       <v-flex style="display:flex" justify-end>
         <div class="pt-4" style="width:300px;text-align: center;">
-          <a href="" class="white--text">Quên mật khẩu?</a>        
+          <a href="/"  class="textlink">Về trang chủ</a>
+        </div>
+        <div class="pt-4" style="width:300px;text-align: center;">
+          <a href="" class="textlink">Quên mật khẩu?</a>        
         </div>
       </v-flex>
     </div>
@@ -85,5 +88,9 @@
     color: white;
     transform: translate(-50%,-50%);
     border-radius: 12px;
+  }
+  .textlink {
+    color: white;
+    text-decoration: none;
   }
 </style>
