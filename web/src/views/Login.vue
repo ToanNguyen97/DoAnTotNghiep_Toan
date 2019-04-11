@@ -77,6 +77,8 @@
   #inspire {
     background: url(../assets/login.jpg) no-repeat;
     background-size: cover;
+    background-position: bottom;
+
   }
   .loginbox {
     position: absolute;

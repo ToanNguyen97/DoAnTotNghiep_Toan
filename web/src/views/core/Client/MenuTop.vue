@@ -6,10 +6,10 @@
           {{ link.name }}
         </v-btn> -->
         <v-btn large  class="buttonMenu" flat  :to="{path:'/login'}">Trang Chủ</v-btn>
-        <v-btn large  class="buttonMenu" flat  :to="{path:'/login'}">Giới Thiệu</v-btn>
+        <v-btn large  class="buttonMenu" flat @click="goTo()">Giới Thiệu</v-btn>
         <v-img  :src="require('@/assets/Slogan.png')" class="mx-2" contain height="48" width="48" max-width="50"/>        
-        <v-btn large  class="buttonMenu" flat  :to="{path:'/login'}">Phòng Trọ</v-btn>
-        <v-btn large  class="buttonMenu" flat  :to="{path:'/login'}">Liên Hệ</v-btn>
+        <v-btn large  class="buttonMenu" flat @click="goToPT()"  >Phòng Trọ</v-btn>
+        <v-btn large  class="buttonMenu" flat @click="goToLH()" >Liên Hệ</v-btn>
       </v-layout>
     <v-btn large  class="buttonMenu" flat  :to="{path:'/login'}">Đăng Nhập</v-btn>
   </v-toolbar>
@@ -26,7 +26,18 @@ export default {
         {name: 'Tin Tức', path:'/quan-ly-giao-vien.html'}
       ]
     }
-  }
+  },
+  methods: {
+    goTo () {
+      this.$vuetify.goTo("#gioithieu",{duration:1000,offset:100,easing:'easeInQuint'})
+    },
+    goToPT () {
+      this.$vuetify.goTo("#phongtro1",{duration:1000,offset:100,easing:'easeInQuint'})
+    },
+    goToLH () {
+      this.$vuetify.goTo("#lienhe",{duration:1000,offset:100,easing:'easeInQuint'})
+    },
+  },
 }
 </script>
 <style scoped>
@@ -34,6 +45,10 @@ export default {
     background: rgba(0,0, 0,.8);
     height: 80px;
     padding-top:10px;
+    position: fixed;
+    top:0px;
+    width: 100%;
+    z-index: 99;
   }
 
   .buttonMenu {
