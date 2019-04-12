@@ -2,14 +2,11 @@
   <v-toolbar class="menutop"  flat >
     <v-toolbar-side-icon class="hidden-md-and-up" />
       <v-layout justify-center>
-        <!-- <v-btn large dark v-for="(link, i) in links" :key="i" :to="link.path" class=" buttonMenu hidden-sm-and-down" flat  >
-          {{ link.name }}
-        </v-btn> -->
-        <v-btn large  class="buttonMenu" flat  :to="{path:'/login'}">Trang Chủ</v-btn>
+        <v-btn large  class="buttonMenu" flat  :to="{path:'/'}">Trang Chủ</v-btn>
         <v-btn large  class="buttonMenu" flat @click="goTo()">Giới Thiệu</v-btn>
         <v-img  :src="require('@/assets/Slogan.png')" class="mx-2" contain height="48" width="48" max-width="50"/>        
         <v-btn large  class="buttonMenu" flat @click="goToPT()"  >Phòng Trọ</v-btn>
-        <v-btn large  class="buttonMenu" flat @click="goToLH()" >Liên Hệ</v-btn>
+        <v-btn large  class="buttonMenu" flat @click="goToDV()" >Dịch vụ</v-btn>
       </v-layout>
     <v-btn large  class="buttonMenu" flat  :to="{path:'/login'}">Đăng Nhập</v-btn>
   </v-toolbar>
@@ -19,12 +16,6 @@
 export default {
   data () {
     return {
-      links: [
-        {name: 'Trang Chủ', path:'/quan-ly-giao-vien.html'},
-        {name: 'Giới Thiệu', path:'/quan-ly-giao-vien.html'},
-        {name: 'Phòng Trọ', path:'/quan-ly-giao-vien.html'},
-        {name: 'Tin Tức', path:'/quan-ly-giao-vien.html'}
-      ]
     }
   },
   methods: {
@@ -32,10 +23,10 @@ export default {
       this.$vuetify.goTo("#gioithieu",{duration:1000,offset:100,easing:'easeInQuint'})
     },
     goToPT () {
-      this.$vuetify.goTo("#phongtro1",{duration:1000,offset:100,easing:'easeInQuint'})
+      this.$vuetify.goTo("#phongtro1",{duration:1000,offset:80,easing:'easeInQuint'})
     },
-    goToLH () {
-      this.$vuetify.goTo("#lienhe",{duration:1000,offset:100,easing:'easeInQuint'})
+    goToDV () {
+      this.$vuetify.goTo("#dichvu",{duration:1000,offset:85,easing:'easeInQuint'})
     },
   },
 }
@@ -48,7 +39,7 @@ export default {
     position: fixed;
     top:0px;
     width: 100%;
-    z-index: 99;
+    z-index: 99 !important;
   }
 
   .buttonMenu {

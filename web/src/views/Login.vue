@@ -20,7 +20,7 @@
       </v-flex>
       <v-flex style="display:flex" justify-end>
         <div class="pt-4" style="width:300px;text-align: center;">
-          <a href="/"  class="textlink">Về trang chủ</a>
+          <router-link style="text-decoration:none;" class="pt-2 white--text" :to="{path:'/'}">về trang chủ</router-link>
         </div>
         <div class="pt-4" style="width:300px;text-align: center;">
           <a href="" class="textlink">Quên mật khẩu?</a>        
