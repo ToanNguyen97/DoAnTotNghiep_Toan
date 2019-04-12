@@ -2,7 +2,7 @@
   <v-toolbar class="menutop"  flat >
     <v-toolbar-side-icon class="hidden-md-and-up" />
       <v-layout justify-center>
-        <v-btn large  class="buttonMenu" flat  :to="{path:'/'}">Trang Chủ</v-btn>
+        <v-btn large  class="buttonMenu" flat  :to="{path:'/index.html'}">Trang Chủ</v-btn>
         <v-btn large  class="buttonMenu" flat @click="goTo()">Giới Thiệu</v-btn>
         <v-img  :src="require('@/assets/Slogan.png')" class="mx-2" contain height="48" width="48" max-width="50"/>        
         <v-btn large  class="buttonMenu" flat @click="goToPT()"  >Phòng Trọ</v-btn>

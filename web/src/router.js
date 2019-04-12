@@ -14,6 +14,8 @@ import Dashboard from './modules/Dashboard/index.js'
 import NhanVienRoutes from './modules/NhanVien/index.js'
 import LayoutKhachThue from './modules/LayoutKhach/index.js'
 import Authenticated from './plugins/auththenticated.js'
+import TrangChu from './views/core/Client/TrangChu.vue'
+import danhSachPhong from './views/core/Client/DanhSachPhong.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -46,7 +48,19 @@ export default new Router({
     {
       path: '/',
       name: 'Client',
-      component: Client
+      component: Client,
+      children: [
+        {
+          path:'/index.html',
+          name: 'TrangChu',
+          component: TrangChu
+        },
+        {
+          path:'/danh-sach-phong-tro.html',
+          name: 'danhSachPhong',
+          component: danhSachPhong
+        }
+      ]
     }
   ]
 })
