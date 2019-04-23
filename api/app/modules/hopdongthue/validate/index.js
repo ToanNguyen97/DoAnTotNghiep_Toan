@@ -31,6 +31,11 @@ const hopDongThueVal = {
       ngayThongKe: Joi.array().required(),
       tieuChi: Joi.string().required()
     }
+  },
+  BaoHetHanHD: {
+    payload: {
+      dsHD: Joi.array().required()
+    }
   }
 }
 

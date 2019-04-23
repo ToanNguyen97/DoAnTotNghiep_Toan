@@ -312,6 +312,37 @@ exports.dependencies = ['app-redis'];
 
 /***/ }),
 
+/***/ "./app/lib/basemail/mailHetHanHopDong.js":
+/*!***********************************************!*\
+  !*** ./app/lib/basemail/mailHetHanHopDong.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const fs = __webpack_require__(/*! fs */ "fs");
+
+const path = __webpack_require__(/*! path */ "path");
+
+const mailHetHanHopDong = function (data) {
+  let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'templateHetHanHopDong.html'));
+  content = String(content);
+  content = content.replace('{{hoTenKhachThue}}', `${data.khachThueID.hoKhachThue} ${data.khachThueID.tenKhachThue}`);
+  return content;
+};
+
+exports.default = {
+  mailHetHanHopDong
+};
+
+/***/ }),
+
 /***/ "./app/lib/basemail/mailHopDong.js":
 /*!*****************************************!*\
   !*** ./app/lib/basemail/mailHopDong.js ***!
@@ -2368,6 +2399,10 @@ var _mailHopDong = __webpack_require__(/*! ../../../lib/basemail/mailHopDong.js 
 
 var _mailHopDong2 = _interopRequireDefault(_mailHopDong);
 
+var _mailHetHanHopDong = __webpack_require__(/*! ../../../lib/basemail/mailHetHanHopDong.js */ "./app/lib/basemail/mailHetHanHopDong.js");
+
+var _mailHetHanHopDong2 = _interopRequireDefault(_mailHetHanHopDong);
+
 var _translateCharacter = __webpack_require__(/*! ../../../lib/services/translateCharacter.js */ "./app/lib/services/translateCharacter.js");
 
 var _translateCharacter2 = _interopRequireDefault(_translateCharacter);
@@ -2375,10 +2410,6 @@ var _translateCharacter2 = _interopRequireDefault(_translateCharacter);
 var _index = __webpack_require__(/*! ../../user/controller/index.js */ "./app/modules/user/controller/index.js");
 
 var _index2 = _interopRequireDefault(_index);
-
-var _nodeExcelExport = __webpack_require__(/*! node-excel-export */ "node-excel-export");
-
-var _nodeExcelExport2 = _interopRequireDefault(_nodeExcelExport);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2520,11 +2551,32 @@ const thongKeHD = async (request, h) => {
   }
 };
 
+const BaoHetHanHD = async (request, h) => {
+  try {
+    let data = request.payload.dsHD;
+
+    for (let item of data) {
+      let options = {
+        content: _mailHetHanHopDong2.default.mailHetHanHopDong(item),
+        subject: 'Báo Hết Hạn Hợp Đồng Thuê Phòng Trọ',
+        text: 'Báo Hết Hạn Hợp Đồng Thuê Phòng Trọ'
+      };
+
+      _sendMail2.default.SenMail(options, item.khachThueID.email);
+    }
+
+    return true;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   getAll,
   getById,
   save,
-  thongKeHD
+  thongKeHD,
+  BaoHetHanHD
 };
 
 /***/ }),
@@ -2634,6 +2686,25 @@ exports.default = [{
     }
   }
 }, {
+  method: 'POST',
+  path: '/hopdong-baohethan',
+  handler: _controller2.default.BaoHetHanHD,
+  config: {
+    tags: ['api'],
+    description: 'báo hết hạn hợp đồng',
+    validate: _validate2.default.BaoHetHanHD,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
   method: 'GET',
   path: '/hopdongthuephong/{id}',
   handler: _controller2.default.getById,
@@ -2704,6 +2775,11 @@ const hopDongThueVal = {
     payload: {
       ngayThongKe: _joi2.default.array().required(),
       tieuChi: _joi2.default.string().required()
+    }
+  },
+  BaoHetHanHD: {
+    payload: {
+      dsHD: _joi2.default.array().required()
     }
   }
 };
@@ -6741,17 +6817,6 @@ module.exports = require("mongoose-paginate");
 /***/ (function(module, exports) {
 
 module.exports = require("node-cmd");
-
-/***/ }),
-
-/***/ "node-excel-export":
-/*!************************************!*\
-  !*** external "node-excel-export" ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = require("node-excel-export");
 
 /***/ }),
 

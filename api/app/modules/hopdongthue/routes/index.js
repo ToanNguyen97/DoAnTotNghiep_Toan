@@ -52,6 +52,22 @@ export default [
     }
   },
   {
+    method: 'POST',
+    path: '/hopdong-baohethan',
+    handler: HopDongThueController.BaoHetHanHD,
+    config: {
+      tags: ['api'],
+      description: 'báo hết hạn hợp đồng',
+      validate: HopDongThueVal.BaoHetHanHD,
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'GET',
     path: '/hopdongthuephong/{id}',
     handler: HopDongThueController.getById,

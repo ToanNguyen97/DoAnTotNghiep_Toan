@@ -9,7 +9,16 @@ const ThongKe = async (payload) => {
   }
 }
 
+const BaoHetHan = async (dsHD) => {
+  try {
+    let {data} = await axios.post(`http:${window.urlApi}api/hopdong-baohethan`, {dsHD}, {withCredentials: true})
+    return data
+  } catch (err) {
+    return err
+  }
+}
 
 export default {
-  ThongKe
+  ThongKe,
+  BaoHetHan
 }

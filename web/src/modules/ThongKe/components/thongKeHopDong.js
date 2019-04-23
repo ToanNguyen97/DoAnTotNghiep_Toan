@@ -70,6 +70,16 @@ export default {
       } catch (err) {
         toast.Error(err)
       }
+    },
+    async BaoHetHan () {
+      try {
+        let res = await ThongKeServices.BaoHetHan(this.dsHD)
+        if(res) {
+          toast.Success('Đã gởi mail báo hết hạn hợp đồng!')
+        }
+      } catch (err) {
+        toast.Error(err)
+      }
     }
   },
   filters: {

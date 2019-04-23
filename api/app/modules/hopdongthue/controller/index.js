@@ -4,9 +4,9 @@ import Mongoose from 'mongoose'
 import Boom from 'boom'
 import Mail from '../../../lib/basemail/sendMail.js'
 import MailHopDong from '../../../lib/basemail/mailHopDong.js'
+import MailHetHanHopDong from '../../../lib/basemail/mailHetHanHopDong.js'
 import formatCharacter from '../../../lib/services/translateCharacter.js'
 import UserController from '../../user/controller/index.js'
-import Excel from 'node-excel-export'
 const HopDongThuePhong = Mongoose.model('HopDongThuePhong')
 const KhachThue = Mongoose.model('KhachThue')
 const User = Mongoose.model('User')
@@ -117,9 +117,27 @@ const thongKeHD = async (request, h) => {
   }
 }
 
+const BaoHetHanHD = async (request, h) => {
+  try {
+    let data = request.payload.dsHD
+    for(let item of data) {
+      let options = {
+        content: MailHetHanHopDong.mailHetHanHopDong(item),
+        subject: 'Báo Hết Hạn Hợp Đồng Thuê Phòng Trọ',
+        text: 'Báo Hết Hạn Hợp Đồng Thuê Phòng Trọ'
+      }
+      Mail.SenMail(options, item.khachThueID.email)
+    }
+    return true
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
 export default {
   getAll,
   getById,
   save,
-  thongKeHD
+  thongKeHD,
+  BaoHetHanHD
 }

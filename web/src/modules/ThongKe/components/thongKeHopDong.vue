@@ -30,7 +30,7 @@
           <v-divider class="mx-2" inset vertical ></v-divider>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
-              <v-btn outline color="amber" v-on="on"  flat dark depressed icon ><v-icon>mail</v-icon></v-btn>
+              <v-btn outline color="amber" @click="BaoHetHan" v-on="on"  flat dark depressed icon ><v-icon>mail</v-icon></v-btn>
             </template>
             <span>Báo hết hạn</span>
           </v-tooltip>
