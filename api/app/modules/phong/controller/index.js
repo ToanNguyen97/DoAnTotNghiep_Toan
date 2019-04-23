@@ -171,7 +171,6 @@ const searchMultiple = async (request, h) => {
   }
 }
 
-// check quyền truy cập
 
 export default {
   save,

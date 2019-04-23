@@ -34,8 +34,7 @@ export const loader = async function (server) {
       plugin: HapiCors,
       options: {
           origins: ['*'],        
-          methods: ['POST, GET, OPTIONS, PUT, DELETE']
-      
+          methods: ['POST, GET, OPTIONS, PUT, DELETE'] 
       }
     }
   ])

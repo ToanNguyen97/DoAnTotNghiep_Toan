@@ -821,6 +821,49 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/models/HopDongThuePhong/dao.js":
+/*!********************************************!*\
+  !*** ./app/models/HopDongThuePhong/dao.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (schema, options) {
+  schema.statics.thongKeHD = async function (payload) {
+    let Model = this;
+    let ngayBD = payload.ngayThongKe[0];
+    let ngayKT = payload.ngayThongKe[1];
+
+    if (payload.tieuChi === 'hdLap') {
+      return await Model.find({
+        ngayLap: {
+          $gt: ngayBD,
+          $lt: ngayKT
+        }
+      }).populate(['khachThueID', 'phongID']);
+    }
+
+    if (payload.tieuChi === 'hdKT') {
+      return await Model.find({
+        ngayKetThuc: {
+          $gt: ngayBD,
+          $lt: ngayKT
+        }
+      }).populate([{
+        path: 'khachThueID'
+      }, {
+        path: 'phongID',
+        populate: ['khuPhongID']
+      }]);
+    }
+  };
+};
+
+/***/ }),
+
 /***/ "./app/models/HopDongThuePhong/model.js":
 /*!**********************************************!*\
   !*** ./app/models/HopDongThuePhong/model.js ***!
@@ -841,9 +884,14 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 var _schema = __webpack_require__(/*! ./schema */ "./app/models/HopDongThuePhong/schema.js");
 
+var _dao = __webpack_require__(/*! ./dao.js */ "./app/models/HopDongThuePhong/dao.js");
+
+var _dao2 = _interopRequireDefault(_dao);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const hopDongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+hopDongSchema.plugin(_dao2.default);
 exports.default = _mongoose2.default.model('HopDongThuePhong', hopDongSchema);
 
 /***/ }),
@@ -1607,7 +1655,6 @@ module.exports = function (schema, options) {
       queryString.status = payload.status;
     }
 
-    console.log(queryString);
     let data = await Model.find(queryString).lean().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID');
     return data;
   };
@@ -1918,6 +1965,7 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
+    console.log('vao ady');
     return await CacKhoanThu.find();
   } catch (err) {
     return Boom.forbidden(err);
@@ -1984,6 +2032,7 @@ exports.default = [{
   path: '/cackhoanthu',
   handler: _index2.default.getAll,
   config: {
+    auth: false,
     tags: ['api'],
     description: 'lay danh sach cac khoan thu',
     plugins: {
@@ -2327,6 +2376,10 @@ var _index = __webpack_require__(/*! ../../user/controller/index.js */ "./app/mo
 
 var _index2 = _interopRequireDefault(_index);
 
+var _nodeExcelExport = __webpack_require__(/*! node-excel-export */ "node-excel-export");
+
+var _nodeExcelExport2 = _interopRequireDefault(_nodeExcelExport);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const HopDongThuePhong = _mongoose2.default.model('HopDongThuePhong');
@@ -2341,6 +2394,7 @@ const Phong = _mongoose2.default.model('Phong'); //import translateCharacter fro
 const save = async (request, h) => {
   try {
     let data = request.payload;
+    console.log('dữ liêu', data);
     let item = await HopDongThuePhong.findById(data._id);
     let khachThue = {};
 
@@ -2457,10 +2511,20 @@ const getById = async (request, h) => {
   }
 };
 
+const thongKeHD = async (request, h) => {
+  try {
+    let data = await HopDongThuePhong.thongKeHD(request.payload);
+    return data || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   getAll,
   getById,
-  save
+  save,
+  thongKeHD
 };
 
 /***/ }),
@@ -2520,6 +2584,25 @@ exports.default = [{
   config: {
     tags: ['api'],
     description: 'xem danh sach hop dong',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/hopdong-thongke',
+  handler: _controller2.default.thongKeHD,
+  config: {
+    description: 'thống kê hợp đồng',
+    validate: _validate2.default.thongKeHD,
+    tags: ['api'],
     plugins: {
       'hapi-swagger': {
         responses: {
@@ -2615,6 +2698,12 @@ const hopDongThueVal = {
   delete: {
     params: {
       id: _joi2.default.string().required()
+    }
+  },
+  thongKeHD: {
+    payload: {
+      ngayThongKe: _joi2.default.array().required(),
+      tieuChi: _joi2.default.string().required()
     }
   }
 };
@@ -5294,8 +5383,7 @@ const searchMultiple = async (request, h) => {
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
-}; // check quyền truy cập
-
+};
 
 exports.default = {
   save,
@@ -6420,7 +6508,7 @@ exports.default = { ...userVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongodb-backup":"^1.6.9","mongodb-restore":"^1.6.2","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","node-cmd":"^3.0.0","nodemailer":"^5.1.1","paypal-rest-sdk":"^1.8.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongodb-backup":"^1.6.9","mongodb-restore":"^1.6.2","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","node-cmd":"^3.0.0","node-excel-export":"^1.4.4","nodemailer":"^5.1.1","paypal-rest-sdk":"^1.8.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 
@@ -6653,6 +6741,17 @@ module.exports = require("mongoose-paginate");
 /***/ (function(module, exports) {
 
 module.exports = require("node-cmd");
+
+/***/ }),
+
+/***/ "node-excel-export":
+/*!************************************!*\
+  !*** external "node-excel-export" ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("node-excel-export");
 
 /***/ }),
 

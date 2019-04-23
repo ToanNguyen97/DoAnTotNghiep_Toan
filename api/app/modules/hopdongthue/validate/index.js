@@ -25,6 +25,12 @@ const hopDongThueVal = {
     params: {
       id: Joi.string().required()
     }
+  },
+  thongKeHD: {
+    payload: {
+      ngayThongKe: Joi.array().required(),
+      tieuChi: Joi.string().required()
+    }
   }
 }
 

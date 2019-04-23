@@ -6,6 +6,7 @@ import store from './store'
 import './plugins/toast'
 
 window.urlImage = '//localhost:3003/image/'
+window.urlApi = '//localhost:3003/'
 
 
 Vue.config.productionTip = false

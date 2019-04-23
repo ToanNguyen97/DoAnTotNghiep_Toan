@@ -43,7 +43,6 @@ module.exports = function (schema, options) {
     {
       queryString.status = payload.status
     }
-    console.log(queryString)
     let data = await Model.find(queryString).lean().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID')
     return data
   }

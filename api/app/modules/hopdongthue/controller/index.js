@@ -6,6 +6,7 @@ import Mail from '../../../lib/basemail/sendMail.js'
 import MailHopDong from '../../../lib/basemail/mailHopDong.js'
 import formatCharacter from '../../../lib/services/translateCharacter.js'
 import UserController from '../../user/controller/index.js'
+import Excel from 'node-excel-export'
 const HopDongThuePhong = Mongoose.model('HopDongThuePhong')
 const KhachThue = Mongoose.model('KhachThue')
 const User = Mongoose.model('User')
@@ -15,6 +16,7 @@ const Phong = Mongoose.model('Phong')
 const save = async (request, h) => {
   try {
     let data = request.payload
+    console.log('dữ liêu',data)
     let item = await HopDongThuePhong.findById(data._id)
     let khachThue = {}
     if(item) {
@@ -106,8 +108,18 @@ const getById = async (request, h) => {
   }
 }
 
+const thongKeHD = async (request, h) => {
+  try {
+    let data = await HopDongThuePhong.thongKeHD(request.payload)
+    return data || Boom.notFound()
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
 export default {
   getAll,
   getById,
-  save
+  save,
+  thongKeHD
 }

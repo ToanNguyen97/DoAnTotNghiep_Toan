@@ -21,6 +21,22 @@ export default [
   },
   {
     method: 'POST',
+    path: '/hopdong-thongke',
+    handler: HopDongThueController.thongKeHD,
+    config: {
+      description: 'thống kê hợp đồng',
+      validate: HopDongThueVal.thongKeHD,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
     path: '/hopdongthuephong',
     handler: HopDongThueController.save,
     config: {

@@ -7,6 +7,7 @@ export default [
     path: '/cackhoanthu',
     handler: CacKhoanThuController.getAll,
     config: {
+      auth:false,
       tags: ['api'],
       description: 'lay danh sach cac khoan thu',
       plugins: {

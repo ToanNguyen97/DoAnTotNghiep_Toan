@@ -16,10 +16,10 @@ export default {
   data () {
     return {
       itemsTK: [
-        { title: 'Thống kê phòng', icon: 'account_balance' },
-        { title: 'Thống kê khách thuê', icon: 'people_outline' },
-        { title: 'Thống kê phiếu thu', icon: 'monetization_on' },
-        { title: 'Thống kê phiếu trả phòng', icon: 'signal_cellular_no_sim' },
+        { title: 'Thống kê hợp đồng', icon: 'account_balance', link: '/thong-ke-hop-dong.html' },
+        { title: 'Thống kê khách thuê', icon: 'people_outline', link: '/thong-ke-phieu-thu1.html' },
+        { title: 'Thống kê phiếu thu', icon: 'monetization_on', link: '/thong-ke-phieu-thu2.html' },
+        { title: 'Thống kê phiếu trả phòng', icon: 'signal_cellular_no_sim', link: '/thong-ke-phieu-thu3.html' },
       ],
       drawer: true,
       isOpenMini: true,
