@@ -34,7 +34,7 @@
             </template>
             <span>Báo hết hạn</span>
           </v-tooltip>
-          <download-excel v-if="dsHD && dsHD.length > 0" :data="dsHD" title="Thống Kê Hợp Đồng Hết Hạn" :fields="exportHeader"  worksheet="Hợp Đồng Hết Hạn" name='hopdonghethan.xls'>
+          <download-excel v-if="dsHD && dsHD.length > 0" :data="dsHD" title="Thống Kê Hợp Đồng Hết Hạn" :fields="exportHeader"  worksheet="Hợp Đồng Hết Hạn" :name='nameExcel'>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn outline color="success"  v-on="on" flat dark depressed icon ><v-icon color="success" >fas fa-file-download</v-icon></v-btn>

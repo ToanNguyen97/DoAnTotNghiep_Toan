@@ -9,6 +9,7 @@ export default {
     return {
       formData: {},
       search: '',
+      nameExcel:'',
       pagination: {
         rowsPerPage:5
       },
@@ -58,6 +59,8 @@ export default {
       try {
         this.loadingTK = true
         this.dsHD = await ThongKeServices.ThongKe(this.formData)
+        let date = new Date()
+        this.nameExcel = `hop-dong-het-han-${date.getMonth() +1 +'-' +date.getFullYear()}.xls`
         if(this.dsHD.length > 0)
         {
           this.loadingTK = false
