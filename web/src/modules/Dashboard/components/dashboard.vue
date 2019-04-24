@@ -43,7 +43,7 @@
 <v-container>
 <v-layout row justify-space-between style="margin-top:15px;" >
   <Chart class="pr-3" />
-  <CirleChart />
+  <CirleChart  :series="countPercentTinhTrang.series" :month="countPercentTinhTrang.thang" />
 </v-layout>
 </v-container>
 </div>
