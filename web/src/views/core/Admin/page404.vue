@@ -5,10 +5,19 @@
       <hr>
       <div class="_1">THE PAGE</div>
       <div class="_2">WAS NOT FOUND</div>
-      <a class="btn" href="/admin">BACK TO HOME</a>
+      <v-btn class="btn mt-2" @click="goHome" color="white" depressed >Back To Home</v-btn>
     </div>
   </div>
 </template>
+<script>
+export default {
+    methods: {
+        goHome () {
+            this.$router.go(-2)
+        }
+    }
+}
+</script>
 <style scoped>
 
 .c{
@@ -68,6 +77,7 @@
     width: 358px;
     padding: 5px;
     z-index: 5;
+    height: 49px;
     font-size: 25px;
     margin:0 auto;
     color:#33cc99;

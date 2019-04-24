@@ -6052,6 +6052,8 @@ var _mongoose2 = _interopRequireDefault(_mongoose);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+const PhieuThu = _mongoose2.default.model('PhieuThuTien');
+
 const Bcrypt = __webpack_require__(/*! bcrypt */ "bcrypt");
 
 const Boom = __webpack_require__(/*! boom */ "boom");
@@ -6203,8 +6205,23 @@ const login = async (request, h) => {
           valid: true,
           id: Aguid(),
           expires: new Date().getTime() + 30 * 60 * 1000,
-          credentials
+          credentials // đoạn này sẽ chèn thêm phần cập nhật phiếu thu hết hạn
+
         };
+        let dsPTQuaHan = await PhieuThu.find({
+          ngayHetHan: {
+            $lt: Date.now()
+          },
+          tinhTrangPhieuThu: 'chưa đóng'
+        });
+
+        if (dsPTQuaHan && dsPTQuaHan.length > 0) {
+          for (let item of dsPTQuaHan) {
+            item.tinhTrangPhieuThu = 'quá hạn';
+            await item.save();
+          }
+        }
+
         request.server.redis.set(session.id, JSON.stringify(session));
         let token = Jwt.sign(session, global.CONFIG.get('web.jwt.secret'));
         const response = h.response({
