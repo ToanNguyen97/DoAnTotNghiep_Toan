@@ -4,6 +4,7 @@ export default [
   {
     path:'/thong-ke-hop-dong.html',
     name:'thongKeHopDong',
-    component: ThongKeHopDong
+    component: ThongKeHopDong,
+    meta: { roles: ['chủ trọ']},
   }
 ]

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import EasyAccess from 'vuex-easy-access'
 import Phong from './modules/Phong/store/index'
 import KhachThue from './modules/KhachThue/store/index'
 import HopDongThuePhong from './modules/HopDongThuePhong/store/index'
@@ -28,5 +29,6 @@ export default new Vuex.Store({
     auth: Auth,
     nhanvien: NhanVien,
     layoutkhach: layOutKhach
-  }
+  },
+  plugins: [EasyAccess()]
 })

@@ -7,6 +7,7 @@ export default [
   {
     path: '/danh-sach-hop-dong-thue-phong.html',
     name: 'ListHopDongThuePhong',
-    component: ListHopDongThuePhong
+    component: ListHopDongThuePhong,
+    meta: { roles: ['chủ trọ','nhân viên']},
   }
 ]

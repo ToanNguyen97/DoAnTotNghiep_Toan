@@ -5,13 +5,12 @@ export default [
     path: '/danh-sach-phong.html',
     name: 'ListPhong',
     component: ListPhong,
-    meta: {
-      roles: 'super-admin'
-    }
+    meta: { roles: ['chủ trọ','nhân viên']},
   },
   {
     path: '/thong-tin-chi-tiet-phong-:id.html',
     name: 'DetailPhong',
-    component: DetailPhong
+    component: DetailPhong,
+    meta: { roles: ['chủ trọ','nhân viên']},
   }
 ]

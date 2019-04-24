@@ -4,11 +4,13 @@ export default [
   {
     path: '/thong-tin-khach-thue.html',
     name: 'infoKhachThue',
-    component: infoKhachThue
+    component: infoKhachThue,
+    meta: { roles: ['khách thuê'] }
   },
   {
     path: '/thong-tin-phong-dang-thue.html',
     name: 'infoPhongOfKhach',
-    component: infoPhongOfKhach
+    component: infoPhongOfKhach,
+    meta: { roles: ['khách thuê'] }
   }
 ]
