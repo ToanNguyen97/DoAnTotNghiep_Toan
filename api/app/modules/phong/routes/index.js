@@ -38,6 +38,22 @@ export default [
     }
   },
   {
+    method: 'POST',
+    path: '/tracuuphong',
+    handler: PhongController.tracuuphong,
+    config: {
+      description: 'tra cuu phong',
+      validate: PhongVal.tracuuphong,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'GET',
     path: '/phong/{id}',
     handler: PhongController.getById,

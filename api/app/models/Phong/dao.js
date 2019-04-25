@@ -46,4 +46,30 @@ module.exports = function (schema, options) {
     let data = await Model.find(queryString).lean().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID')
     return data
   }
+  schema.statics.tracuuphong = async function (payload) {
+    let Model = this
+    let queryString = {}
+    let arrayLoaiPhong = []
+    if (payload.loaiPhong)
+    {
+      arrayLoaiPhong.push(payload.loaiPhong)
+    }
+    if (payload.giaPhong)
+    {
+      arrayLoaiPhong.push(payload.giaPhong)
+    }
+    if (payload.isMang)
+    {
+      queryString.dKMang = payload.isMang
+    }
+    if(arrayLoaiPhong && arrayLoaiPhong.length > 0) {
+      queryString.loaiPhongID = { $in: arrayLoaiPhong }
+    }
+    if(payload.tinhTrangPhongSelect && payload.tinhTrangPhongSelect.length > 0) {
+      // lọc ra phòng có tình trạn theo yêu cầu
+      queryString.tinhTrangPhongID = {$in: payload.tinhTrangPhongSelect}
+    }
+    let data = await Model.find(queryString).lean().populate(['loaiPhongID','khuPhongID','tinhTrangPhongID'])
+    return data
+  }
 }

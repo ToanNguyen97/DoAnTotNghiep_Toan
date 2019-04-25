@@ -1689,6 +1689,40 @@ module.exports = function (schema, options) {
     let data = await Model.find(queryString).lean().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID');
     return data;
   };
+
+  schema.statics.tracuuphong = async function (payload) {
+    let Model = this;
+    let queryString = {};
+    let arrayLoaiPhong = [];
+
+    if (payload.loaiPhong) {
+      arrayLoaiPhong.push(payload.loaiPhong);
+    }
+
+    if (payload.giaPhong) {
+      arrayLoaiPhong.push(payload.giaPhong);
+    }
+
+    if (payload.isMang) {
+      queryString.dKMang = payload.isMang;
+    }
+
+    if (arrayLoaiPhong && arrayLoaiPhong.length > 0) {
+      queryString.loaiPhongID = {
+        $in: arrayLoaiPhong
+      };
+    }
+
+    if (payload.tinhTrangPhongSelect && payload.tinhTrangPhongSelect.length > 0) {
+      // lọc ra phòng có tình trạn theo yêu cầu
+      queryString.tinhTrangPhongID = {
+        $in: payload.tinhTrangPhongSelect
+      };
+    }
+
+    let data = await Model.find(queryString).lean().populate(['loaiPhongID', 'khuPhongID', 'tinhTrangPhongID']);
+    return data;
+  };
 };
 
 /***/ }),
@@ -5461,13 +5495,23 @@ const searchMultiple = async (request, h) => {
   }
 };
 
+const tracuuphong = async (request, h) => {
+  try {
+    let items = await Phong.tracuuphong(request.payload);
+    return items;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   save,
   getById,
   getAll,
   update,
   deletePhong,
-  searchMultiple
+  searchMultiple,
+  tracuuphong
 };
 
 /***/ }),
@@ -5553,6 +5597,25 @@ exports.default = [{
   config: {
     description: 'tim kiem nhieu tham so',
     validate: _index4.default.search,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/tracuuphong',
+  handler: _index2.default.tracuuphong,
+  config: {
+    description: 'tra cuu phong',
+    validate: _index4.default.tracuuphong,
     tags: ['api'],
     plugins: {
       'hapi-swagger': {
@@ -5737,6 +5800,17 @@ const phongVal = {
   get: {
     params: {
       id: _joi2.default.ObjectId()
+    }
+  },
+  tracuuphong: {
+    payload: {
+      loaiPhong: _joi2.default.ObjectId(),
+      giaPhong: _joi2.default.ObjectId(),
+      isMang: _joi2.default.boolean(),
+      tinhTrangPhongSelect: _joi2.default.array()
+    },
+    options: {
+      allowUnknown: true
     }
   }
 };

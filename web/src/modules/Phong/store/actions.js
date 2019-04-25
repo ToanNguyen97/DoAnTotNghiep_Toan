@@ -1,8 +1,7 @@
-import axios from 'axios'
-
+import PhongServices from '../Phongservices.js'
 const getPhongs = async (context) => {
   try {
-    let {data} = await axios.get('http://localhost:3003/api/phong')
+    let {data} = await PhongServices.getPhongs()
     if(data.message !== 'Not allowed') {
       context.commit('getListPhong', data)
       return true
@@ -16,7 +15,7 @@ const getPhongs = async (context) => {
 
 const getKhuPhongs = async (context) => {
   try {
-    let {data} = await axios.get('http://localhost:3003/api/khuphong')
+    let {data} = await PhongServices.getKhuPhongs()
     context.commit('getListKhuPhong', data)
   } catch (err)  {
     return err
@@ -25,7 +24,7 @@ const getKhuPhongs = async (context) => {
 
 const getLoaiPhongs = async (context) => {
   try {
-    let {data} = await axios.get('http://localhost:3003/api/loaiphong')
+    let {data} = await PhongServices.getLoaiPhongs()
     context.commit('getListLoaiPhong', data)
   } catch (err)  {
     return err
@@ -34,7 +33,7 @@ const getLoaiPhongs = async (context) => {
 
 const getTinhTrangPhongs = async (context) => {
   try {
-    let {data} = await axios.get('http://localhost:3003/api/tinhtrangphong')
+    let {data} = await PhongServices.getTinhTrangPhongs()
     context.commit('getListTinhTrangPhong', data)
   } catch (err)  {
     return err
@@ -42,26 +41,26 @@ const getTinhTrangPhongs = async (context) => {
 }
 
 const XacNhan = async (context, payload) => {
-  let {data} = await axios.post('http://localhost:3003/api/phong', payload)
+  let {data} = await PhongServices.XacNhan(payload)
   context.commit('addPhong', data)
 }
 
 const deletePhong = async (context, idXoa) => {
-  let {data} = await axios.delete('http://localhost:3003/api/phong/'+ idXoa)
+  let {data} = await PhongServices.deletePhong(idXoa)
   context.commit('deletePhong', data)
   return data
 }
 
 const deleteMultiPhong = async (context, deleteMultiId) => {
   for(let item of deleteMultiId) {
-    await axios.delete('http://localhost:3003/api/phong/'+ item)
+    await PhongServices.deletePhong(item)
   }
   context.commit('deletePhongMulti', deleteMultiId)
 }
 
 const timKiem = async (context, payload) => {
   try {
-    let {data} = await axios.post('http://localhost:3003/api/timkiemphong/timchinhxac='+ payload.isReal, payload.formData)
+    let {data} = await PhongServices.timKiem(payload)
     context.commit('searchPhong', data)
     return data
   } catch (err) {
@@ -71,7 +70,7 @@ const timKiem = async (context, payload) => {
 
 const getPhongById = async (context, idPhong) => {
   try {
-    let {data} = await axios.get('http://localhost:3003/api/phong/'+ idPhong)
+    let {data} = await PhongServices.getPhongById(idPhong)
     return data
   } catch (err) {
     return err

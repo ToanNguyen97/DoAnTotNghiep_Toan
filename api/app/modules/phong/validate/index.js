@@ -75,6 +75,17 @@ const phongVal = {
     params: {
       id: Joi.ObjectId()
     }
+  },
+  tracuuphong: {
+    payload: {
+      loaiPhong: Joi.ObjectId(),
+      giaPhong: Joi.ObjectId(),
+      isMang: Joi.boolean(),
+      tinhTrangPhongSelect: Joi.array()
+    },
+    options: {
+      allowUnknown: true
+    }
   }
 }
 

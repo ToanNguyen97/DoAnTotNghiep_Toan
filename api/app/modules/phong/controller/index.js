@@ -171,6 +171,14 @@ const searchMultiple = async (request, h) => {
   }
 }
 
+const tracuuphong = async (request, h) => {
+  try {
+    let items = await Phong.tracuuphong(request.payload)
+    return items
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
 
 export default {
   save,
@@ -178,5 +186,6 @@ export default {
   getAll,
   update,
   deletePhong,
-  searchMultiple
+  searchMultiple,
+  tracuuphong
 }

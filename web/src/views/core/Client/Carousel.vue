@@ -66,7 +66,7 @@
                   dark
                   label="Có dịch vụ mạng"
                   id="checkbox-oghep"
-                  color="orange darken-3"
+                  color="cyan darken-3"
                   value="orange darken-3"
                   hide-details
                 ></v-checkbox>
