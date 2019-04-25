@@ -52,17 +52,20 @@ export default {
    this.$store.dispatch('phong/getPhongById',this.$route.params.id).then( res => {
      this.phong = res
      let PhieuThuNow = res.dsPhieuThu[res.dsPhieuThu.length -1]
-     this.phieuThuTT = PhieuThuNow
-     if(this.phieuThuTT.tinhTrangPhieuThu != 'đã đóng') {
-       this.disabled = false
-     } else {
-       this.disabled = true
+     if(PhieuThuNow) {
+      this.phieuThuTT = PhieuThuNow
+      if(this.phieuThuTT.tinhTrangPhieuThu != 'đã đóng') {
+        this.disabled = false
+      } else {
+        this.disabled = true
+      }
+      this.dsCTPT = PhieuThuNow.dsCTPT
+      this.tongTien = this.dsCTPT.reduce((tongTien, current) => {
+       return (current.chiSoMoi && current.chiSoMoi >0)?tongTien + (current.chiSoMoi - current.chiSoCu) * current.donGia : tongTien + current.donGia
+      }, 0)
+      this.tenThang = moment(PhieuThuNow.ngayLap).format('MM')
      }
-     this.dsCTPT = PhieuThuNow.dsCTPT
-     this.tongTien = this.dsCTPT.reduce((tongTien, current) => {
-      return (current.chiSoMoi && current.chiSoMoi >0)?tongTien + (current.chiSoMoi - current.chiSoCu) * current.donGia : tongTien + current.donGia
-     }, 0)
-     this.tenThang = moment(PhieuThuNow.ngayLap).format('MM')
+
    })
   },
   computed: {
