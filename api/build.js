@@ -1720,7 +1720,14 @@ module.exports = function (schema, options) {
       };
     }
 
-    let data = await Model.find(queryString).lean().populate(['loaiPhongID', 'khuPhongID', 'tinhTrangPhongID']);
+    let data = await Model.find(queryString).populate([{
+      path: 'loaiPhongID'
+    }, {
+      path: 'khuPhongID',
+      populate: ['dsPhong']
+    }, {
+      path: 'tinhTrangPhongID'
+    }]).lean();
     return data;
   };
 };
@@ -5461,7 +5468,10 @@ const getById = async (request, h) => {
   try {
     return await Phong.findById({
       _id: request.params.id
-    }).populate(['loaiPhongID', 'khuPhongID', 'tinhTrangPhongID', {
+    }).populate(['loaiPhongID', {
+      path: 'khuPhongID',
+      populate: ['dsPhong']
+    }, 'tinhTrangPhongID', {
       path: 'dsHopDong',
       populate: [{
         path: 'khachThueID',

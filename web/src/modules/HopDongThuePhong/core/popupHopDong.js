@@ -1,9 +1,16 @@
 import _ from 'lodash'
 import toast from '../../../plugins/toast'
+import popupKhach from '../../KhachThue/core/popupKhachThue.vue'
 import moment from 'moment'
 export default {
+  components: {
+    popupKhach
+  },
   props:{
     HopDongThuePhongSelect: {
+      type: Object
+    },
+    phongSelect: {
       type: Object
     },
     value: {
@@ -26,7 +33,8 @@ export default {
       khachThue: null,
       khuPhongID: null,
       phongID: null,
-      dsPhong: null
+      dsPhong: null,
+      openKhach: false
     }
   },
   computed: {
@@ -113,6 +121,12 @@ export default {
       if (v) {
         this.$store.dispatch('phong/getKhuPhongs')
         this.$store.dispatch('getLoaiKhachs')
+        if(this.phongSelect) {
+          this.phong = this.phongSelect
+          this.khuPhongID = this.phong.khuPhongID._id
+          this.dsPhong = this.phong.khuPhongID.dsPhong
+          this.phongID = this.phong._id
+        }
       }
       if (v && this.isThem === false) {
         if (this.HopDongThuePhongSelect && this.HopDongThuePhongSelect._id) {

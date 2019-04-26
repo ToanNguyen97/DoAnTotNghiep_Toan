@@ -48,6 +48,13 @@
           <v-card-actions>
             <v-btn flat color="blue" ><v-icon dark>far fa-thumbs-up</v-icon></v-btn>
             <v-btn flat color="purple"><v-icon dark>fas fa-share-alt</v-icon></v-btn>
+            <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+               <v-btn flat color="green accent-3" @click="openHD = true" v-on="on"><v-icon dark>fas fa-file-signature</v-icon></v-btn>
+            </template>
+            <span>Lập hợp đồng</span>
+          </v-tooltip>
+           
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -160,9 +167,7 @@
         </v-tabs>   
       </v-flex>
     </v-layout>
-    <v-layout row wrap>
-
-    </v-layout>
+    <lap-hop-dong v-model="openHD" :phongSelect="phong || {}"></lap-hop-dong>
   </div>
 </template>
 

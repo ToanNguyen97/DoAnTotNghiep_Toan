@@ -1,8 +1,13 @@
 import moment from 'moment'
 import toast from '../../../plugins/toast.js'
+import LapHopDong from '../../HopDongThuePhong/core/popupHopDong.vue'
 export default {
+  components: {
+    LapHopDong
+  },
   data() {
     return {
+      openHD: false,
       phong: {},
       dsKhachThue: [],
       dsKhachTraPhong: [],

@@ -11,10 +11,13 @@
             <v-card>
               <v-card-title class="pa-0">
                 <v-layout row wrap style="padding:2px;" justify-space-between>
-                  <v-flex xs6 sm6 md6>
-                    <h3 class="pl-1 pt-2" >Thông tin khách thuê</h3> 
+                  <v-flex xs6 sm6 md5>
+                    <h3 class="pl-1 pt-2">Thông tin khách thuê</h3>
+                  </v-flex>
+                  <v-flex md2>
+                    <v-btn icon @click="openKhach=true" dark color="pink"><v-icon>add</v-icon></v-btn>
                   </v-flex>             
-                  <v-flex xs6 sm6 md6 pt-0 pb-2 pr-2>
+                  <v-flex xs6 sm6 md5 pt-0 pb-2 pr-2>
                     <v-text-field style="padding-top:4px" v-model="soDienThoai" single-line  hide-details label="nhập số điện thoại" append-icon="phone"></v-text-field>  
                   </v-flex>  
                   </v-layout>
@@ -164,6 +167,7 @@
       </v-container>
     </v-card-text>          
   </v-card>
+  <popup-khach v-model="openKhach" :isThem="true"></popup-khach>
 </v-dialog>
 </template>
 

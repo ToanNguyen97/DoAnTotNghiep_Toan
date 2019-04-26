@@ -43,6 +43,8 @@ export default {
           this.loading = false
         } else {
           toast.Show('Không có kết quả theo tìm kiếm')
+          this.loading = false
+          this.dsPhong = []
         }
       })
     }

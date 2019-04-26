@@ -48,7 +48,7 @@
                 <v-container pt-0 style="height: 500px;">
                   <div style="width:950px;" class="pl-4">
                     <v-layout justify-start row wrap v-if="dsPhong && dsPhong.length > 0">
-                      <v-btn style="width:120px; height:120px;"  target="_blank" :to="{path:`/thong-tin-chi-tiet-phong-${item._id}.html`}" :color="item.tinhTrangPhongID._id === '5c88669ffcd238559ca25d13'?'cyan accent-2':(item.tinhTrangPhongID._id === '5c8866adfcd238559ca25d14'?'green accent-3':(item.tinhTrangPhongID._id === '5c8866b6fcd238559ca25d15'?'pink accent-2':'amber accent-3'))"  class="mx-3 my-2" v-for="item of dsPhong" :key="item._id">{{item.tenPhong}}<br>{{item.khuPhongID.tenKhuPhong}}<br>{{item.giaPhong.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}}</v-btn>
+                      <v-btn  style="width:120px; height:120px;"  target="_blank" :to="{path:`/thong-tin-chi-tiet-phong-${item._id}.html`}" :color="item.tinhTrangPhongID._id === '5c88669ffcd238559ca25d13'?'cyan accent-2':(item.tinhTrangPhongID._id === '5c8866adfcd238559ca25d14'?'green accent-3':(item.tinhTrangPhongID._id === '5c8866b6fcd238559ca25d15'?'pink accent-2':'amber accent-3'))"  class="mx-3 my-2" v-for="item of dsPhong" :key="item._id">{{item.tenPhong}}<br>{{item.khuPhongID.tenKhuPhong}}<br>{{item.giaPhong.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}}</v-btn>
                     </v-layout>
                   </div>
                 </v-container>
