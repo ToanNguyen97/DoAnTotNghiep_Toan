@@ -6,7 +6,7 @@ const nhanVienVal = {
   save: {
     payload: {
       _id: Joi.string().length(24),
-      hoNhanVien: Joi.string().required().max(30),
+      hoNhanVien: Joi.string().required(),
       tenNhanVien: Joi.string().required().max(20),
       anhDaiDien: Joi.object(),
       ngaySinh: Joi.date().required(),
@@ -15,7 +15,7 @@ const nhanVienVal = {
       soDienThoai: Joi.string().required().max(11),
       hoTenNguoiThan: Joi.string().required().max(50),
       diaChi: Joi.string().required().max(80),
-      ChucVu: Joi.string().required().max(30),
+      rolesGroupID: Joi.ObjectId(),
       email: Joi.string().email(),
       status: Joi.boolean().default(true)
     },
@@ -26,7 +26,7 @@ const nhanVienVal = {
   put: {
     payload: {
       _id: Joi.string().length(24),
-      hoNhanVien: Joi.string().required().max(30),
+      hoNhanVien: Joi.string().required(),
       tenNhanVien: Joi.string().required().max(20),
       anhDaiDien: Joi.string(),
       ngaySinh: Joi.date().required(),
@@ -35,7 +35,7 @@ const nhanVienVal = {
       soDienThoai: Joi.string().required().max(11),
       hoTenNguoiThan: Joi.string().required().max(50),
       diaChi: Joi.string().required().max(80),
-      ChucVu: Joi.string().required().max(30),
+      ChucVu: Joi.ObjectId(),
       email: Joi.string().email(),
       status: Joi.boolean().default(true)
     },

@@ -6,18 +6,18 @@ export default [
     path: '/danh-sach-phong.html',
     name: 'ListPhong',
     component: ListPhong,
-    meta: { roles: ['chủ trọ','nhân viên']},
+    meta: { role:'5cc57a84f34b6716fc4a82cb'},
   },
   {
     path: '/thong-tin-chi-tiet-phong-:id.html',
     name: 'DetailPhong',
     component: DetailPhong,
-    meta: { roles: ['chủ trọ','nhân viên']},
+    meta: { role:'5cc57a84f34b6716fc4a82cb'},
   },
   {
     path: '/tra-cuu-phong.html',
     name: 'SearchRoom',
     component: SearchRoom,
-    meta: { roles: ['chủ trọ','nhân viên']},
+    meta: { role:'5cc57a84f34b6716fc4a82cb'},
   }
 ]

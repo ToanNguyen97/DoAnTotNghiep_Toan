@@ -42,7 +42,7 @@ export default new Router({
     {
       path: '/admin',
       name: 'Admin',
-      meta: { roles: ['chủ trọ','nhân viên', 'khách thuê']},
+      meta: { role: '5cc5752e6adfd01278d9a325'},
       component: Admin,
       children: [...Dashboard, ...PhongRoutes, ...KhachThueRoutes, ...HopDongThuePhongRoutes, ...PhieuThuTienRoutes, ...NhanVienRoutes, ...LayoutKhachThue, ...ThongKeRoutes],
       beforeEnter: Authenticated.Authenticated

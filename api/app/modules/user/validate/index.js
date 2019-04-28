@@ -9,7 +9,8 @@ const userVal = {
       passWord: Joi.string().required(),
       email: Joi.string().email(),
       status: Joi.boolean().default(true),
-      roles: Joi.string()
+      rolesGroupID: Joi.ObjectId(),
+      nhanVienID: Joi.ObjectId()
     }
   },
   login: {

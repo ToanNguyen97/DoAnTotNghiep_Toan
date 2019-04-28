@@ -44,18 +44,22 @@
     methods: {
       Login () {
         let payload = {userName: this.username, passWord: this.password}
-        this.$store.dispatch('auth/login', payload).then(res => {          
+        this.$store.dispatch('auth/login', payload).then(res => { 
+          /*chúng ta check role của account đó nếu thuộc diện account admin thì vào admin,
+            khách thì vào khách,
+            còn các nhóm còn lại thì chuyển sang route admin (route admin là route mặc định)
+          */
           if(res.isValid === true)
           {
-            toast.Success(`Xin chào ${res.credentials.roles}: ${res.credentials.userInfo.tenNhanVien || res.credentials.userInfo.tenKhachThue}`)
-            if(res.credentials.roles === 'chủ trọ') {
+            toast.Success(`Xin chào ${res.credentials.rolesGroupID.nameRoleGroup}: ${res.credentials.userInfo.tenNhanVien || res.credentials.userInfo.tenKhachThue}`)
+            if(res.credentials.rolesGroupID._id === '5cc565ac9f49904f20b6211e') {
               this.$router.push({path: '/tong-quan.html'})
             }
-            else if(res.credentials.roles === 'nhân viên') {
-              this.$router.push({path: '/danh-sach-phong.html'})
+            else if(res.credentials.rolesGroupID._id === '5cc565b39f49904f20b6211f') {
+              this.$router.push({path: '/thong-tin-phong-dang-thue.html'})
             }
             else {
-              this.$router.push({path: '/thong-tin-phong-dang-thue.html'})
+              this.$router.push({path: '/admin'})
             }
             
           }

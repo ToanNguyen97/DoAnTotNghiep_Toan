@@ -11,14 +11,13 @@ const SALT_LENGTH= 10
 const signin = async (request, h) => {
   try {
     let data = request.payload
-
     let listUsers = await User.find()
     let userNotDuplicate = listUsers.filter(item => {
       item.userName = data.userName
     })
     if(userNotDuplicate && userNotDuplicate.length === 0) {
       let newpass = Bcrypt.hashSync(data.passWord,SALT_LENGTH)
-      let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, roles: data.roles}
+      let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, rolesGroupID: data.rolesGroupID, nhanVienID:data.nhanVienID}
       // tao token
       let token = Jwt.sign(user, global.CONFIG.get('web.jwt.secret'))
       let userRegisted = await User.create(user)
@@ -33,20 +32,11 @@ const signin = async (request, h) => {
 }
 const createAccountNV = async (data) => {
   try {
-    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo roles
-    let listUsers = await User.find({roles: 'nhân viên'})
-    let userNotDuplicate = listUsers.filter(item => {
-      item.userName = data.userName
-    })
-    if(userNotDuplicate && userNotDuplicate.length === 0) {
+    // tài khoản nhân viên sẽ không bao giờ trùng
       let newpass = Bcrypt.hashSync(data.passWord,SALT_LENGTH)
-      let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, roles: data.roles, nhanVienID:data.nhanVienID}
+      let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, rolesGroupID: data.rolesGroupID, nhanVienID:data.nhanVienID}
       let userRegisted = await User.create(user)
       return userRegisted
-    }
-    else {
-      return Boom.badRequest('Lỗi lúc thêm rồi!')
-    }
   } catch (err) {
     return Boom.forbidden(err)
   }
@@ -54,19 +44,19 @@ const createAccountNV = async (data) => {
 
 const createAccountKT = async (data) => {
   try {
-    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo roles
-    let listUsers = await User.find({roles: 'khách thuê'})
+    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo rolesGroupID
+    let listUsers = await User.find({rolesGroupID: '5cc560ee21fd1c0d185cbd82'})
     let userNotDuplicate = listUsers.filter(item => {
       item.userName = data.userName
     })
     if(userNotDuplicate && userNotDuplicate.length === 0) {
       let newpass = Bcrypt.hashSync(data.passWord,SALT_LENGTH)
-      let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, roles: data.roles, khachThueID:data.khachThueID}
+      let user = {userName: data.userName, passWord: newpass, email: data.email, status: data.status, rolesGroupID: data.rolesGroupID, khachThueID:data.khachThueID}
       let userRegisted = await User.create(user)
       return userRegisted
     }
     else {
-      return Boom.badRequest('Lỗi lúc thêm rồi!')
+      return Boom.badRequest('Lỗi trùng tài khoản!')
     }
   } catch (err) {
     return Boom.forbidden(err)
@@ -80,11 +70,11 @@ const login = async (request, h) => {
     // check xem tài khoản này của khach hay của nhan vien
     let userInfo = {}
     if(data && data.nhanVienID) {
-      data = await User.findById({_id:data._id}).populate('nhanVienID')
+      data = await User.findById({_id:data._id}).populate(['nhanVienID',{path:'rolesGroupID', populate:['roles']}])
       userInfo = data.nhanVienID
     }
     if(data && data.khachThueID) {
-      data = await User.findById({_id:data._id}).populate('khachThueID')
+      data = await User.findById({_id:data._id}).populate(['khachThueID',{path:'rolesGroupID', populate:'roles'}])
       userInfo= data.khachThueID
     }
     if(data === null) {
@@ -93,7 +83,7 @@ const login = async (request, h) => {
     else {
       let isValid = await Bcrypt.compare(request.payload.passWord, data.passWord)
       if(isValid) {
-        const credentials = {userName: data.userName, email: data.email, roles: data.roles, status: data.status, userInfo}
+        const credentials = {userName: data.userName, email: data.email, rolesGroupID: data.rolesGroupID, status: data.status, userInfo}
         let session = {
           valid: true,
           id: Aguid(),
@@ -152,7 +142,7 @@ const editUser = async (request, h) => {
           passWord: newpass,
           email: data.email,
           status: user.status,
-          roles: user.roles,
+          rolesGroupID: user.rolesGroupID,
           khachThueID: data.khachThueID
         }
         user = Object.assign(user,newUser)
@@ -175,7 +165,7 @@ const editUser = async (request, h) => {
           passWord: newpass,
           email: data.email,
           status: user.status,
-          roles: user.roles,
+          rolesGroupID: user.rolesGroupID,
           nhanVienID: data.nhanVienID
         } 
         user = Object.assign(user,newUser)

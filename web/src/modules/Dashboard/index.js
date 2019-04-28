@@ -5,6 +5,6 @@ export default [
     path:'/tong-quan.html',
     name:'dashboard',
     component: Dashboard,
-    meta: { roles: ['chủ trọ']},
+    meta: { role: '5cc560d021fd1c0d185cbd81'},
   }
 ]

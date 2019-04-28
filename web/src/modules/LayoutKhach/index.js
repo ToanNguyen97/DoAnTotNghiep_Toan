@@ -5,12 +5,12 @@ export default [
     path: '/thong-tin-khach-thue.html',
     name: 'infoKhachThue',
     component: infoKhachThue,
-    meta: { roles: ['khách thuê'] }
+    meta: { role:'5cc57b81f34b6716fc4a82cd' }
   },
   {
     path: '/thong-tin-phong-dang-thue.html',
     name: 'infoPhongOfKhach',
     component: infoPhongOfKhach,
-    meta: { roles: ['khách thuê'] }
+    meta: { role:'5cc57b81f34b6716fc4a82cd' }
   }
 ]

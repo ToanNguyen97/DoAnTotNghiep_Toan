@@ -56,6 +56,8 @@ export const loader = async function (server) {
      require('../models/PhieuTraPhong/model')
      require('../models/User/model')
      require('../models/NhanVien/model')
+     require('../models/Role/model')
+     require('../models/RoleGroup/model')
      require('../lib/services/translateCharacter.js')
      require('../lib/services/checkQuyen.js')
 
@@ -74,6 +76,8 @@ export const loader = async function (server) {
      modules.push(require('../modules/phieutraphong'))
      modules.push(require('../modules/user'))
      modules.push(require('../modules/nhanvien'))
+     modules.push(require('../modules/role'))
+     modules.push(require('../modules/rolegroup'))
      
      if (modules.length) {
        let options = {}

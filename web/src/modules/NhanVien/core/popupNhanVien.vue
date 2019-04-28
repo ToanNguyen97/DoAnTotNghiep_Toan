@@ -16,11 +16,11 @@
             </v-flex>       
             <v-flex xs12 sm6 md3>
               <v-select
-                v-model="formData.ChucVu"
+                v-model="formData.rolesGroupID"
                 :items="dsAuth"
                 label="Chức vụ"
-                item-text="ten"
-                item-value="ten"
+                item-text="nameRoleGroup"
+                item-value="_id"
               ></v-select>
             </v-flex>   
             <v-flex xs12 sm6 md3>

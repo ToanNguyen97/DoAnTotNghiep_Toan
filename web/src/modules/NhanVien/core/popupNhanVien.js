@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import toast from '../../../plugins/toast'
 import moment from 'moment'
+import axios from 'axios'
 export default {
   props:{
     NhanVienSelect: {
@@ -110,6 +111,9 @@ export default {
   },
   watch: {
     value (v) {
+      axios.get('http://localhost:3003/api/role-group').then(res => {
+        this.dsAuth = res.data
+      })
       if (v && this.isThem === false) {
         if (this.NhanVienSelect && this.NhanVienSelect._id) {
           this.formData = _.cloneDeep(this.NhanVienSelect)

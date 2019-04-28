@@ -7,7 +7,7 @@ const fs = require('fs')
 const NhanVien = Mongoose.model('NhanVien')
 const save = async (request, h) => {
   try {
-    if(request.pre.isRoles) {
+   // if(request.pre.isRoles) {
       let data = request.payload
       let item = {}
       if(!data._id)
@@ -20,11 +20,11 @@ const save = async (request, h) => {
         item  = new NhanVien(data)
         // chỗ này chưa check trường hợp nếu nhân viên đó vừa là khách thì tài khoản sẽ trùng??
         let user = {
-          userName: formatCharacter(`${item.hoNhanVien}${item.tenNhanVien}${item.soDienThoai}`),
+          userName: formatCharacter(`nhanvien${item.hoNhanVien}${item.tenNhanVien}${item.soDienThoai}`),
           passWord: item.soDienThoai,
           email: item.email,
           status: item.status,
-          roles: item.ChucVu,
+          rolesGroupID: item.rolesGroupID,
           nhanVienID: item._id
         }
         await User.createAccountNV(user)
@@ -43,16 +43,24 @@ const save = async (request, h) => {
           })
           data.anhDaiDien = data.anhDaiDien.name
           item = await NhanVien.findById({_id: data._id})
-          item = Object.assign(item, data)
+          // kiểm tra thử có sửa quyền của tài khoản nhân viên hay không
+          if(String(data.rolesGroupID) !== String(item.rolesGroupID)) {
+            let account = await User.findById({nhanVienID:item._id})
+            if(account) {
+              account.rolesGroupID = data.rolesGroupID
+              await account.save()
+            }
+          }
+          item = Object.assign(item, data)  
         }
         }   
         await item.save()    
-        let nhanVien = await NhanVien.findById({_id: item._id}) || Boom.notFound()
+        let nhanVien = await NhanVien.findById({_id: item._id}).populate('rolesGroupID')  || Boom.notFound()
         return nhanVien
-    }
-    else {
-      return h.response({message:'Not allowed'})
-    }
+    // }
+    // else {
+    //   return h.response({message:'Not allowed'})
+    // }
   } catch (err) {
     return Boom.forbidden(err)
   }
@@ -60,12 +68,12 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    if(request.pre.isRoles) {
-      return await NhanVien.find() || Boom.notFound()
-    }
-    else {
-      return h.response({message:'Not allowed'})
-    }
+   // if(request.pre.isRoles) {
+      return await NhanVien.find().populate('rolesGroupID') || Boom.notFound()
+    // }
+    // else {
+    //   return h.response({message:'Not allowed'})
+    // }
   } catch (err) {
     return Boom.forbidden(err)
   }

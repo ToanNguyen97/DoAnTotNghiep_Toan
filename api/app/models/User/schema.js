@@ -4,8 +4,7 @@ import {Schema} from 'mongoose'
 const schema = {
   userName: {
     type: String,
-    required: true,
-    max: 30
+    required: true
   },
   passWord: {
     type: String,
@@ -19,9 +18,9 @@ const schema = {
     type: Boolean,
     default: true // true: active, false: inactive
   },
-  roles: {
-    type: String,
-    enum: [ 'khách thuê', 'nhân viên', 'chủ trọ' ]
+  rolesGroupID: {
+    type: Schema.Types.ObjectId,
+    ref: 'RoleGroup'
   },
   nhanVienID: {
     type: Schema.Types.ObjectId,

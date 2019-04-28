@@ -43,7 +43,7 @@ const save = async (request, h) => {
           passWord: khachThue.soDienThoai,
           email: khachThue.email,
           status: true,
-          roles: 'khách thuê',
+          rolesGroupID: '5cc565b39f49904f20b6211f',
           khachThueID: khachThue._id
         }
         await UserController.createAccountKT(user)

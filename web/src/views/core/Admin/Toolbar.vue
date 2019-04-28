@@ -30,7 +30,7 @@
               <img :src="`//localhost:3003/image/${ user.userInfo.anhDaiDien}`" alt="ảnh">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title v-if="user && user.roles && user.roles">{{user.roles}} </v-list-tile-title>
+              <v-list-tile-title v-if="user && user.rolesGroupID ">{{user.rolesGroupID.nameRoleGroup}} </v-list-tile-title>
               <v-list-tile-sub-title v-if="user && user.userInfo && user.userInfo.hoNhanVien">{{user.userInfo.hoNhanVien}} {{user.userInfo.tenNhanVien}}</v-list-tile-sub-title>
               <v-list-tile-sub-title v-if="user && user.userInfo && user.userInfo.hoKhachThue">{{user.userInfo.hoKhachThue}} {{user.userInfo.tenKhachThue}}</v-list-tile-sub-title>
             </v-list-tile-content>
@@ -69,7 +69,7 @@
     </div>
     
   </v-toolbar>
-  <NavigationDrawer @input="input" v-if="user" :permission="user && user.roles" :User="user && user.userInfo" :mini="mini" :check="check" />
+  <NavigationDrawer @input="input" v-if="user" :permission="user && user.rolesGroupID" :User="user && user.userInfo" :mini="mini" :check="check" />
   <popupUser v-model="openPopUser"/>
 </nav>
 </template>

@@ -222,6 +222,10 @@ const loader = exports.loader = async function (server) {
 
     __webpack_require__(/*! ../models/NhanVien/model */ "./app/models/NhanVien/model.js");
 
+    __webpack_require__(/*! ../models/Role/model */ "./app/models/Role/model.js");
+
+    __webpack_require__(/*! ../models/RoleGroup/model */ "./app/models/RoleGroup/model.js");
+
     __webpack_require__(/*! ../lib/services/translateCharacter.js */ "./app/lib/services/translateCharacter.js");
 
     __webpack_require__(/*! ../lib/services/checkQuyen.js */ "./app/lib/services/checkQuyen.js");
@@ -242,6 +246,8 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/phieutraphong */ "./app/modules/phieutraphong/index.js"));
     modules.push(__webpack_require__(/*! ../modules/user */ "./app/modules/user/index.js"));
     modules.push(__webpack_require__(/*! ../modules/nhanvien */ "./app/modules/nhanvien/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/role */ "./app/modules/role/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/rolegroup */ "./app/modules/rolegroup/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -1385,6 +1391,10 @@ exports.default = _mongoose2.default.model('NhanVien', nhanVienSchema);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
 const schema = {
   hoNhanVien: {
     type: String,
@@ -1427,10 +1437,9 @@ const schema = {
     required: true,
     max: 80
   },
-  ChucVu: {
-    type: String,
-    required: true,
-    max: 30
+  rolesGroupID: {
+    ref: 'RoleGroup',
+    type: _mongoose.Schema.Types.ObjectId
   },
   email: String,
   status: {
@@ -1854,6 +1863,126 @@ exports.options = options;
 
 /***/ }),
 
+/***/ "./app/models/Role/model.js":
+/*!**********************************!*\
+  !*** ./app/models/Role/model.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema.js */ "./app/models/Role/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const RoleSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('Role', RoleSchema);
+
+/***/ }),
+
+/***/ "./app/models/Role/schema.js":
+/*!***********************************!*\
+  !*** ./app/models/Role/schema.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const schema = {
+  roleName: {
+    type: String,
+    required: true,
+    max: 30
+  }
+};
+const options = {
+  collection: 'roles',
+  virtuals: true
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/models/RoleGroup/model.js":
+/*!***************************************!*\
+  !*** ./app/models/RoleGroup/model.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema.js */ "./app/models/RoleGroup/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const RoleGroupSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('RoleGroup', RoleGroupSchema);
+
+/***/ }),
+
+/***/ "./app/models/RoleGroup/schema.js":
+/*!****************************************!*\
+  !*** ./app/models/RoleGroup/schema.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const schema = {
+  nameRoleGroup: {
+    type: String,
+    required: true,
+    max: 30
+  },
+  roles: [{
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'Role'
+  }]
+};
+const options = {
+  collections: 'rolegroups',
+  virtuals: true
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
 /***/ "./app/models/TinhTrangPhong/model.js":
 /*!********************************************!*\
   !*** ./app/models/TinhTrangPhong/model.js ***!
@@ -1956,8 +2085,7 @@ var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 const schema = {
   userName: {
     type: String,
-    required: true,
-    max: 30
+    required: true
   },
   passWord: {
     type: String,
@@ -1972,9 +2100,9 @@ const schema = {
     default: true // true: active, false: inactive
 
   },
-  roles: {
-    type: String,
-    enum: ['khách thuê', 'nhân viên', 'chủ trọ']
+  rolesGroupID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'RoleGroup'
   },
   nhanVienID: {
     type: _mongoose.Schema.Types.ObjectId,
@@ -2500,7 +2628,7 @@ const save = async (request, h) => {
           passWord: khachThue.soDienThoai,
           email: khachThue.email,
           status: true,
-          roles: 'khách thuê',
+          rolesGroupID: '5cc565b39f49904f20b6211f',
           khachThueID: khachThue._id
         };
         await _index2.default.createAccountKT(user);
@@ -4072,59 +4200,69 @@ const NhanVien = _mongoose2.default.model('NhanVien');
 
 const save = async (request, h) => {
   try {
-    if (request.pre.isRoles) {
-      let data = request.payload;
-      let item = {};
+    // if(request.pre.isRoles) {
+    let data = request.payload;
+    let item = {};
 
-      if (!data._id) {
+    if (!data._id) {
+      let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
+      fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+        return err;
+      });
+      data.anhDaiDien = data.anhDaiDien.name;
+      item = new NhanVien(data); // chỗ này chưa check trường hợp nếu nhân viên đó vừa là khách thì tài khoản sẽ trùng??
+
+      let user = {
+        userName: (0, _translateCharacter2.default)(`nhanvien${item.hoNhanVien}${item.tenNhanVien}${item.soDienThoai}`),
+        passWord: item.soDienThoai,
+        email: item.email,
+        status: item.status,
+        rolesGroupID: item.rolesGroupID,
+        nhanVienID: item._id
+      };
+      await _index2.default.createAccountNV(user);
+    } else {
+      if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
+        item = await NhanVien.findById({
+          _id: data._id
+        });
+        data.anhDaiDien = item.anhDaiDien;
+        item = Object.assign(item, data);
+      } else {
         let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
         fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
           return err;
         });
         data.anhDaiDien = data.anhDaiDien.name;
-        item = new NhanVien(data); // chỗ này chưa check trường hợp nếu nhân viên đó vừa là khách thì tài khoản sẽ trùng??
+        item = await NhanVien.findById({
+          _id: data._id
+        }); // kiểm tra thử có sửa quyền của tài khoản nhân viên hay không
 
-        let user = {
-          userName: (0, _translateCharacter2.default)(`${item.hoNhanVien}${item.tenNhanVien}${item.soDienThoai}`),
-          passWord: item.soDienThoai,
-          email: item.email,
-          status: item.status,
-          roles: item.ChucVu,
-          nhanVienID: item._id
-        };
-        await _index2.default.createAccountNV(user);
-      } else {
-        if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
-          item = await NhanVien.findById({
-            _id: data._id
+        if (String(data.rolesGroupID) !== String(item.rolesGroupID)) {
+          let account = await _index2.default.findById({
+            nhanVienID: item._id
           });
-          data.anhDaiDien = item.anhDaiDien;
-          item = Object.assign(item, data);
-        } else {
-          let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
-          fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
-            return err;
-          });
-          data.anhDaiDien = data.anhDaiDien.name;
-          item = await NhanVien.findById({
-            _id: data._id
-          });
-          item = Object.assign(item, data);
+
+          if (account) {
+            account.rolesGroupID = data.rolesGroupID;
+            await account.save();
+          }
         }
+
+        item = Object.assign(item, data);
       }
-
-      await item.save();
-
-      let nhanVien = (await NhanVien.findById({
-        _id: item._id
-      })) || _boom2.default.notFound();
-
-      return nhanVien;
-    } else {
-      return h.response({
-        message: 'Not allowed'
-      });
     }
+
+    await item.save();
+
+    let nhanVien = (await NhanVien.findById({
+      _id: item._id
+    }).populate('rolesGroupID')) || _boom2.default.notFound();
+
+    return nhanVien; // }
+    // else {
+    //   return h.response({message:'Not allowed'})
+    // }
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -4132,13 +4270,11 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    if (request.pre.isRoles) {
-      return (await NhanVien.find()) || _boom2.default.notFound();
-    } else {
-      return h.response({
-        message: 'Not allowed'
-      });
-    }
+    // if(request.pre.isRoles) {
+    return (await NhanVien.find().populate('rolesGroupID')) || _boom2.default.notFound(); // }
+    // else {
+    //   return h.response({message:'Not allowed'})
+    // }
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -4208,10 +4344,6 @@ exports.default = [{
   path: '/nhanvien',
   handler: _index2.default.getAll,
   config: {
-    pre: [{
-      method: _checkQuyen2.default.isRolesAdmin,
-      assign: 'isRoles'
-    }],
     tags: ['api'],
     description: 'lay danh sach nhan vien',
     plugins: {
@@ -4230,10 +4362,6 @@ exports.default = [{
   path: '/nhanvien',
   handler: _index2.default.save,
   config: {
-    pre: [{
-      method: _checkQuyen2.default.isRolesAdmin,
-      assign: 'isRoles'
-    }],
     description: 'them va sua nhan vien',
     tags: ['api'],
     validate: _index4.default.save,
@@ -4273,7 +4401,7 @@ const nhanVienVal = {
   save: {
     payload: {
       _id: Joi.string().length(24),
-      hoNhanVien: Joi.string().required().max(30),
+      hoNhanVien: Joi.string().required(),
       tenNhanVien: Joi.string().required().max(20),
       anhDaiDien: Joi.object(),
       ngaySinh: Joi.date().required(),
@@ -4282,7 +4410,7 @@ const nhanVienVal = {
       soDienThoai: Joi.string().required().max(11),
       hoTenNguoiThan: Joi.string().required().max(50),
       diaChi: Joi.string().required().max(80),
-      ChucVu: Joi.string().required().max(30),
+      rolesGroupID: Joi.ObjectId(),
       email: Joi.string().email(),
       status: Joi.boolean().default(true)
     },
@@ -4293,7 +4421,7 @@ const nhanVienVal = {
   put: {
     payload: {
       _id: Joi.string().length(24),
-      hoNhanVien: Joi.string().required().max(30),
+      hoNhanVien: Joi.string().required(),
       tenNhanVien: Joi.string().required().max(20),
       anhDaiDien: Joi.string(),
       ngaySinh: Joi.date().required(),
@@ -4302,7 +4430,7 @@ const nhanVienVal = {
       soDienThoai: Joi.string().required().max(11),
       hoTenNguoiThan: Joi.string().required().max(50),
       diaChi: Joi.string().required().max(80),
-      ChucVu: Joi.string().required().max(30),
+      ChucVu: Joi.ObjectId(),
       email: Joi.string().email(),
       status: Joi.boolean().default(true)
     },
@@ -5393,13 +5521,11 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    if (request.pre.isRoles) {
-      return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean();
-    } else {
-      return h.response({
-        message: 'Not allowed'
-      });
-    }
+    // if(request.pre.isRoles) {
+    return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean(); // }
+    // else {
+    //   return h.response({message:'Not allowed'})
+    // }
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -5583,10 +5709,6 @@ exports.default = [{
   path: '/phong',
   handler: _index2.default.getAll,
   config: {
-    pre: [{
-      method: _checkQuyen2.default.isRoles,
-      assign: 'isRoles'
-    }],
     description: 'lay danh sach phong',
     tags: ['api'],
     plugins: {
@@ -5825,6 +5947,436 @@ const phongVal = {
   }
 };
 exports.default = { ...phongVal
+};
+
+/***/ }),
+
+/***/ "./app/modules/role/controller/index.js":
+/*!**********************************************!*\
+  !*** ./app/modules/role/controller/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const Role = _mongoose2.default.model('Role');
+
+const get = async (request, h) => {
+  try {
+    return await Role.find();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = {};
+
+    if (!data._id) {
+      item = new Role(data);
+    } else {
+      item = await Role.findById(data._id);
+      item = Object.assign(item, data);
+    }
+
+    await item.save();
+    return item;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  get,
+  save
+};
+
+/***/ }),
+
+/***/ "./app/modules/role/index.js":
+/*!***********************************!*\
+  !*** ./app/modules/role/index.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _routes = __webpack_require__(/*! ./routes */ "./app/modules/role/routes/index.js");
+
+var _routes2 = _interopRequireDefault(_routes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_routes2.default);
+};
+
+exports.name = 'role-admin';
+
+/***/ }),
+
+/***/ "./app/modules/role/routes/index.js":
+/*!******************************************!*\
+  !*** ./app/modules/role/routes/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _validate = __webpack_require__(/*! ../validate */ "./app/modules/role/validate/index.js");
+
+var _validate2 = _interopRequireDefault(_validate);
+
+var _controller = __webpack_require__(/*! ../controller */ "./app/modules/role/controller/index.js");
+
+var _controller2 = _interopRequireDefault(_controller);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/role',
+  handler: _controller2.default.get,
+  config: {
+    auth: false,
+    description: 'xem danh sách role',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/role',
+  handler: _controller2.default.save,
+  config: {
+    auth: false,
+    validate: _validate2.default.create,
+    description: 'them va sua role',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/role/validate/index.js":
+/*!********************************************!*\
+  !*** ./app/modules/role/validate/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjecId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const roleVal = {
+  create: {
+    payload: {
+      _id: _joi2.default.string(),
+      roleName: _joi2.default.string().required().max(30)
+    },
+    options: {
+      allowUnknown: true
+    }
+  }
+};
+exports.default = { ...roleVal
+};
+
+/***/ }),
+
+/***/ "./app/modules/rolegroup/controller/index.js":
+/*!***************************************************!*\
+  !*** ./app/modules/rolegroup/controller/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const RoleGroup = _mongoose2.default.model('RoleGroup');
+
+const get = async (request, h) => {
+  try {
+    return await RoleGroup.find().populate('roles');
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const save = async (request, h) => {
+  try {
+    let data = request.payload;
+    let item = {};
+
+    if (!data._id) {
+      data.roles.push('5cc5752e6adfd01278d9a325');
+      item = new RoleGroup(data);
+    } else {
+      item = await RoleGroup.findById(data._id);
+      item = Object.assign(item, data);
+    }
+
+    await item.save();
+    return item;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+}; // add quyền cho group
+
+
+const addRole = async (request, h) => {
+  try {
+    let data = request.payload;
+    let roleGroup = await RoleGroup.findById({
+      _id: data.idGroup
+    });
+
+    if (roleGroup) {
+      if (!roleGroup.roles) {
+        roleGroup.roles = [];
+      }
+
+      roleGroup.roles.push(data.idRole);
+    }
+
+    await roleGroup.save();
+    return roleGroup;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  get,
+  save,
+  addRole
+};
+
+/***/ }),
+
+/***/ "./app/modules/rolegroup/index.js":
+/*!****************************************!*\
+  !*** ./app/modules/rolegroup/index.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _routes = __webpack_require__(/*! ./routes */ "./app/modules/rolegroup/routes/index.js");
+
+var _routes2 = _interopRequireDefault(_routes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_routes2.default);
+};
+
+exports.name = "rolegroup-admin";
+
+/***/ }),
+
+/***/ "./app/modules/rolegroup/routes/index.js":
+/*!***********************************************!*\
+  !*** ./app/modules/rolegroup/routes/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _validate = __webpack_require__(/*! ../validate */ "./app/modules/rolegroup/validate/index.js");
+
+var _validate2 = _interopRequireDefault(_validate);
+
+var _controller = __webpack_require__(/*! ../controller */ "./app/modules/rolegroup/controller/index.js");
+
+var _controller2 = _interopRequireDefault(_controller);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/role-group',
+  handler: _controller2.default.get,
+  config: {
+    auth: false,
+    tags: ['api'],
+    description: 'lay danh sach nhom quyen',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/role-group',
+  handler: _controller2.default.save,
+  config: {
+    auth: false,
+    validate: _validate2.default.save,
+    tags: ['api'],
+    description: 'them hoac sua nhom quyen',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/role-group-add-role',
+  handler: _controller2.default.addRole,
+  config: {
+    auth: false,
+    validate: _validate2.default.addRole,
+    tags: ['api'],
+    description: 'them quyen cho nhom',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/rolegroup/validate/index.js":
+/*!*************************************************!*\
+  !*** ./app/modules/rolegroup/validate/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const roleGroupVal = {
+  save: {
+    payload: {
+      _id: _joi2.default.string(),
+      nameRoleGroup: _joi2.default.string().required().max(30)
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
+  addRole: {
+    payload: {
+      idGroup: _joi2.default.ObjectId(),
+      idRole: _joi2.default.ObjectId()
+    },
+    options: {
+      allowUnknown: true
+    }
+  }
+};
+exports.default = { ...roleGroupVal
 };
 
 /***/ }),
@@ -6169,7 +6721,8 @@ const signin = async (request, h) => {
         passWord: newpass,
         email: data.email,
         status: data.status,
-        roles: data.roles // tao token
+        rolesGroupID: data.rolesGroupID,
+        nhanVienID: data.nhanVienID // tao token
 
       };
       let token = Jwt.sign(user, global.CONFIG.get('web.jwt.secret'));
@@ -6189,29 +6742,18 @@ const signin = async (request, h) => {
 
 const createAccountNV = async data => {
   try {
-    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo roles
-    let listUsers = await User.find({
-      roles: 'nhân viên'
-    });
-    let userNotDuplicate = listUsers.filter(item => {
-      item.userName = data.userName;
-    });
-
-    if (userNotDuplicate && userNotDuplicate.length === 0) {
-      let newpass = Bcrypt.hashSync(data.passWord, SALT_LENGTH);
-      let user = {
-        userName: data.userName,
-        passWord: newpass,
-        email: data.email,
-        status: data.status,
-        roles: data.roles,
-        nhanVienID: data.nhanVienID
-      };
-      let userRegisted = await User.create(user);
-      return userRegisted;
-    } else {
-      return Boom.badRequest('Lỗi lúc thêm rồi!');
-    }
+    // tài khoản nhân viên sẽ không bao giờ trùng
+    let newpass = Bcrypt.hashSync(data.passWord, SALT_LENGTH);
+    let user = {
+      userName: data.userName,
+      passWord: newpass,
+      email: data.email,
+      status: data.status,
+      rolesGroupID: data.rolesGroupID,
+      nhanVienID: data.nhanVienID
+    };
+    let userRegisted = await User.create(user);
+    return userRegisted;
   } catch (err) {
     return Boom.forbidden(err);
   }
@@ -6219,9 +6761,9 @@ const createAccountNV = async data => {
 
 const createAccountKT = async data => {
   try {
-    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo roles
+    // để phân biệt tài khoản của nhân viên hay khách thì nên lọc user kèm theo rolesGroupID
     let listUsers = await User.find({
-      roles: 'khách thuê'
+      rolesGroupID: '5cc560ee21fd1c0d185cbd82'
     });
     let userNotDuplicate = listUsers.filter(item => {
       item.userName = data.userName;
@@ -6234,13 +6776,13 @@ const createAccountKT = async data => {
         passWord: newpass,
         email: data.email,
         status: data.status,
-        roles: data.roles,
+        rolesGroupID: data.rolesGroupID,
         khachThueID: data.khachThueID
       };
       let userRegisted = await User.create(user);
       return userRegisted;
     } else {
-      return Boom.badRequest('Lỗi lúc thêm rồi!');
+      return Boom.badRequest('Lỗi trùng tài khoản!');
     }
   } catch (err) {
     return Boom.forbidden(err);
@@ -6258,14 +6800,20 @@ const login = async (request, h) => {
     if (data && data.nhanVienID) {
       data = await User.findById({
         _id: data._id
-      }).populate('nhanVienID');
+      }).populate(['nhanVienID', {
+        path: 'rolesGroupID',
+        populate: ['roles']
+      }]);
       userInfo = data.nhanVienID;
     }
 
     if (data && data.khachThueID) {
       data = await User.findById({
         _id: data._id
-      }).populate('khachThueID');
+      }).populate(['khachThueID', {
+        path: 'rolesGroupID',
+        populate: 'roles'
+      }]);
       userInfo = data.khachThueID;
     }
 
@@ -6281,7 +6829,7 @@ const login = async (request, h) => {
         const credentials = {
           userName: data.userName,
           email: data.email,
-          roles: data.roles,
+          rolesGroupID: data.rolesGroupID,
           status: data.status,
           userInfo
         };
@@ -6361,7 +6909,7 @@ const editUser = async (request, h) => {
           passWord: newpass,
           email: data.email,
           status: user.status,
-          roles: user.roles,
+          rolesGroupID: user.rolesGroupID,
           khachThueID: data.khachThueID
         };
         user = Object.assign(user, newUser);
@@ -6393,7 +6941,7 @@ const editUser = async (request, h) => {
           passWord: newpass,
           email: data.email,
           status: user.status,
-          roles: user.roles,
+          rolesGroupID: user.rolesGroupID,
           nhanVienID: data.nhanVienID
         };
         user = Object.assign(user, newUser);
@@ -6644,7 +7192,8 @@ const userVal = {
       passWord: Joi.string().required(),
       email: Joi.string().email(),
       status: Joi.boolean().default(true),
-      roles: Joi.string()
+      rolesGroupID: Joi.ObjectId(),
+      nhanVienID: Joi.ObjectId()
     }
   },
   login: {

@@ -93,12 +93,12 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    if(request.pre.isRoles) {
+   // if(request.pre.isRoles) {
       return await Phong.find().populate('loaiPhongID').populate('khuPhongID').populate('tinhTrangPhongID').populate('dsPhieuThu').lean()
-    }
-    else {
-      return h.response({message:'Not allowed'})
-    }
+    // }
+    // else {
+    //   return h.response({message:'Not allowed'})
+    // }
   } catch (err) {
     return Boom.forbidden(err)
   }

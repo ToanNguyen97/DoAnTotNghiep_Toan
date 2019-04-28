@@ -1,4 +1,4 @@
-
+import {Schema} from 'mongoose'
 const schema = {
   hoNhanVien: {type: String, required: true, max: 30},
   tenNhanVien: {type: String, required: true, max: 20},
@@ -9,7 +9,7 @@ const schema = {
   soDienThoai: {type: String, max: 11},
   hoTenNguoiThan: {type: String, max: 50},
   diaChi: {type: String, required: true, max:80},
-  ChucVu: {type: String, required: true, max: 30},
+  rolesGroupID: {ref:'RoleGroup', type: Schema.Types.ObjectId},
   email: String,
   status: {type: Boolean, default:true}
 }

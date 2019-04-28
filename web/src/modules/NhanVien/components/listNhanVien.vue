@@ -64,7 +64,7 @@
             <td class="text-xs-center">{{ props.item.soDienThoai }}</td>
             <td class="text-xs-center">{{ props.item.diaChi}}</td>
             <td class="text-xs-center">
-             <v-chip :color="props.item.ChucVu === 'nhân viên'? 'deep-orange ':(props.item.ChucVu === 'chủ trọ'? 'green accent-4': 'amber ')" class="white--text">{{ props.item.ChucVu }}</v-chip>
+             <v-chip :color="props.item.rolesGroupID._id === '5cc565ac9f49904f20b6211e'?'green accent-4':'amber'" class="white--text">{{ props.item.rolesGroupID.nameRoleGroup }}</v-chip>
             </td>
             <td class="justify-center text-xs-center">
              <v-layout row justify-center>    

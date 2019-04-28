@@ -7,10 +7,6 @@ export default [
     path: '/phong',
     handler: PhongController.getAll,
     config: {
-      pre: [{
-        method: checkRoles.isRoles,
-        assign: 'isRoles'
-      }],
       description: 'lay danh sach phong',
       tags: ['api'],
       plugins: {

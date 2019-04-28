@@ -7,6 +7,6 @@ export default [
     name: 'ListKhachThue',
     path: '/danh-sach-khach-thue.html',
     component: ListKhachThue,
-    meta: { roles: ['chủ trọ','nhân viên']},
+    meta: { role:'5cc560ee21fd1c0d185cbd82'},
   }
 ]

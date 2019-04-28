@@ -21,8 +21,8 @@ const Authenticated = async (to, from, next) => {
       await store.dispatch('auth/getUser').then (res => {
         user = res
       })
-    } 
-    if(to.meta.roles.some(item => item === user.roles)) {
+    }
+    if(user.rolesGroupID.roles.some(item => String(item._id) === String(to.meta.role))) {
       next()
     } else {
       next('/404.html')
