@@ -1,15 +1,13 @@
 <template>
- <div style="background-color: #fff; border-radius:10px " class="danhsachkhachthue">
+<div style="background-color: #fff; border-radius:10px " class="danhsachnhomnguoi">
     <v-layout row wrap justify-start class="ml-2 pl-1">
-      <h1 class="mb-2 danhsachPT">Danh sách nhân viên:</h1>    
+      <h1 class="mb-2 danhsachPT">Danh sách nhóm người sử dụng:</h1>    
     </v-layout>
     <v-layout row wrap>
       <v-btn depressed @click="ResetPage"  color="cyan" dark class="mt-3 hidden-xs-only">Làm Mới</v-btn>
       <v-btn depressed fab small @click="ResetPage"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>refresh</v-icon></v-btn>
       <v-btn depressed @click="OpenThem"  color="success" dark class="mt-3 hidden-xs-only">Thêm Mới</v-btn>
       <v-btn depressed fab small @click="OpenThem"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>add_circle_outline</v-icon></v-btn>
-      <v-btn depressed @click="OpenPhanQuyen" v-if="isPhanQuyen"  color="success" dark class="mt-3 hidden-xs-only">Phân Quyền</v-btn>
-      <v-btn depressed fab small @click="OpenPhanQuyen" v-if="isPhanQuyen"  color="success" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>people</v-icon></v-btn>
       <v-btn depressed @click="OpenDeleteMulti" :disabled="disabled" color="warning" dark class="mt-3 hidden-xs-only">Xóa Nhiều</v-btn>
       <v-btn depressed fab small @click="OpenDeleteMulti" :disabled="disabled"  color="warning" dark class="mt-3 hidden-md-only hidden-sm-only hidden-lg-only"><v-icon>remove_circle_outline</v-icon></v-btn>
     </v-layout>
@@ -102,15 +100,7 @@
       <v-btn color="red" @click="ResetSnackbackMulti">Cancel</v-btn>
     </v-snackbar>
     <popupNhanVien v-model="edit" :isThem="isThem" :NhanVienSelect="NhanVienSelect || {}"/>
-    <popupPhanQuyen v-model="openPhanQuyen" />
   </div>
 </template>
-<script src="./listNhanVien.js">
+<script src='./listRoleGroup.js'>
 </script>
-
-<style scoped>
-  .div-danhsach {
-    padding-top: 30px;
-    padding-left: 5px;
-  }
-</style>

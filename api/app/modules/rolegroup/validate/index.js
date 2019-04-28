@@ -13,7 +13,7 @@ const roleGroupVal = {
   addRole: {
     payload: {
       idGroup: Joi.ObjectId(),
-      idRole: Joi.ObjectId()
+      roles: Joi.array()
     },
     options: {
       allowUnknown: true

@@ -2,10 +2,12 @@
 
 import toast from '../../../plugins/toast.js'
 import popupNhanVien from '../core/popupNhanVien.vue'
+import popupPhanQuyen from '../core/popupPhanQuyen.vue'
 import moment from 'moment'
 export default {
   components: {
-    popupNhanVien
+    popupNhanVien,
+    popupPhanQuyen
   },
   data() {
     return {
@@ -31,11 +33,17 @@ export default {
       snackbar: false,
       snackbarMulti: false,
       idXoa: '',
-      tenNhanVien: '',   
+      tenNhanVien: '',
+      isPhanQuyen: false,
+      openPhanQuyen: false
     }
   },
   created() {
     this.loading = false
+    let user  = this.$store.get('auth/user')
+    if(user.rolesGroupID.roles && user.rolesGroupID.roles.length > 0 && user.rolesGroupID.roles.some(item => String(item._id) === '5cc59aaada3e4e5b6c97390c')) {
+      this.isPhanQuyen = true
+    }
     this.$store.dispatch('nhanvien/getNhanViens').then(res => {
       if(res === false) {
         this.$router.push({path:'/404.html'})
@@ -66,6 +74,9 @@ export default {
     }
   },
   methods: {
+    OpenPhanQuyen () {
+      this.openPhanQuyen = true
+    },
     toggleAll () {
       if (this.selected.length) 
       {

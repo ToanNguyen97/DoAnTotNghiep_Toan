@@ -15,7 +15,7 @@
       </v-flex>
       <v-flex style="display:flex" justify-center>
         <div class="pt-4" style="width:300px;text-align: center;">
-          <v-btn color="cyan" @click="Login" dark>Đăng Nhập</v-btn>
+          <v-btn color="cyan" :loading="loading" @click="Login" dark>Đăng Nhập</v-btn>
         </div>
       </v-flex>
       <v-flex style="display:flex" justify-end>
@@ -36,13 +36,15 @@
     data: () => ({
       drawer: null,
       username: '',
-      password: ''
+      password: '',
+      loading: false
     }),
     props: {
       source: String
     },
     methods: {
       Login () {
+        this.loading = true
         let payload = {userName: this.username, passWord: this.password}
         this.$store.dispatch('auth/login', payload).then(res => { 
           /*chúng ta check role của account đó nếu thuộc diện account admin thì vào admin,
@@ -61,7 +63,7 @@
             else {
               this.$router.push({path: '/admin'})
             }
-            
+            this.loading = false
           }
           else if (res.credentials === null)
           {

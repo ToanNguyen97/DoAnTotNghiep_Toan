@@ -34,13 +34,12 @@ const addRole = async (request, h) => {
     let data = request.payload
     let roleGroup = await RoleGroup.findById({_id:data.idGroup})
     if(roleGroup) {
-      if(!roleGroup.roles) {
-        roleGroup.roles = []
-      }
-      roleGroup.roles.push(data.idRole)
+      roleGroup.roles = []
+      roleGroup.roles = [...data.roles]
     }
     await roleGroup.save()
-    return roleGroup
+    let resRole = await RoleGroup.findById({_id:roleGroup._id}).populate('roles')
+    return resRole
   } catch (err) {
     return Boom.forbidden(err)
   }

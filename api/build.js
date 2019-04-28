@@ -6202,15 +6202,15 @@ const addRole = async (request, h) => {
     });
 
     if (roleGroup) {
-      if (!roleGroup.roles) {
-        roleGroup.roles = [];
-      }
-
-      roleGroup.roles.push(data.idRole);
+      roleGroup.roles = [];
+      roleGroup.roles = [...data.roles];
     }
 
     await roleGroup.save();
-    return roleGroup;
+    let resRole = await RoleGroup.findById({
+      _id: roleGroup._id
+    }).populate('roles');
+    return resRole;
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -6369,7 +6369,7 @@ const roleGroupVal = {
   addRole: {
     payload: {
       idGroup: _joi2.default.ObjectId(),
-      idRole: _joi2.default.ObjectId()
+      roles: _joi2.default.array()
     },
     options: {
       allowUnknown: true
