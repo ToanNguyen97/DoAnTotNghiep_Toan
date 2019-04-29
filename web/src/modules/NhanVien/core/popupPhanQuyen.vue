@@ -14,7 +14,7 @@
           <div>
           <v-chip outline label small hide-details class="ml-2 mt-4" color="orange" text-color="black">
             Nhóm Quyền
-            <v-icon color="cyan" right @click="true">add</v-icon>
+            <v-icon color="cyan" right @click="openRoleGroup = true">add</v-icon>
           </v-chip>
           <v-combobox
           hide-details
@@ -33,18 +33,19 @@
           <h1 class="headline font-weight-bold red--text">Chức năng của trang web</h1>
           <v-layout row wrap>
             <v-flex md6  v-for="item of dsRole" :key="item._id">
-            <v-checkbox v-model="formData.roles" class="mt-1" hide-details color="success" :value="item._id" :label="item.roleName"></v-checkbox>
+            <v-checkbox  v-model="formData.roles" class="mt-1" hide-details color="success" :value="item._id" :label="item.roleName"></v-checkbox>
             </v-flex>
           </v-layout>
         </v-flex>
       </v-layout>                            
       <v-layout row wrap mt-2>
           <v-flex xs12 sm12 md12 style="display: flex !important;justify-content: center !important;">                   
-            <v-btn depressed color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
+            <v-btn depressed color="blue darken-1" :loading="loading" dark @click="XacNhan" >Xác nhận</v-btn>
             <v-btn depressed color="yellow darken-1" dark @click="Huy" >Hủy</v-btn>
           </v-flex>
       </v-layout>  
-    </v-card-text>          
+    </v-card-text>
+      <popupRoleGroup v-model="openRoleGroup"></popupRoleGroup>  
   </v-card>
 </v-dialog>
 </template>

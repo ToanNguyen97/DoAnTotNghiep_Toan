@@ -17,11 +17,7 @@ const HopDongThue = Mongoose.model('HopDongThuePhong')
 let TotalCTPT = 0
 const getAll = async (request, h) => {
   try {
-    if(request.pre.isRoles) {
-      return await PhieuThuTien.find().populate(['phongID','dsCTPT']).lean()
-    } else {
-      return h.response({message:'Not allowed'})
-    }
+    return await PhieuThuTien.find().populate(['phongID','dsCTPT']).lean()
   } catch (err) {
     return Boom.forbidden(err)
   }

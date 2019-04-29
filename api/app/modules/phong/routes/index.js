@@ -1,6 +1,5 @@
 import PhongController from '../controller/index.js'
 import PhongVal from '../validate/index.js'
-import checkRoles from '../../../lib/services/checkQuyen.js'
 export default [
   {
     method: 'GET',

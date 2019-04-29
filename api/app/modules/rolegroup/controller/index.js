@@ -4,7 +4,7 @@ const RoleGroup = Mongoose.model('RoleGroup')
 
 const get = async (request, h ) => {
   try {
-    return await RoleGroup.find().populate('roles')
+    return await RoleGroup.find().populate(['roles','dsNhanVien']).lean()
   } catch (err) {
     return Boom.forbidden(err)
   }
@@ -15,6 +15,7 @@ const save = async (request, h ) => {
     let data = request.payload
     let item = {}
     if(!data._id) {
+      data.roles = []
       data.roles.push('5cc5752e6adfd01278d9a325')
       item = new RoleGroup(data)
     } else {

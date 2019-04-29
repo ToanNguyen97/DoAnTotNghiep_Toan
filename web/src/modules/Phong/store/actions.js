@@ -2,12 +2,8 @@ import PhongServices from '../Phongservices.js'
 const getPhongs = async (context) => {
   try {
     let {data} = await PhongServices.getPhongs()
-    if(data.message !== 'Not allowed') {
-      context.commit('getListPhong', data)
-      return true
-    }else {
-      return false
-    }
+    context.commit('getListPhong', data)
+    return true
   } catch (err)  {
     return err
   }

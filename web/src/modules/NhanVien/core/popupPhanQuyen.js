@@ -1,6 +1,10 @@
 import axios from 'axios'
-
+import toast from '../../../plugins/toast.js'
+import popupRoleGroup from './popupRoleGroup.vue'
 export default {
+  components: {
+    popupRoleGroup
+  },
   props: {
     value: {
       type: Boolean,
@@ -11,10 +15,12 @@ export default {
     return {
       dsRoleGroup: [],
       dsRole: [],
+      loading: false,
       formData: {
         roles: []
       },
-      roleGroupSelect:''
+      roleGroupSelect:'',
+      openRoleGroup: false
     }
   },
   watch:{
@@ -34,17 +40,27 @@ export default {
         return this.formData.roles
       }
       return ''
+    },
+    openRoleGroup () {
+      if(this.openRoleGroup === false) {
+        axios.get(`http:${window.urlApi}api/role-group`).then(res => {
+          this.dsRoleGroup = res.data
+        })
+      }
     }
   },
   methods: {
     XacNhan () {
+      this.loading = true
       if(this.roleGroupSelect) {
         this.formData.idGroup = this.roleGroupSelect._id
       }
       axios.post(`http:${window.urlApi}api/role-group-add-role`,this.formData).then(res => {
         this.roleGroupSelect = res.data
+        toast.Success('Phân quyền thành công!')
         axios.get(`http:${window.urlApi}api/role-group`).then(res => {
           this.dsRoleGroup = res.data
+          this.loading = false
         })
       })
     },
@@ -52,9 +68,6 @@ export default {
       this.formData.roles = []
       this.roleGroupSelect = ''
       this.$emit('input',false)
-    },
-    getRoles () {
-      console.log('vao day')
     }
   },
 }

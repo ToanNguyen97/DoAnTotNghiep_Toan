@@ -1942,6 +1942,13 @@ var _schema = __webpack_require__(/*! ./schema.js */ "./app/models/RoleGroup/sch
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const RoleGroupSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+RoleGroupSchema.virtual('dsNhanVien', {
+  ref: 'NhanVien',
+  // The model to use
+  localField: '_id',
+  // Find people where `localField`
+  foreignField: 'rolesGroupID'
+});
 exports.default = _mongoose2.default.model('RoleGroup', RoleGroupSchema);
 
 /***/ }),
@@ -4521,13 +4528,7 @@ let TotalCTPT = 0;
 
 const getAll = async (request, h) => {
   try {
-    if (request.pre.isRoles) {
-      return await PhieuThuTien.find().populate(['phongID', 'dsCTPT']).lean();
-    } else {
-      return h.response({
-        message: 'Not allowed'
-      });
-    }
+    return await PhieuThuTien.find().populate(['phongID', 'dsCTPT']).lean();
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -4912,10 +4913,6 @@ var _index3 = __webpack_require__(/*! ../validate/index */ "./app/modules/phieut
 
 var _index4 = _interopRequireDefault(_index3);
 
-var _checkQuyen = __webpack_require__(/*! ../../../lib/services/checkQuyen */ "./app/lib/services/checkQuyen.js");
-
-var _checkQuyen2 = _interopRequireDefault(_checkQuyen);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = [{
@@ -4923,10 +4920,6 @@ exports.default = [{
   path: '/phieuthutien',
   handler: _index2.default.getAll,
   config: {
-    pre: [{
-      method: _checkQuyen2.default.isRoles,
-      assign: 'isRoles'
-    }],
     tags: ['api'],
     description: "lay danh sach phieu thu",
     plugins: {
@@ -5698,10 +5691,6 @@ var _index3 = __webpack_require__(/*! ../validate/index.js */ "./app/modules/pho
 
 var _index4 = _interopRequireDefault(_index3);
 
-var _checkQuyen = __webpack_require__(/*! ../../../lib/services/checkQuyen.js */ "./app/lib/services/checkQuyen.js");
-
-var _checkQuyen2 = _interopRequireDefault(_checkQuyen);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = [{
@@ -6167,7 +6156,7 @@ const RoleGroup = _mongoose2.default.model('RoleGroup');
 
 const get = async (request, h) => {
   try {
-    return await RoleGroup.find().populate('roles');
+    return await RoleGroup.find().populate(['roles', 'dsNhanVien']).lean();
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -6179,6 +6168,7 @@ const save = async (request, h) => {
     let item = {};
 
     if (!data._id) {
+      data.roles = [];
       data.roles.push('5cc5752e6adfd01278d9a325');
       item = new RoleGroup(data);
     } else {
