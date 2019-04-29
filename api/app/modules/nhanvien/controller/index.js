@@ -5,6 +5,7 @@ import formatCharacter from '../../../lib/services/translateCharacter.js'
 import User from '../../user/controller/index.js'
 const fs = require('fs')
 const NhanVien = Mongoose.model('NhanVien')
+const Account = Mongoose.model('User')
 const save = async (request, h) => {
   try {
    // if(request.pre.isRoles) {
@@ -33,6 +34,14 @@ const save = async (request, h) => {
       {
         if(data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
           item = await NhanVien.findById({_id: data._id})
+          // kiểm tra thử có sửa quyền của tài khoản nhân viên hay không
+          if(String(data.rolesGroupID) !== String(item.rolesGroupID)) {
+            let account = await Account.findOne({nhanVienID:item._id})
+            if(account) {
+              account.rolesGroupID = data.rolesGroupID
+              await account.save()
+            }
+          }
           data.anhDaiDien = item.anhDaiDien
           item = Object.assign(item,data)
         }
@@ -42,15 +51,15 @@ const save = async (request, h) => {
             return err
           })
           data.anhDaiDien = data.anhDaiDien.name
-          item = await NhanVien.findById({_id: data._id})
           // kiểm tra thử có sửa quyền của tài khoản nhân viên hay không
           if(String(data.rolesGroupID) !== String(item.rolesGroupID)) {
-            let account = await User.findById({nhanVienID:item._id})
+            let account = await Account.findOne({nhanVienID:item._id})
             if(account) {
               account.rolesGroupID = data.rolesGroupID
               await account.save()
             }
           }
+          item = await NhanVien.findById({_id: data._id})
           item = Object.assign(item, data)  
         }
         }   

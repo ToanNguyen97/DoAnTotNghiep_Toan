@@ -4205,6 +4205,8 @@ const fs = __webpack_require__(/*! fs */ "fs");
 
 const NhanVien = _mongoose2.default.model('NhanVien');
 
+const Account = _mongoose2.default.model('User');
+
 const save = async (request, h) => {
   try {
     // if(request.pre.isRoles) {
@@ -4232,21 +4234,10 @@ const save = async (request, h) => {
       if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
         item = await NhanVien.findById({
           _id: data._id
-        });
-        data.anhDaiDien = item.anhDaiDien;
-        item = Object.assign(item, data);
-      } else {
-        let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
-        fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
-          return err;
-        });
-        data.anhDaiDien = data.anhDaiDien.name;
-        item = await NhanVien.findById({
-          _id: data._id
         }); // kiểm tra thử có sửa quyền của tài khoản nhân viên hay không
 
         if (String(data.rolesGroupID) !== String(item.rolesGroupID)) {
-          let account = await _index2.default.findById({
+          let account = await Account.findOne({
             nhanVienID: item._id
           });
 
@@ -4256,6 +4247,29 @@ const save = async (request, h) => {
           }
         }
 
+        data.anhDaiDien = item.anhDaiDien;
+        item = Object.assign(item, data);
+      } else {
+        let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
+        fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+          return err;
+        });
+        data.anhDaiDien = data.anhDaiDien.name; // kiểm tra thử có sửa quyền của tài khoản nhân viên hay không
+
+        if (String(data.rolesGroupID) !== String(item.rolesGroupID)) {
+          let account = await Account.findOne({
+            nhanVienID: item._id
+          });
+
+          if (account) {
+            account.rolesGroupID = data.rolesGroupID;
+            await account.save();
+          }
+        }
+
+        item = await NhanVien.findById({
+          _id: data._id
+        });
         item = Object.assign(item, data);
       }
     }
