@@ -7,6 +7,7 @@ export default [
     path: '/tinhtrangphong',
     handler: TinhTrangPhongController.getAll,
     config: {
+      auth:false,
       description: 'xem danh sach tinh trang phong',
       tags: ['api'],
       plugins: {

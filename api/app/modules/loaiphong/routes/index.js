@@ -9,6 +9,7 @@ export default [
     path: '/loaiphong',
     handler: LoaiPhongController.getAll,
     config: {
+      auth: false,
       description: 'xem danh sach loai phong',
       tags: ['api'],
       plugins: {

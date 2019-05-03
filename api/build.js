@@ -4027,6 +4027,7 @@ exports.default = [{
   path: '/loaiphong',
   handler: _index2.default.getAll,
   config: {
+    auth: false,
     description: 'xem danh sach loai phong',
     tags: ['api'],
     plugins: {
@@ -5712,6 +5713,7 @@ exports.default = [{
   path: '/phong',
   handler: _index2.default.getAll,
   config: {
+    auth: false,
     description: 'lay danh sach phong',
     tags: ['api'],
     plugins: {
@@ -5749,6 +5751,7 @@ exports.default = [{
   path: '/tracuuphong',
   handler: _index2.default.tracuuphong,
   config: {
+    auth: false,
     description: 'tra cuu phong',
     validate: _index4.default.tracuuphong,
     tags: ['api'],
@@ -6528,6 +6531,7 @@ exports.default = [{
   path: '/tinhtrangphong',
   handler: _index2.default.getAll,
   config: {
+    auth: false,
     description: 'xem danh sach tinh trang phong',
     tags: ['api'],
     plugins: {

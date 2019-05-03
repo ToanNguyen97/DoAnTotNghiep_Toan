@@ -6,6 +6,7 @@ export default [
     path: '/phong',
     handler: PhongController.getAll,
     config: {
+      auth: false,
       description: 'lay danh sach phong',
       tags: ['api'],
       plugins: {
@@ -37,6 +38,7 @@ export default [
     path: '/tracuuphong',
     handler: PhongController.tracuuphong,
     config: {
+      auth:false,
       description: 'tra cuu phong',
       validate: PhongVal.tracuuphong,
       tags: ['api'],

@@ -7,6 +7,13 @@ const getPhongs = async () => {
     return err
   }
 }
+const getPhongsClient = async () => {
+  try {
+    return await axios.get('http://localhost:3003/api/phong')
+  } catch (err) {
+    return err
+  }
+}
 
 const getKhuPhongs = async () => {
   try {
@@ -84,5 +91,6 @@ export default {
   deletePhong,
   timKiem,
   getPhongById,
-  traCuu
+  traCuu,
+  getPhongsClient
 }

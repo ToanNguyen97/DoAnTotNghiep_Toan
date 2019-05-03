@@ -81,7 +81,7 @@
           </v-flex>
         </v-layout>
         <div style="text-align:center; position:unset; margin-top:50px;">
-          <v-btn  class="btnXemTatCa" :to="{name:'danhSachPhong'}" outline>Xem tất cả</v-btn>
+          <v-btn target="_blank"  class="btnXemTatCa" :to="{name:'danhSachPhong'}" outline>Xem tất cả</v-btn>
         </div>
       </v-container>
     </section>

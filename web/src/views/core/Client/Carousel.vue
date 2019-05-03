@@ -37,42 +37,30 @@
           <div class="boxCarousel" >
             <h1 class="texttimkiem"><v-icon large color="white" class="pr-2">search</v-icon>Tìm kiếm phòng</h1>
             <div class="mt-3">
-              <v-select label="Chọn loại phòng" :items="dsLoaiPhong"  dark background-color="white" outline class="pa-2 labelSelect" hide-details></v-select>
-              <v-select label="Chọn giá phòng" :items="dsLoaiPhong" dark background-color="white" outline class="px-2 py-3" hide-details></v-select>
-              <div >
-                <v-checkbox class="pl-3"
-                style="display:inline-block"
-                  v-model="isOGhep"
+              <v-select label="Chọn loại phòng" dark v-model="formData.loaiPhong" :items="dsLoaiPhong" item-text="tenLoaiPhong" item-value="_id" outline class="pa-2 labelSelect" hide-details></v-select>
+              <v-select label="Chọn giá phòng" dark v-model="formData.giaPhong" :items="dsLoaiPhong" item-text="giaPhong" item-value="_id" outline class="px-2" hide-details></v-select>
+              <div v-if="dsTinhTrangPhong" >
+                <v-checkbox v-for="item of dsTinhTrangPhong" :key="item._id" class="pl-3"
+                  style="display:inline-block"
                   dark
-                  label="Cho ở ghép"
-                  id="checkbox-oghep"
-                  color="orange darken-3"
-                  value="orange darken-3"
+                  v-model="formData.tinhTrangPhongSelect"
+                  :label="item.tenTinhTrangPhong"
+                  :value="item._id"
+                  color="orange"
                   hide-details
                 ></v-checkbox>
                 <v-checkbox class="pl-2"
                 style="display:inline-block"
-                  v-model="isConTrong"
-                  dark
-                  label="Còn trống"
-                  id="checkbox-oghep"
-                  color="orange darken-3"
-                  value="orange darken-3"
-                  hide-details
-                ></v-checkbox>
-                <v-checkbox class="pl-2"
-                style="display:inline-block"
-                  v-model="isMang"
+                  v-model="formData.isMang"
                   dark
                   label="Có dịch vụ mạng"
                   id="checkbox-oghep"
-                  color="cyan darken-3"
-                  value="orange darken-3"
+                  color="red"
                   hide-details
                 ></v-checkbox>
               </div>
               <div style="text-align:center" class="pt-3">
-                <v-btn color="cyan" class="btnTimKiem" dark>Tìm Kiếm  <v-icon>search</v-icon> </v-btn>
+                <v-btn color="cyan" @click="TimKiem" class="btnTimKiem" dark>Tìm Kiếm  <v-icon>search</v-icon> </v-btn>
               </div>
             </div>
           </div>
@@ -83,43 +71,12 @@
   </div>
 </template>
 
-<script>
-import MenuTop from './MenuTop.vue'
-export default {
-  components: {
-    MenuTop
-  },
-  data () {
-    return {
-      isOGhep: false,
-      isConTrong: false,
-      isMang: false,
-      dsLoaiPhong: [
-        'Phòng cửa gỗ',
-        'Phòng cửa sắt',
-        'Phòng gác lửng'
-      ]
-    }
-  },
-  watch: {
-    isOGhep (v) {
-      if(v) {
-        this.isConTrong = false
-      }
-    },
-    isConTrong (v) {
-      if(v) {
-        this.isOGhep = false
-      }
-    }
-  },
-}
-</script>
+<script src="./Carousel.js"></script>
 
 <style scoped >
 .boxCarousel {
   width: 430px;
-  height: 352px;
+  height:  380px;
   position: absolute;
   color: black;
   margin:30px 0 0 20px;

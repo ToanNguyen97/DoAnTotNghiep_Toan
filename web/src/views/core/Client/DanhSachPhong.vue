@@ -14,147 +14,78 @@
         <v-icon>more_vert</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-layout ma-2 row wrap>
-      <div style="display:flex; ">
-        <div class="boxPhongTro">
-          <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-          <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-          <span class="black--text pl-2 font-weight-bold title">Phòng gác lửng</span>
-          <div class="mt-2">
-          <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
+    <v-layout v-if="dsPhong" ma-2 row wrap>
+      <v-flex md9>
+        <v-card flat>
+          <v-layout row wrap>
+            <div v-for="item of dsPhong" :key="item._id" class="boxPhongTro ma-1">
+              <img class="imagePhongTro pa-1" :src="`//localhost:3003/image/${item.anhChinh}`" />
+              <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
+              <span class="black--text pl-2 font-weight-bold title">{{item.loaiPhongID.tenLoaiPhong}}</span>
+              <div class="mt-2">
+              <span class="black--text pl-2 font-weight-bold title">Giá phòng: {{item.loaiPhongID.giaPhong}}</span>
+              </div>
+              <div style="text-align:center;">
+                <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
+              </div>
+            </div>
+          </v-layout>
+          <div class="text-xs-center">
+            <v-pagination
+              v-model="pagination.page"
+              :length="pages"
+            ></v-pagination>
           </div>
-          <div style="text-align:center;">
-            <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-          </div>
-        </div>
-        <div class="boxPhongTro ">
-          <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-          <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-          <span class="black--text pl-2 font-weight-bold title">Phòng gác lửng</span>
-          <div class="mt-2">
-          <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
-          </div>
-          <div style="text-align:center;">
-            <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-          </div>
-        </div>
-        <div class="boxPhongTro">
-          <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-          <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-          <span class="black--text pl-2 font-weight-bold title">Phòng gác lửng</span>
-          <div class="mt-2">
-          <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
-          </div>
-          <div style="text-align:center;">
-            <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-          </div>
-        </div>
-        <div class="boxPhongTro">
-          <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-          <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-          <span class="black--text pl-2 font-weight-bold title">Phòng gác lửng</span>
-          <div class="mt-2">
-          <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
-          </div>
-          <div style="text-align:center;">
-            <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-          </div>
-        </div>
-      </div>
-      <div style="display:flex;" class="mt-2">
-        <div class="boxPhongTro">
-          <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-          <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-          <span class="black--text pl-2 font-weight-bold title">Phòng gác lửng</span>
-          <div class="mt-2">
-          <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
-          </div>
-          <div style="text-align:center;">
-            <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-          </div>
-        </div>
-        <div class="boxPhongTro ">
-          <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-          <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-          <span class="black--text pl-2 font-weight-bold title">Phòng gác lửng</span>
-          <div class="mt-2">
-          <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
-          </div>
-          <div style="text-align:center;">
-            <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-          </div>
-        </div>
-        <div class="boxPhongTro">
-          <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-          <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-          <span class="black--text pl-2 font-weight-bold title">Phòng gác lửng</span>
-          <div class="mt-2">
-          <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
-          </div>
-          <div style="text-align:center;">
-            <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-          </div>
-        </div>
-        <div class="boxPhongTro">
-          <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-          <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-          <span class="black--text pl-2 font-weight-bold title">Phòng gác lửng</span>
-          <div class="mt-2">
-          <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
-          </div>
-          <div style="text-align:center;">
-            <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-          </div>
-        </div>
-      </div>
+        </v-card>
+      </v-flex>
+    </v-layout>
+    <v-layout v-if="dsPhong.length === 0" ma-2 row wrap>
+      <v-flex md9>
+        <v-card flat>
+          <v-layout row wrap>
+           <v-alert
+              :value="true"
+              type="info"
+            >
+              Không có kết quả cần tìm
+            </v-alert>
+          </v-layout>
+        </v-card>
+      </v-flex>
     </v-layout>
     <div class="boxPhongTro fixed">
-      <v-select label="Chọn khu phòng" :items="dsLoaiPhong" outline class="pa-2" hide-details></v-select>
-      <v-select label="Chọn loại phòng" :items="dsLoaiPhong" outline class="pa-2" hide-details></v-select>
-      <v-select label="Chọn giá phòng" :items="dsLoaiPhong"  outline class="pa-2" hide-details></v-select>
+        <v-select label="Chọn loại phòng"  v-model="formData.loaiPhong" :items="dsLoaiPhong" item-text="tenLoaiPhong" item-value="_id" outline class="pa-2 labelSelect" hide-details></v-select>
+        <v-select label="Chọn giá phòng"  v-model="formData.giaPhong" :items="dsLoaiPhong" item-text="giaPhong" item-value="_id" outline class="px-2" hide-details></v-select>
       <v-layout row>
         <v-flex md6>
-          <v-checkbox class="pl-3" v-model="isOGhep" label="Cho ở ghép" id="checkbox-oghep" color="orange darken-3" value="orange darken-3"  hide-details ></v-checkbox>
-          <v-checkbox class="pl-3" v-model="isConTrong" label="Còn trống" id="checkbox-oghep" color="orange darken-3" value="orange darken-3" hide-details></v-checkbox>
-          <v-checkbox class="pl-3" v-model="isMang" label="Có dịch vụ mạng" id="checkbox-oghep"  color="orange darken-3" value="orange darken-3" hide-details ></v-checkbox>
+          <div v-if="dsTinhTrangPhong" >
+            <v-checkbox v-for="item of dsTinhTrangPhong" :key="item._id" class="pl-3"
+              style="display:inline-block"
+              v-model="formData.tinhTrangPhongSelect"
+              :label="item.tenTinhTrangPhong"
+              :value="item._id"
+              color="orange"
+              hide-details
+            ></v-checkbox>
+            <v-checkbox class="pl-3"
+            style="display:inline-block"
+              v-model="formData.isMang"
+              label="Có dịch vụ mạng"
+              id="checkbox-oghep"
+              color="red"
+              hide-details
+            ></v-checkbox>
+          </div>
         </v-flex>
         <v-flex md6>
-         <v-btn color="cyan" class="white--text ml-4 mt-5" depressed>Tìm kiếm <v-icon>search</v-icon></v-btn>
+         <v-btn color="cyan" @click="TimKiem" :loading="loading" class="white--text ml-4 mt-5" depressed>Tìm kiếm <v-icon>search</v-icon></v-btn>
         </v-flex>
       </v-layout>
-    
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      isOGhep: false,
-      isConTrong: false,
-      isMang: false,
-      dsLoaiPhong: [
-      'Phòng cửa gỗ',
-      'Phòng cửa sắt',
-      'Phòng gác lửng'
-    ]
-    }
-  },
-  watch: {
-    isOGhep (v) {
-      if(v) {
-        this.isConTrong = false
-      }
-    },
-    isConTrong (v) {
-      if(v) {
-        this.isOGhep = false
-      }
-    }
-  },
-}
-</script>
+<script src="./DanhSachPhong.js"></script>
 <style scoped>
 .boxPhongTro {
   width: 268px;
