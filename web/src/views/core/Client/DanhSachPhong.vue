@@ -32,14 +32,14 @@
           </v-layout>
           <div class="text-xs-center">
             <v-pagination
-              v-model="pagination.page"
+              v-model="page"
               :length="pages"
             ></v-pagination>
           </div>
         </v-card>
       </v-flex>
     </v-layout>
-    <v-layout v-if="dsPhong.length === 0" ma-2 row wrap>
+    <v-layout v-if="dsPhong && dsPhong.length === 0" ma-2 row wrap>
       <v-flex md9>
         <v-card flat>
           <v-layout row wrap>

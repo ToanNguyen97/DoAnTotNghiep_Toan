@@ -7,9 +7,10 @@ const getPhongs = async () => {
     return err
   }
 }
-const getPhongsClient = async () => {
+
+const getPhongsClient = async (payload) => {
   try {
-    return await axios.get('http://localhost:3003/api/phong')
+    return await axios.post('http://localhost:3003/api/get-all-client',payload)
   } catch (err) {
     return err
   }

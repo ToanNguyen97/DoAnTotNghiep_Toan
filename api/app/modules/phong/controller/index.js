@@ -103,6 +103,20 @@ const getAll = async (request, h) => {
     return Boom.forbidden(err)
   }
 }
+const getAllClient = async (request, h) => {
+  try {
+    console.log('vao day 1', request.payload)
+    let options = {
+      populate: [{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}],
+      lean: true,
+      limit:request.payload.rowsPerPage,
+      page: request.payload.page
+    }
+    return await Phong.paginate({}, options)
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
 
 const update = async (request, h) => {
   try {
@@ -184,6 +198,7 @@ export default {
   save,
   getById,
   getAll,
+  getAllClient,
   update,
   deletePhong,
   searchMultiple,

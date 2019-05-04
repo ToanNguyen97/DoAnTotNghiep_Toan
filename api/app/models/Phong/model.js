@@ -1,6 +1,7 @@
 import Mongoose, {Schema} from 'mongoose'
 import { schema, options} from './schema'
 import PhongDao from './dao'
+import MongoosePaginate from 'mongoose-paginate'
 const PhongSchema = new Schema(schema,options)
 PhongSchema.virtual('dsPhieuThu',{
   ref: 'PhieuThuTien',
@@ -15,5 +16,6 @@ PhongSchema.virtual('dsHopDong', {
 })
 
 PhongSchema.plugin(PhongDao)
+PhongSchema.plugin(MongoosePaginate)
 
 export default Mongoose.model('Phong', PhongSchema)

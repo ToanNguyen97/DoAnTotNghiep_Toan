@@ -1729,14 +1729,21 @@ module.exports = function (schema, options) {
       };
     }
 
-    let data = await Model.find(queryString).populate([{
-      path: 'loaiPhongID'
-    }, {
-      path: 'khuPhongID',
-      populate: ['dsPhong']
-    }, {
-      path: 'tinhTrangPhongID'
-    }]).lean();
+    let options = {
+      populate: [{
+        path: 'loaiPhongID'
+      }, {
+        path: 'khuPhongID',
+        populate: ['dsPhong']
+      }, {
+        path: 'tinhTrangPhongID'
+      }],
+      lean: true,
+      limit: payload.pagination.rowsPerPage,
+      page: payload.pagination.page
+    };
+    let data = await Model.paginate(queryString, options); //find().populate([{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}]).lean()
+
     return data;
   };
 };
@@ -1767,6 +1774,10 @@ var _dao = __webpack_require__(/*! ./dao */ "./app/models/Phong/dao.js");
 
 var _dao2 = _interopRequireDefault(_dao);
 
+var _mongoosePaginate = __webpack_require__(/*! mongoose-paginate */ "mongoose-paginate");
+
+var _mongoosePaginate2 = _interopRequireDefault(_mongoosePaginate);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhongSchema = new _mongoose.Schema(_schema.schema, _schema.options);
@@ -1781,6 +1792,7 @@ PhongSchema.virtual('dsHopDong', {
   foreignField: 'phongID'
 });
 PhongSchema.plugin(_dao2.default);
+PhongSchema.plugin(_mongoosePaginate2.default);
 exports.default = _mongoose2.default.model('Phong', PhongSchema);
 
 /***/ }),
@@ -5539,6 +5551,28 @@ const getAll = async (request, h) => {
   }
 };
 
+const getAllClient = async (request, h) => {
+  try {
+    console.log('vao day 1', request.payload);
+    let options = {
+      populate: [{
+        path: 'loaiPhongID'
+      }, {
+        path: 'khuPhongID',
+        populate: ['dsPhong']
+      }, {
+        path: 'tinhTrangPhongID'
+      }],
+      lean: true,
+      limit: request.payload.rowsPerPage,
+      page: request.payload.page
+    };
+    return await Phong.paginate({}, options);
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 const update = async (request, h) => {
   try {
     let anhChinh = request.payload.anhChinh;
@@ -5652,6 +5686,7 @@ exports.default = {
   save,
   getById,
   getAll,
+  getAllClient,
   update,
   deletePhong,
   searchMultiple,
@@ -5754,6 +5789,26 @@ exports.default = [{
     auth: false,
     description: 'tra cuu phong',
     validate: _index4.default.tracuuphong,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/get-all-client',
+  handler: _index2.default.getAllClient,
+  config: {
+    auth: false,
+    description: 'load tat ca danh sach phan trang',
+    validate: _index4.default.getallclient,
     tags: ['api'],
     plugins: {
       'hapi-swagger': {
@@ -5946,6 +6001,14 @@ const phongVal = {
       giaPhong: _joi2.default.ObjectId(),
       isMang: _joi2.default.boolean(),
       tinhTrangPhongSelect: _joi2.default.array()
+    },
+    options: {
+      allowUnknown: true
+    }
+  },
+  getallclient: {
+    payload: {
+      pagination: _joi2.default.object()
     },
     options: {
       allowUnknown: true

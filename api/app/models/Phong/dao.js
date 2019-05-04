@@ -69,7 +69,13 @@ module.exports = function (schema, options) {
       // lọc ra phòng có tình trạn theo yêu cầu
       queryString.tinhTrangPhongID = {$in: payload.tinhTrangPhongSelect}
     }
-    let data = await Model.find(queryString).populate([{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}]).lean()
+    let options = {
+      populate: [{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}],
+      lean: true,
+      limit:payload.pagination.rowsPerPage,
+      page: payload.pagination.page
+    }
+    let data = await Model.paginate(queryString, options) //find().populate([{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}]).lean()
     return data
   }
 }

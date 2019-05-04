@@ -51,6 +51,23 @@ export default [
     }
   },
   {
+    method: 'POST',
+    path: '/get-all-client',
+    handler: PhongController.getAllClient,
+    config: {
+      auth:false,
+      description: 'load tat ca danh sach phan trang',
+      validate: PhongVal.getallclient,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'GET',
     path: '/phong/{id}',
     handler: PhongController.getById,

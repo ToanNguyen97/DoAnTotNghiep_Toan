@@ -86,6 +86,14 @@ const phongVal = {
     options: {
       allowUnknown: true
     }
+  },
+  getallclient: {
+    payload: {
+     pagination: Joi.object()
+    },
+    options: {
+      allowUnknown: true
+    }
   }
 }
 

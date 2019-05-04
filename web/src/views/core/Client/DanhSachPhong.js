@@ -9,8 +9,10 @@ export default {
       formData: {tinhTrangPhongSelect: []},
       dsPhong: [],
       loading: false,
+      total:0,
+      page:1,
       pagination: {
-        rowsPerPage: 4
+        rowsPerPage: 4,
       }
     }
   },
@@ -23,11 +25,14 @@ export default {
     })
     if(!_.isEmpty(this.$route.query)) {
       this.formData = this.$route.query
+      this.pagination.page = this.page
+      this.formData.pagination = this.pagination
       PhongServices.traCuu(this.formData).then( res => {
-        if(res && res.length > 0) {
-          this.dsPhong = res
-          this.ketqua = res.length
-          toast.Info(`Có ${res.length} phòng được tìm thấy`)
+        if(res && res.docs.length > 0) {
+          this.dsPhong = res.docs
+          this.page = res.page
+          this.total = res.pages
+          toast.Info(`Có ${res.total} phòng được tìm thấy`)
           this.loading = false
         } else {
           toast.Show('Không có kết quả theo tìm kiếm')
@@ -36,8 +41,12 @@ export default {
         }
       })
     } else {
-        PhongServices.getPhongs().then(res => {
-        this.dsPhong = res.data
+        this.pagination.page = this.page
+        PhongServices.getPhongsClient(this.pagination).then(res => {
+          let data = res.data
+          this.dsPhong = data.docs
+          this.page = data.page
+          this.total = data.pages
       })
     }
   },
@@ -51,23 +60,44 @@ export default {
       if(v) {
         this.isOGhep = false
       }
+    },
+    page () {
+      this.pagination.page = this.page
+      this.formData.pagination = this.pagination
+      PhongServices.traCuu(this.formData).then( res => {
+        if(res && res.docs.length > 0) {
+          this.dsPhong = res.docs
+          this.page = res.page
+          this.total = res.pages
+          this.loading = false
+        } else {
+          toast.Show('Không có kết quả theo tìm kiếm')
+          this.loading = false
+          this.dsPhong = []
+        }
+      })
     }
   },
   computed: {
     pages () {
-      if (this.pagination.rowsPerPage == null
-      ) return 0
-      return Math.ceil(this.dsPhong.length / this.pagination.rowsPerPage)
+      if (this.total === 0 ) {
+        return 0
+      } else {
+        return this.total
+      }  
     }
   },
   methods: {
     TimKiem () {
       this.loading = true
+      this.pagination.page = this.page
+      this.formData.pagination = this.pagination
       PhongServices.traCuu(this.formData).then( res => {
-        if(res && res.length > 0) {
-          this.dsPhong = res
-          this.ketqua = res.length
-          toast.Info(`Có ${res.length} phòng được tìm thấy`)
+        if(res && res.docs.length > 0) {
+          this.dsPhong = res.docs
+          this.page = res.page
+          this.total = res.pages
+          toast.Info(`Có ${res.total} phòng được tìm thấy`)
           this.loading = false
         } else {
           toast.Show('Không có kết quả theo tìm kiếm')
