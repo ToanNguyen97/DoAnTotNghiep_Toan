@@ -105,7 +105,6 @@ const getAll = async (request, h) => {
 }
 const getAllClient = async (request, h) => {
   try {
-    console.log('vao day 1', request.payload)
     let options = {
       populate: [{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}],
       lean: true,
@@ -194,6 +193,15 @@ const tracuuphong = async (request, h) => {
   }
 }
 
+const tracuuphongAdmin = async (request, h) => {
+  try {
+    let items = await Phong.tracuuphongAdmin(request.payload)
+    return items
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
 export default {
   save,
   getById,
@@ -202,5 +210,6 @@ export default {
   update,
   deletePhong,
   searchMultiple,
-  tracuuphong
+  tracuuphong,
+  tracuuphongAdmin
 }

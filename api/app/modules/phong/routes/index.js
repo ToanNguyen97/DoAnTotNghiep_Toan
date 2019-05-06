@@ -52,6 +52,23 @@ export default [
   },
   {
     method: 'POST',
+    path: '/tracuuphong-admin',
+    handler: PhongController.tracuuphongAdmin,
+    config: {
+      auth:false,
+      description: 'tra cuu phong',
+      validate: PhongVal.tracuuphong,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
     path: '/get-all-client',
     handler: PhongController.getAllClient,
     config: {

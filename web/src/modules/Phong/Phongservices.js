@@ -72,6 +72,14 @@ const traCuu = async (payload) => {
     return err
   }
 }
+const traCuuAdmin = async (payload) => {
+  try {
+    let {data} =  await axios.post('http://localhost:3003/api/tracuuphong-admin', payload)
+    return data
+  } catch (err) {
+    return err
+  }
+}
 
 const getPhongById = async (idPhong) => {
   try {
@@ -93,5 +101,6 @@ export default {
   timKiem,
   getPhongById,
   traCuu,
-  getPhongsClient
+  getPhongsClient,
+  traCuuAdmin
 }

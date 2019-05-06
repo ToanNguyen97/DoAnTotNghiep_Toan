@@ -4,7 +4,7 @@ const countMoney = state => {
   let curentMonth = new Date()
   // nếu tháng hiện tại là 0 thì tháng trước là 12
   let getYear = curentMonth.getMonth() === 0?curentMonth.getFullYear()-1:curentMonth.getFullYear()
-  let preMonth = new Date(`${curentMonth.getMonth() ===0?12:curentMonth.getMonth()}/${curentMonth.getDay()}/${getYear}`)
+  let preMonth = new Date(`${curentMonth.getMonth() ===0?12:curentMonth.getMonth()}/${curentMonth.getDate()}/${getYear}`)
   let getMonth = moment(preMonth).format('MM/YYYY')
   let dsCTPT = state.dsPhieuThuTien.filter((item) => {
    let date = moment(new Date(item.ngayLap)).format('MM/YYYY')  
@@ -36,7 +36,7 @@ const countPercentTinhTrang = state => {
   let curentMonth = new Date()
   // nếu tháng hiện tại là 0 thì tháng trước là 12 và năm là của năm trước
   let getYear = curentMonth.getMonth() === 0?curentMonth.getFullYear()-1:curentMonth.getFullYear()
-  let preMonth = new Date(`${curentMonth.getMonth() ===0?12:curentMonth.getMonth()}/${curentMonth.getDay()}/${getYear}`)
+  let preMonth = new Date(`${curentMonth.getMonth() ===0?12:curentMonth.getMonth()}/${curentMonth.getDate()}/${getYear}`)
   let getMonth = moment(preMonth).format('MM/YYYY')
   // lấy ra danh sách phiếu thu có tháng và năm bằng vs tháng và năm tháng trước
   let dsPT = state.dsPhieuThuTien.filter((item) => {

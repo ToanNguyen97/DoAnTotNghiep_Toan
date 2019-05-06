@@ -35,7 +35,7 @@ export default {
   methods: {
     TimKiem () {
       this.loading = true
-      PhongServices.traCuu(this.formData).then( res => {
+      PhongServices.traCuuAdmin(this.formData).then( res => {
         if(res && res.length > 0) {
           this.dsPhong = res
           this.ketqua = res.length
