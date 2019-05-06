@@ -220,6 +220,8 @@ const loader = exports.loader = async function (server) {
 
     __webpack_require__(/*! ../models/User/model */ "./app/models/User/model.js");
 
+    __webpack_require__(/*! ../models/Booking/model */ "./app/models/Booking/model.js");
+
     __webpack_require__(/*! ../models/NhanVien/model */ "./app/models/NhanVien/model.js");
 
     __webpack_require__(/*! ../models/Role/model */ "./app/models/Role/model.js");
@@ -248,6 +250,7 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/nhanvien */ "./app/modules/nhanvien/index.js"));
     modules.push(__webpack_require__(/*! ../modules/role */ "./app/modules/role/index.js"));
     modules.push(__webpack_require__(/*! ../modules/rolegroup */ "./app/modules/rolegroup/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/booking */ "./app/modules/booking/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -720,6 +723,96 @@ function translateCharacter(input) {
   slug = slug.replace(/\@\-|\-\@|\@/gi, '');
   return slug;
 }
+
+/***/ }),
+
+/***/ "./app/models/Booking/model.js":
+/*!*************************************!*\
+  !*** ./app/models/Booking/model.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema.js */ "./app/models/Booking/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const bookingSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('Booking', bookingSchema);
+
+/***/ }),
+
+/***/ "./app/models/Booking/schema.js":
+/*!**************************************!*\
+  !*** ./app/models/Booking/schema.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const schema = {
+  hoTenNguoiBook: {
+    type: String,
+    required: true,
+    max: 50
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  soDienThoai: {
+    type: String,
+    required: true,
+    max: 12
+  },
+  soCMND: {
+    type: String,
+    required: true,
+    max: 11
+  },
+  phongID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'Phong'
+  },
+  ngayBookPhong: {
+    type: Date,
+    default: Date.now()
+  },
+  ngayNhanPhong: {
+    type: Date,
+    required: true
+  },
+  status: {
+    type: Boolean,
+    default: false,
+    required: true
+  }
+};
+const options = {
+  collection: 'booking'
+};
+exports.schema = schema;
+exports.options = options;
 
 /***/ }),
 
@@ -2180,6 +2273,122 @@ const options = {
 };
 exports.schema = schema;
 exports.options = options;
+
+/***/ }),
+
+/***/ "./app/modules/booking/controller/index.js":
+/*!*************************************************!*\
+  !*** ./app/modules/booking/controller/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const get = async (request, h) => {
+  try {
+    return true;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  get
+};
+
+/***/ }),
+
+/***/ "./app/modules/booking/index.js":
+/*!**************************************!*\
+  !*** ./app/modules/booking/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index.js */ "./app/modules/booking/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = 'admin-booking';
+
+/***/ }),
+
+/***/ "./app/modules/booking/routes/index.js":
+/*!*********************************************!*\
+  !*** ./app/modules/booking/routes/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index.js */ "./app/modules/booking/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index.js */ "./app/modules/booking/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'GET',
+  path: '/booking',
+  handler: _index2.default.get,
+  config: {
+    tags: ['api'],
+    description: 'lay danh sach cac khoan thu',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/booking/validate/index.js":
+/*!***********************************************!*\
+  !*** ./app/modules/booking/validate/index.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 /***/ }),
 
