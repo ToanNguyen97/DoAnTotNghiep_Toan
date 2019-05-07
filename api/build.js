@@ -6120,6 +6120,26 @@ exports.default = [{
     }
   }
 }, {
+  method: 'GET',
+  path: '/phong-client/{id}',
+  handler: _index2.default.getById,
+  config: {
+    auth: false,
+    validate: _index4.default.get,
+    description: 'xem thong tin phong',
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
   method: 'POST',
   path: '/phong',
   handler: _index2.default.save,

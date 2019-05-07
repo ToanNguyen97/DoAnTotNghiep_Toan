@@ -101,6 +101,23 @@ export default [
     }
   },
   {
+    method: 'GET',
+    path: '/phong-client/{id}',
+    handler: PhongController.getById,
+    config: {
+      auth: false,
+      validate: PhongVal.get,
+      description: 'xem thong tin phong',
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'POST',
     path:'/phong',
     handler: PhongController.save,

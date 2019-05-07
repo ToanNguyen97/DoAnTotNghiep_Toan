@@ -26,7 +26,7 @@
               <span class="black--text pl-2 font-weight-bold title">Giá phòng: {{item.loaiPhongID.giaPhong}}</span>
               </div>
               <div style="text-align:center;">
-                <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
+                <v-btn color="cyan" target="_blank" :to="{path:`/chi-tiet-phong-${item._id}.html`}" class="white--text mt-3">Xem chi tiết</v-btn>
               </div>
             </div>
           </v-layout>

@@ -17,6 +17,7 @@ import LayoutKhachThue from './modules/LayoutKhach/index.js'
 import Authenticated from './plugins/auththenticated.js'
 import TrangChu from './views/core/Client/TrangChu.vue'
 import danhSachPhong from './views/core/Client/DanhSachPhong.vue'
+import bookPhong from './views/core/Client/BookPhong.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -61,6 +62,11 @@ export default new Router({
           path:'/danh-sach-phong-tro.html',
           name: 'danhSachPhong',
           component: danhSachPhong
+        },
+        {
+          path: '/chi-tiet-phong-:id.html',
+          name: 'chitietphong',
+          component: bookPhong
         }
       ]
     }

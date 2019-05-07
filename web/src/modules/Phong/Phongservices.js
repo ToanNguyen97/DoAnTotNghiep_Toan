@@ -88,6 +88,14 @@ const getPhongById = async (idPhong) => {
     return err
   }
 }
+const getPhongByIdCLI = async (idPhong) => {
+  try {
+    let {data} = await axios.get('http://localhost:3003/api/phong-client/'+ idPhong)
+    return data
+  } catch (err) {
+    return err
+  }
+}
 
 
 
@@ -100,6 +108,7 @@ export default {
   deletePhong,
   timKiem,
   getPhongById,
+  getPhongByIdCLI,
   traCuu,
   getPhongsClient,
   traCuuAdmin
