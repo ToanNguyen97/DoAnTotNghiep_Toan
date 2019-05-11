@@ -1,9 +1,15 @@
 import {Schema} from 'mongoose'
+
 const schema = {
-  hoTenNguoiBook : {
+  hoNguoiBook : {
     type: String,
     required: true,
-    max: 50
+    max: 20
+  },
+  tenNguoiBook : {
+    type: String,
+    required: true,
+    max: 10
   },
   email: {
     type: String, 
@@ -18,6 +24,11 @@ const schema = {
     type: String,
     required: true,
     max: 11
+  },
+  diaChi: {
+    type: String,
+    required: true,
+    max: 100
   },
   phongID: {
     type: Schema.Types.ObjectId,

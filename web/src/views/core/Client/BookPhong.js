@@ -1,8 +1,12 @@
 import phongServices from '../../../modules/Phong/Phongservices'
-
+import popupBook from './PopUpBookPhong.vue'
 export default {
+  components: {
+    popupBook
+  },
   data() {
     return {
+      openPopupBook: false,
       phongDetail: {},
       rating:5,
       dsPhongCungLoai: []

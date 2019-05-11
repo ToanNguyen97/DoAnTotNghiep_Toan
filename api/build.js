@@ -771,10 +771,15 @@ exports.options = exports.schema = undefined;
 var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 
 const schema = {
-  hoTenNguoiBook: {
+  hoNguoiBook: {
     type: String,
     required: true,
-    max: 50
+    max: 20
+  },
+  tenNguoiBook: {
+    type: String,
+    required: true,
+    max: 10
   },
   email: {
     type: String,
@@ -789,6 +794,11 @@ const schema = {
     type: String,
     required: true,
     max: 11
+  },
+  diaChi: {
+    type: String,
+    required: true,
+    max: 100
   },
   phongID: {
     type: _mongoose.Schema.Types.ObjectId,
@@ -2294,18 +2304,34 @@ var _boom = __webpack_require__(/*! boom */ "boom");
 
 var _boom2 = _interopRequireDefault(_boom);
 
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const Booking = _mongoose2.default.model('Booking');
 
 const get = async (request, h) => {
   try {
-    return true;
+    return Booking.find();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const book = async (request, h) => {
+  try {
+    let data = request.payload;
+    return await Booking.create(data);
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
 };
 
 exports.default = {
-  get
+  get,
+  book
 };
 
 /***/ }),
@@ -2364,7 +2390,28 @@ exports.default = [{
   handler: _index2.default.get,
   config: {
     tags: ['api'],
+    auth: false,
     description: 'lay danh sach cac khoan thu',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/book-phong',
+  handler: _index2.default.book,
+  config: {
+    tags: ['api'],
+    auth: false,
+    validate: _index4.default.book,
+    description: 'dat phong',
     plugins: {
       'hapi-swagger': {
         responses: {
@@ -2389,6 +2436,36 @@ exports.default = [{
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const bookVal = {
+  book: {
+    payload: {
+      hoNguoiBook: _joi2.default.string().required().max(20),
+      tenNguoiBook: _joi2.default.string().required().max(10),
+      email: _joi2.default.string().required().email(),
+      soDienThoai: _joi2.default.string().required().max(12),
+      soCMND: _joi2.default.string().required().max(11),
+      diaChi: _joi2.default.string().required().max(100),
+      phongID: _joi2.default.ObjectId(),
+      ngayBookPhong: _joi2.default.date().required(),
+      ngayNhanPhong: _joi2.default.date().required(),
+      status: _joi2.default.boolean().required()
+    }
+  }
+};
+exports.default = { ...bookVal
+};
 
 /***/ }),
 
