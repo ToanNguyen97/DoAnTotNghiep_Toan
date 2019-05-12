@@ -18,6 +18,7 @@ import Authenticated from './plugins/auththenticated.js'
 import TrangChu from './views/core/Client/TrangChu.vue'
 import danhSachPhong from './views/core/Client/DanhSachPhong.vue'
 import bookPhong from './views/core/Client/BookPhong.vue'
+import ActiveBooking from './views/core/Client/ActiveBooking.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -39,6 +40,11 @@ export default new Router({
       path:'/success',
       name:'success',
       component: PageSuccess
+    },
+    {
+      path: '/kich-hoat-don-dat-phong-:id.html',
+      name: 'ActiveBooking',
+      component: ActiveBooking
     },
     {
       path: '/admin',

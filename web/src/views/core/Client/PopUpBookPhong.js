@@ -31,9 +31,9 @@ export default {
   methods: {
     Book () {
       this.loadingBook = true
-      BookPhongServices.bookPhong(this.formData).then(res => {
+      BookPhongServices.bookPhong(this.formData).then(() => {
         this.loadingBook = false
-        toast.Success('Đăt phòng thành công, Vui lòng check mail để active')
+        toast.Success('Vui lòng check mail để kích hoạt')
       }).catch(err => {
         toast.Error('Lỗi',err)
       })

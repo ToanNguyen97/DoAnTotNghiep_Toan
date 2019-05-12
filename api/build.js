@@ -321,6 +321,39 @@ exports.dependencies = ['app-redis'];
 
 /***/ }),
 
+/***/ "./app/lib/basemail/mailBooking.js":
+/*!*****************************************!*\
+  !*** ./app/lib/basemail/mailBooking.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const fs = __webpack_require__(/*! fs */ "fs");
+
+const path = __webpack_require__(/*! path */ "path");
+
+const mailBooking = function (data) {
+  let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'templateBooking.html'));
+  content = String(content);
+  content = content.replace('{{hoTenKhachThue}}', `${data.hoNguoiBook} ${data.tenNguoiBook}`);
+  content = content.replace('{{maBooking}}', `${data._id}`);
+  content = content.replace('{{maBooking}}', `${data._id}`);
+  return content;
+};
+
+exports.default = {
+  mailBooking
+};
+
+/***/ }),
+
 /***/ "./app/lib/basemail/mailHetHanHopDong.js":
 /*!***********************************************!*\
   !*** ./app/lib/basemail/mailHetHanHopDong.js ***!
@@ -1832,7 +1865,7 @@ module.exports = function (schema, options) {
       };
     }
 
-    let data = await Model.find().populate([{
+    let data = await Model.find(queryString).populate([{
       path: 'loaiPhongID'
     }, {
       path: 'khuPhongID',
@@ -2308,6 +2341,14 @@ var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./app/lib/basemail/sendMail.js");
+
+var _sendMail2 = _interopRequireDefault(_sendMail);
+
+var _mailBooking = __webpack_require__(/*! ../../../lib/basemail/mailBooking.js */ "./app/lib/basemail/mailBooking.js");
+
+var _mailBooking2 = _interopRequireDefault(_mailBooking);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const Booking = _mongoose2.default.model('Booking');
@@ -2323,7 +2364,29 @@ const get = async (request, h) => {
 const book = async (request, h) => {
   try {
     let data = request.payload;
-    return await Booking.create(data);
+    let booking = await Booking.create(data);
+    let options = {
+      subject: 'Kích hoạt đơn đặt phòng',
+      text: 'Kích hoạt đơn đặt phòng',
+      content: _mailBooking2.default.mailBooking(booking)
+    };
+    await _sendMail2.default.SenMail(options, booking.email);
+    return booking;
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+const activeBooking = async (request, h) => {
+  try {
+    let booking = await Booking.findById(request.params.id);
+    booking.status = true;
+    await booking.save();
+    let activeBooking = await Booking.findById(booking._id).populate([{
+      path: 'phongID',
+      populate: ['khuPhongID', 'loaiPhongID']
+    }]);
+    return activeBooking;
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -2331,7 +2394,8 @@ const book = async (request, h) => {
 
 exports.default = {
   get,
-  book
+  book,
+  activeBooking
 };
 
 /***/ }),
@@ -2404,6 +2468,26 @@ exports.default = [{
     }
   }
 }, {
+  method: 'GET',
+  path: '/kich-hoat-phong-{id}',
+  handler: _index2.default.activeBooking,
+  config: {
+    tags: ['api'],
+    auth: false,
+    validate: _index4.default.active,
+    description: 'lay danh sach cac khoan thu',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
   method: 'POST',
   path: '/book-phong',
   handler: _index2.default.book,
@@ -2461,6 +2545,11 @@ const bookVal = {
       ngayBookPhong: _joi2.default.date().required(),
       ngayNhanPhong: _joi2.default.date().required(),
       status: _joi2.default.boolean().required()
+    }
+  },
+  active: {
+    params: {
+      id: _joi2.default.ObjectId()
     }
   }
 };

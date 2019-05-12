@@ -69,7 +69,7 @@ module.exports = function (schema, options) {
       // lọc ra phòng có tình trạn theo yêu cầu
       queryString.tinhTrangPhongID = {$in: payload.tinhTrangPhongSelect}
     }
-    let data = await Model.find().populate([{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}]).lean()
+    let data = await Model.find(queryString).populate([{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}]).lean()
     return data
   }
   schema.statics.tracuuphong = async function (payload) {

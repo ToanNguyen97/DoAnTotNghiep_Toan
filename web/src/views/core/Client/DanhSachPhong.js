@@ -24,6 +24,10 @@ export default {
       this.dsTinhTrangPhong = res.data
     })
     if(!_.isEmpty(this.$route.query)) {
+      if(this.$route.query.tinhTrangPhongSelect && !Array.isArray(this.$route.query.tinhTrangPhongSelect))
+      {
+        this.$route.query.tinhTrangPhongSelect = [this.$route.query.tinhTrangPhongSelect]
+      }
       this.formData = this.$route.query
       this.pagination.page = this.page
       this.formData.pagination = this.pagination
@@ -39,6 +43,8 @@ export default {
           this.loading = false
           this.dsPhong = []
         }
+      }).catch(err => {
+        toast.Show('Lỗi', err)
       })
     } else {
         this.pagination.page = this.page
@@ -51,16 +57,6 @@ export default {
     }
   },
   watch: {
-    isOGhep (v) {
-      if(v) {
-        this.isConTrong = false
-      }
-    },
-    isConTrong (v) {
-      if(v) {
-        this.isOGhep = false
-      }
-    },
     page () {
       this.pagination.page = this.page
       this.formData.pagination = this.pagination

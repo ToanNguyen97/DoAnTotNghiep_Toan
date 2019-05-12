@@ -20,18 +20,6 @@ export default {
       this.dsTinhTrangPhong = res.data
     })
   },
-  watch: {
-    isOGhep (v) {
-      if(v) {
-        this.isConTrong = false
-      }
-    },
-    isConTrong (v) {
-      if(v) {
-        this.isOGhep = false
-      }
-    }
-  },
   methods: {
     TimKiem () {
       this.loading = true

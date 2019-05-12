@@ -15,6 +15,11 @@ const bookVal = {
       ngayNhanPhong: Joi.date().required(),
       status: Joi.boolean().required()
     }
+  },
+  active: {
+    params: {
+      id: Joi.ObjectId()
+    }
   }
 }
 

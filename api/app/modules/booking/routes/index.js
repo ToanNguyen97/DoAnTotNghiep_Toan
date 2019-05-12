@@ -19,6 +19,23 @@ export default [
     }
   },
   {
+    method: 'GET',
+    path:'/kich-hoat-phong-{id}',
+    handler: bookingController.activeBooking,
+    config: {
+      tags: ['api'],
+      auth:false,
+      validate: bookingVal.active,
+      description: 'lay danh sach cac khoan thu',
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'POST',
     path:'/book-phong',
     handler: bookingController.book,

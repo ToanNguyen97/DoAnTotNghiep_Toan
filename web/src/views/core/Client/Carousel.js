@@ -19,18 +19,6 @@ export default {
       this.dsTinhTrangPhong = res.data
     })
   },
-  watch: {
-    isOGhep (v) {
-      if(v) {
-        this.isConTrong = false
-      }
-    },
-    isConTrong (v) {
-      if(v) {
-        this.isOGhep = false
-      }
-    }
-  },
   methods: {
     TimKiem () {
       this.$router.push({path:'/danh-sach-phong-tro.html', query: this.formData})
