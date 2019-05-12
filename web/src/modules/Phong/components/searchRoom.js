@@ -32,6 +32,7 @@ export default {
         } else {
           toast.Show('Không có kết quả theo tìm kiếm')
           this.loading = false
+          this.ketqua = 0 
           this.dsPhong = []
         }
       })

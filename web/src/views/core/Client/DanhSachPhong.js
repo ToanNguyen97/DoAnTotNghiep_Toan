@@ -39,12 +39,12 @@ export default {
           toast.Info(`Có ${res.total} phòng được tìm thấy`)
           this.loading = false
         } else {
-          toast.Show('Không có kết quả theo tìm kiếm')
+          toast.Error('Không có kết quả theo tìm kiếm')
           this.loading = false
           this.dsPhong = []
         }
       }).catch(err => {
-        toast.Show('Lỗi', err)
+        toast.Error('Lỗi', err)
       })
     } else {
         this.pagination.page = this.page
@@ -67,7 +67,7 @@ export default {
           this.total = res.pages
           this.loading = false
         } else {
-          toast.Show('Không có kết quả theo tìm kiếm')
+          toast.Error('Không có kết quả theo tìm kiếm')
           this.loading = false
           this.dsPhong = []
         }
@@ -96,7 +96,7 @@ export default {
           toast.Info(`Có ${res.total} phòng được tìm thấy`)
           this.loading = false
         } else {
-          toast.Show('Không có kết quả theo tìm kiếm')
+          toast.Error('Không có kết quả theo tìm kiếm')
           this.loading = false
           this.dsPhong = []
         }
