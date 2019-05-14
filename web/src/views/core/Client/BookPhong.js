@@ -1,12 +1,15 @@
 import phongServices from '../../../modules/Phong/Phongservices'
 import popupBook from './PopUpBookPhong.vue'
+import popupLienHe from './LienHe.vue'
 export default {
   components: {
-    popupBook
+    popupBook,
+    popupLienHe
   },
   data() {
     return {
       openPopupBook: false,
+      openPopupLienHe: false,
       phongDetail: {},
       rating:5,
       dsPhongCungLoai: []

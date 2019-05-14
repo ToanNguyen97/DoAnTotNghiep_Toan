@@ -56,6 +56,7 @@ export const loader = async function (server) {
      require('../models/PhieuTraPhong/model')
      require('../models/User/model')
      require('../models/Booking/model')
+     require('../models/LienHe/model')
      require('../models/NhanVien/model')
      require('../models/Role/model')
      require('../models/RoleGroup/model')
@@ -80,6 +81,7 @@ export const loader = async function (server) {
      modules.push(require('../modules/role'))
      modules.push(require('../modules/rolegroup'))
      modules.push(require('../modules/booking'))
+     modules.push(require('../modules/lienhe'))
      
      if (modules.length) {
        let options = {}

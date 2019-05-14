@@ -60,7 +60,7 @@
             </v-card-text>
             <v-card-actions class="justify-center">
               <v-btn @click="openPopupBook = true" depressed dark color="blue" >đặt ngay</v-btn>
-              <v-btn  depressed dark color="purple">báo khi có phòng</v-btn>
+              <v-btn  @click="openPopupLienHe = true" depressed dark color="purple">báo khi có phòng</v-btn>
             </v-card-actions>
           </v-card>
       </v-flex>
@@ -125,6 +125,7 @@
       </v-flex>
     </v-layout>
     <popupBook v-model="openPopupBook" :phongSelected="phongDetail" />
+    <popupLienHe v-model="openPopupLienHe" :phongSelected="phongDetail" />
   </div>
 </template>
 <script src="./BookPhong.js"></script>

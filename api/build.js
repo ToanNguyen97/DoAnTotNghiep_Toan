@@ -222,6 +222,8 @@ const loader = exports.loader = async function (server) {
 
     __webpack_require__(/*! ../models/Booking/model */ "./app/models/Booking/model.js");
 
+    __webpack_require__(/*! ../models/LienHe/model */ "./app/models/LienHe/model.js");
+
     __webpack_require__(/*! ../models/NhanVien/model */ "./app/models/NhanVien/model.js");
 
     __webpack_require__(/*! ../models/Role/model */ "./app/models/Role/model.js");
@@ -251,6 +253,7 @@ const loader = exports.loader = async function (server) {
     modules.push(__webpack_require__(/*! ../modules/role */ "./app/modules/role/index.js"));
     modules.push(__webpack_require__(/*! ../modules/rolegroup */ "./app/modules/rolegroup/index.js"));
     modules.push(__webpack_require__(/*! ../modules/booking */ "./app/modules/booking/index.js"));
+    modules.push(__webpack_require__(/*! ../modules/lienhe */ "./app/modules/lienhe/index.js"));
 
     if (modules.length) {
       let options = {};
@@ -1367,6 +1370,78 @@ const options = {
   collection: 'khuphongs',
   timestamps: true,
   virtuals: true
+};
+exports.schema = schema;
+exports.options = options;
+
+/***/ }),
+
+/***/ "./app/models/LienHe/model.js":
+/*!************************************!*\
+  !*** ./app/models/LienHe/model.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _schema = __webpack_require__(/*! ./schema.js */ "./app/models/LienHe/schema.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const lienHeSchema = new _mongoose.Schema(_schema.schema, _schema.options);
+exports.default = _mongoose2.default.model('LienHe', lienHeSchema);
+
+/***/ }),
+
+/***/ "./app/models/LienHe/schema.js":
+/*!*************************************!*\
+  !*** ./app/models/LienHe/schema.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.options = exports.schema = undefined;
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+const schema = {
+  hoTenNguoiLienHe: {
+    type: String,
+    required: true,
+    max: 50
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  soDienThoai: {
+    type: String,
+    required: true,
+    max: 12
+  },
+  phongID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'Phong'
+  }
+};
+const options = {
+  collection: 'lienhes'
 };
 exports.schema = schema;
 exports.options = options;
@@ -4126,6 +4201,154 @@ const khuPhongVal = {
   }
 };
 exports.default = { ...khuPhongVal
+};
+
+/***/ }),
+
+/***/ "./app/modules/lienhe/controller/index.js":
+/*!************************************************!*\
+  !*** ./app/modules/lienhe/controller/index.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _boom = __webpack_require__(/*! boom */ "boom");
+
+var _boom2 = _interopRequireDefault(_boom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const LienHe = _mongoose2.default.model('LienHe');
+
+const save = async (request, h) => {
+  try {
+    return await LienHe.create(request.payload);
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
+exports.default = {
+  save
+};
+
+/***/ }),
+
+/***/ "./app/modules/lienhe/index.js":
+/*!*************************************!*\
+  !*** ./app/modules/lienhe/index.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _index = __webpack_require__(/*! ./routes/index.js */ "./app/modules/lienhe/routes/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.register = (server, options) => {
+  server.route(_index2.default);
+};
+
+exports.name = "lien-he";
+
+/***/ }),
+
+/***/ "./app/modules/lienhe/routes/index.js":
+/*!********************************************!*\
+  !*** ./app/modules/lienhe/routes/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(/*! ../controller/index.js */ "./app/modules/lienhe/controller/index.js");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = __webpack_require__(/*! ../validate/index.js */ "./app/modules/lienhe/validate/index.js");
+
+var _index4 = _interopRequireDefault(_index3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = [{
+  method: 'POST',
+  path: '/dat-lien-he',
+  handler: _index2.default.save,
+  config: {
+    auth: false,
+    tags: ['api'],
+    validate: _index4.default.save,
+    description: 'lay danh sach cac khoan thu',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}];
+
+/***/ }),
+
+/***/ "./app/modules/lienhe/validate/index.js":
+/*!**********************************************!*\
+  !*** ./app/modules/lienhe/validate/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _joi = __webpack_require__(/*! joi */ "joi");
+
+var _joi2 = _interopRequireDefault(_joi);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_joi2.default.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(_joi2.default);
+const lienHeVal = {
+  save: {
+    payload: {
+      hoTenNguoiLienHe: _joi2.default.string().required().max(50),
+      email: _joi2.default.string().email().required(),
+      soDienThoai: _joi2.default.string(),
+      phongID: _joi2.default.ObjectId()
+    }
+  }
+};
+exports.default = { ...lienHeVal
 };
 
 /***/ }),

@@ -39,43 +39,17 @@
     <section id="phongtro1" >
       <v-container>
         <h1 class="display-2 pb-4 font-weight-thin">Một số loại phòng trọ</h1>
-        <v-layout pt-5 justify-space-between>
-          <v-flex md4 ml-5>
+        <v-layout v-if="dsLoaiPhong && dsLoaiPhong.length > 0" row wrap pt-5 justify-center>   
+          <v-flex v-for="item of dsLoaiPhong" :key="item._id"  md4 ml-5>
             <div class="boxPhongTro">
               <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
               <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-              <span class="black--text pl-2 font-weight-bold title">Loại phòng: Phòng cửa gỗ</span>
+              <span class="black--text pl-2 font-weight-bold title">Loại phòng: {{item.tenLoaiPhong}}</span>
               <div class="mt-2">
-              <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.000.000 đ</span>
+              <span class="black--text pl-2 font-weight-bold title">Giá phòng: {{item.giaPhong | formatCurrency}}</span>
               </div>
               <div style="text-align:center;">
-                <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-              </div>
-            </div>
-          </v-flex>
-          <v-flex md4>
-            <div class="boxPhongTro">
-              <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-              <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-              <span class="black--text pl-2 font-weight-bold title">Loại phòng: Phòng cửa sắt</span>
-              <div class="mt-2">
-              <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.200.000 đ</span>
-              </div>
-              <div style="text-align:center;">
-                <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
-              </div>
-            </div>
-          </v-flex>
-          <v-flex md4>
-            <div class="boxPhongTro">
-              <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-              <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-              <span class="black--text pl-2 font-weight-bold title">Loại phòng: Phòng gác lửng</span>
-              <div class="mt-2">
-              <span class="black--text pl-2 font-weight-bold title">Giá phòng: 1.500.000 đ</span>
-              </div>
-              <div style="text-align:center;">
-                <v-btn color="cyan"  class="white--text mt-3">Xem chi tiết</v-btn>
+                <v-btn color="cyan" target="_blank" :to="{path:'/danh-sach-phong-tro.html', query: {loaiPhong: item._id}}"  class="white--text mt-3">Xem chi tiết</v-btn>
               </div>
             </div>
           </v-flex>
@@ -109,11 +83,32 @@ export default {
   components: {
      Carousel
   },
+  data() {
+    return {
+      loaiPhong: []
+    }
+  },
+  created() {
+    this.$store.dispatch('phong/getLoaiPhongs')
+  },
+  computed: {
+    dsLoaiPhong () {
+      return this.$store.state.phong.dsLoaiPhong
+    }
+  },
   methods: {
     goToTC () {
       this.$vuetify.goTo("#trangchu",{duration:1000,offset:100,easing:'easeInQuint'})
     }
   },
+  filters: {
+    formatCurrency (money) {
+      if(money) {
+        return money.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+      }
+      return 0
+    }
+  }
 }
 </script>
 <style scoped>
