@@ -18,7 +18,17 @@ const Success = (message) => {
   Vue.toasted.success(message,options)
 }
 const Info = (message) => {
-  Vue.toasted.info(message,options)
+  let optionsI = {
+    theme: "outline",
+    position: 'top-center',
+    duration: 5000,
+    icon: {
+      name: 'check_circle',
+      after: false
+    },
+    className: 'colorText'
+  }
+  Vue.toasted.info(message,optionsI)
 }
 const Error = (message) => {
   Vue.toasted.error(message,options)

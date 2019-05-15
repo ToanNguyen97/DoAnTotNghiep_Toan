@@ -16,6 +16,11 @@ const bookVal = {
       status: Joi.boolean().required()
     }
   },
+  check: {
+    params: {
+      id: Joi.ObjectId()
+    }
+  },
   active: {
     params: {
       id: Joi.ObjectId()

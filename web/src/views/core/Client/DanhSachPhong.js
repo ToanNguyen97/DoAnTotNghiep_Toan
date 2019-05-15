@@ -1,10 +1,16 @@
 import PhongServices from '../../../modules/Phong/Phongservices.js'
 import _ from 'lodash'
 import toast from '../../../plugins/toast.js'
+import popUpBook from './PopUpBookPhong.vue'
 export default {
+  components:{
+    popUpBook
+  },
   data() {
     return {
       dsLoaiPhong: [],
+      phongSelected: {},
+      openBooked: false,
       dsTinhTrangPhong: [],
       formData: {tinhTrangPhongSelect: []},
       dsPhong: [],
@@ -28,10 +34,14 @@ export default {
       {
         this.$route.query.tinhTrangPhongSelect = [this.$route.query.tinhTrangPhongSelect]
       }
+      else {
+        this.$route.query.tinhTrangPhongSelect = []
+      }
       this.formData = this.$route.query
       this.pagination.page = this.page
       this.formData.pagination = this.pagination
       PhongServices.traCuu(this.formData).then( res => {
+        this.dsPhong = []
         if(res && res.docs.length > 0) {
           this.dsPhong = res.docs
           this.page = res.page
@@ -61,7 +71,9 @@ export default {
       this.pagination.page = this.page
       this.formData.pagination = this.pagination
       PhongServices.traCuu(this.formData).then( res => {
+        // this.dsPhong = []
         if(res && res.docs.length > 0) {
+          // check xem nếu có số lượng đặt lớn hơn 4 thì mình disable nút đặt ngay
           this.dsPhong = res.docs
           this.page = res.page
           this.total = res.pages
@@ -84,6 +96,10 @@ export default {
     }
   },
   methods: {
+    openBook (phong) {
+      this.phongSelected = phong
+      this.openBooked = true
+    },
     TimKiem () {
       this.loading = true
       this.pagination.page = this.page

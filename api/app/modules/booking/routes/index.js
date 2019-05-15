@@ -20,6 +20,23 @@ export default [
   },
   {
     method: 'GET',
+    path:'/check-so-luong-dat-{id}',
+    handler: bookingController.Check,
+    config: {
+      tags: ['api'],
+      auth:false,
+      validate: bookingVal.check,
+      description: 'lay danh sach cac khoan thu',
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
     path:'/kich-hoat-phong-{id}',
     handler: bookingController.activeBooking,
     config: {

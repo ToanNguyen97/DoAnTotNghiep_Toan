@@ -2416,17 +2416,19 @@ var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
-var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./app/lib/basemail/sendMail.js");
-
-var _sendMail2 = _interopRequireDefault(_sendMail);
-
 var _mailBooking = __webpack_require__(/*! ../../../lib/basemail/mailBooking.js */ "./app/lib/basemail/mailBooking.js");
 
 var _mailBooking2 = _interopRequireDefault(_mailBooking);
 
+var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./app/lib/basemail/sendMail.js");
+
+var _sendMail2 = _interopRequireDefault(_sendMail);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const Booking = _mongoose2.default.model('Booking');
+
+const Phong = _mongoose2.default.model('Phong');
 
 const get = async (request, h) => {
   try {
@@ -2465,12 +2467,47 @@ const activeBooking = async (request, h) => {
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
+}; // check số lượng khách đặt phòng theo id
+
+
+const Check = async (request, h) => {
+  try {
+    let dsKhach = await Phong.findById({
+      _id: request.params.id
+    }).populate([{
+      path: 'dsHopDong',
+      populate: ['khachThueID']
+    }]).lean();
+    let dsKhachThue = dsKhach.dsHopDong.map(item => {
+      return item.khachThueID;
+    });
+    let countPhong = dsKhachThue.filter(item => {
+      for (let key of item.phongs) {
+        if (String(key) === String(request.params.id)) {
+          return item;
+        }
+      }
+    });
+    let dsBooking = await Booking.find({
+      phongID: request.params.id,
+      status: true
+    }); // check số lượng khách đang ở là bao nhiêu && số lượng đang book dc active la bao nhiêu
+
+    if (countPhong && dsBooking && dsBooking.length + countPhong.length >= 4) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
 };
 
 exports.default = {
   get,
   book,
-  activeBooking
+  activeBooking,
+  Check
 };
 
 /***/ }),
@@ -2530,6 +2567,26 @@ exports.default = [{
   config: {
     tags: ['api'],
     auth: false,
+    description: 'lay danh sach cac khoan thu',
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/check-so-luong-dat-{id}',
+  handler: _index2.default.Check,
+  config: {
+    tags: ['api'],
+    auth: false,
+    validate: _index4.default.check,
     description: 'lay danh sach cac khoan thu',
     plugins: {
       'hapi-swagger': {
@@ -2620,6 +2677,11 @@ const bookVal = {
       ngayBookPhong: _joi2.default.date().required(),
       ngayNhanPhong: _joi2.default.date().required(),
       status: _joi2.default.boolean().required()
+    }
+  },
+  check: {
+    params: {
+      id: _joi2.default.ObjectId()
     }
   },
   active: {
@@ -6062,6 +6124,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const Phong = _mongoose2.default.model('Phong');
 
+const Booking = _mongoose2.default.model('Booking');
+
 const fs = __webpack_require__(/*! fs */ "fs");
 
 const save = async (request, h) => {
@@ -6314,6 +6378,34 @@ const searchMultiple = async (request, h) => {
 const tracuuphong = async (request, h) => {
   try {
     let items = await Phong.tracuuphong(request.payload);
+
+    for (let item of items.docs) {
+      let dsKhach = await Phong.findById({
+        _id: item._id
+      }).populate([{
+        path: 'dsHopDong',
+        populate: ['khachThueID']
+      }]);
+      let dsKhachThue = dsKhach.dsHopDong.map(item1 => {
+        return item1.khachThueID;
+      });
+      let countKhach = dsKhachThue.filter(item2 => {
+        for (let key of item2.phongs) {
+          if (String(key) === String(item._id)) {
+            return item2;
+          }
+        }
+      });
+      let dsBooking = await Booking.find({
+        phongID: item._id,
+        status: true
+      }); // check số lượng khách đang ở là bao nhiêu && số lượng đang book dc active la bao nhiêu
+
+      if (countKhach && dsBooking && dsBooking.length + countKhach.length < 4) {
+        item.ok = true;
+      }
+    }
+
     return items;
   } catch (err) {
     return _boom2.default.forbidden(err);

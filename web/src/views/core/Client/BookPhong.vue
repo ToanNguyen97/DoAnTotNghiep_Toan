@@ -59,7 +59,7 @@
               <v-textarea outline name="input-7-4" hide-details :value="phongDetail.moTa" label="mô tả phòng"></v-textarea>
             </v-card-text>
             <v-card-actions class="justify-center">
-              <v-btn @click="openPopupBook = true" depressed dark color="blue" >đặt ngay</v-btn>
+              <v-btn @click="openPopupBook = true" :disabled="disabled" depressed :dark="dark" color="blue" >đặt ngay</v-btn>
               <v-btn  @click="openPopupLienHe = true" depressed dark color="purple">báo khi có phòng</v-btn>
             </v-card-actions>
           </v-card>

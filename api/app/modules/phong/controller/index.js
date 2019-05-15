@@ -3,6 +3,7 @@
 import Mongoose from 'mongoose'
 import Boom from 'boom'
 const Phong = Mongoose.model('Phong')
+const Booking = Mongoose.model('Booking')
 const fs = require('fs')
 
 const save = async (request, h) => {
@@ -187,6 +188,24 @@ const searchMultiple = async (request, h) => {
 const tracuuphong = async (request, h) => {
   try {
     let items = await Phong.tracuuphong(request.payload)
+    for(let item of items.docs) {
+      let dsKhach = await Phong.findById({_id: item._id}).populate([{path: 'dsHopDong', populate: ['khachThueID']}])
+      let dsKhachThue = dsKhach.dsHopDong.map(item1 => {
+        return item1.khachThueID
+      })
+      let countKhach = dsKhachThue.filter((item2) => {
+        for(let key of item2.phongs) {
+          if(String(key) === String(item._id)) {
+            return item2
+          }
+        }
+      })
+      let dsBooking = await Booking.find({phongID: item._id, status: true})
+      // check số lượng khách đang ở là bao nhiêu && số lượng đang book dc active la bao nhiêu
+      if(countKhach && dsBooking && (dsBooking.length + countKhach.length) < 4 ) {
+        item.ok = true
+      } 
+    }
     return items
   } catch (err) {
     return Boom.forbidden(err)

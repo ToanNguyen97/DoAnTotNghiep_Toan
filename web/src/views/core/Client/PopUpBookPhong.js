@@ -51,6 +51,8 @@ export default {
         this.formData.phongID = this.phongSelected._id
         this.formData.ngayBookPhong = new Date()
         this.formData.status = false
+      } else {
+        this.Reset()
       }
     }
   },
