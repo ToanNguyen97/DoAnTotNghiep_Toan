@@ -3,6 +3,9 @@ import Boom from 'boom'
 const PhieuTraPhong = Mongoose.model('PhieuTraPhong')
 const KhachThue = Mongoose.model('KhachThue')
 const Phong = Mongoose.model('Phong')
+const LienHe = Mongoose.model('LienHe')
+import mailLienHe from '../../../lib/basemail/mailLienHe.js'
+import sendMail from '../../../lib/basemail/sendMail.js'
 const save = async (request, h) => {
   try {
     let data = request.payload
@@ -54,6 +57,23 @@ const save = async (request, h) => {
     }
     await item.save()
     let phieu = await PhieuTraPhong.findById({_id:item._id}).populate('khachThueID')
+    // check phòng này có ai để lại liên hệ hay không thì gởi mail liên hệ
+     let lienHePhong = await LienHe.find({phongID: phieu.phongID}).populate('phongID')
+     console.log('lien', lienHePhong)
+    if(lienHePhong && lienHePhong.length > 0) {
+      let emailKhach = lienHePhong.map(v => {return v.email})
+      let stringEmail = "";
+      for(let str of emailKhach) {
+        stringEmail += str + ', '
+      }
+      let options = {
+        content: mailLienHe.mailLienHe(lienHePhong[0]),
+        subject: 'Thông báo phòng trống',
+        text: 'Thông báo phòng trống'
+      }
+      console.log('email',stringEmail)
+      sendMail.SenMail(options, stringEmail)
+    } 
     return phieu  
   } catch (err) {
     return Boom.forbidden(err)

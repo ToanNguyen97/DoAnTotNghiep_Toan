@@ -34,9 +34,9 @@ export default {
       {
         this.$route.query.tinhTrangPhongSelect = [this.$route.query.tinhTrangPhongSelect]
       }
-      else {
-        this.$route.query.tinhTrangPhongSelect = []
-      }
+      // else {
+      //   this.$route.query.tinhTrangPhongSelect = []
+      // }
       this.formData = this.$route.query
       this.pagination.page = this.page
       this.formData.pagination = this.pagination

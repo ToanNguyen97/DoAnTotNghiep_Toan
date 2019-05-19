@@ -10,9 +10,9 @@ const SenMail = async (options, email) => {
     auth: {
       type: 'OAuth2',
       user: 'toan210597ntu@gmail.com',
-      clientId: '529369342696-4u88ucm5d6rgudkl84alam67eht2h7rq.apps.googleusercontent.com',
-      clientSecret: '10jxMEC_wXSxRlMxkPfU39pF',
-      refreshToken:'1/aG6GoKDmPvwG2OQK3H_tUkzeu1RopMJV8_vBfirFQL0'  
+      clientId: '111021480568-u7nd27a29i23hfgalgl54vcna1g5l94r.apps.googleusercontent.com',
+      clientSecret: 'lVDO6CQihwxxY1PgbqSXcjDE',
+      refreshToken:'1/J8ieB6OAqGzcTvVhOC9QrGg-2r2kOUIewO2fxC-_se8'  
     }
   })
   

@@ -434,6 +434,38 @@ exports.default = {
 
 /***/ }),
 
+/***/ "./app/lib/basemail/mailLienHe.js":
+/*!****************************************!*\
+  !*** ./app/lib/basemail/mailLienHe.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const fs = __webpack_require__(/*! fs */ "fs");
+
+const path = __webpack_require__(/*! path */ "path");
+
+const mailLienHe = function (data) {
+  let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'teamplateLienHe.html'));
+  content = String(content);
+  content = content.replace('{{matenPhong}}', `${data.phongID.tenPhong}`);
+  content = content.replace('{{maBooking}}', `${data.phongID._id}`);
+  return content;
+};
+
+exports.default = {
+  mailLienHe
+};
+
+/***/ }),
+
 /***/ "./app/lib/basemail/mailPhieuThuTien.js":
 /*!**********************************************!*\
   !*** ./app/lib/basemail/mailPhieuThuTien.js ***!
@@ -528,9 +560,9 @@ const SenMail = async (options, email) => {
     auth: {
       type: 'OAuth2',
       user: 'toan210597ntu@gmail.com',
-      clientId: '529369342696-4u88ucm5d6rgudkl84alam67eht2h7rq.apps.googleusercontent.com',
-      clientSecret: '10jxMEC_wXSxRlMxkPfU39pF',
-      refreshToken: '1/aG6GoKDmPvwG2OQK3H_tUkzeu1RopMJV8_vBfirFQL0'
+      clientId: '111021480568-u7nd27a29i23hfgalgl54vcna1g5l94r.apps.googleusercontent.com',
+      clientSecret: 'lVDO6CQihwxxY1PgbqSXcjDE',
+      refreshToken: '1/J8ieB6OAqGzcTvVhOC9QrGg-2r2kOUIewO2fxC-_se8'
     }
   });
   let mailOptions = {
@@ -3166,7 +3198,6 @@ const Phong = _mongoose2.default.model('Phong'); //import translateCharacter fro
 const save = async (request, h) => {
   try {
     let data = request.payload;
-    console.log('dữ liêu', data);
     let item = await HopDongThuePhong.findById(data._id);
     let khachThue = {};
 
@@ -5810,6 +5841,14 @@ var _boom = __webpack_require__(/*! boom */ "boom");
 
 var _boom2 = _interopRequireDefault(_boom);
 
+var _mailLienHe = __webpack_require__(/*! ../../../lib/basemail/mailLienHe.js */ "./app/lib/basemail/mailLienHe.js");
+
+var _mailLienHe2 = _interopRequireDefault(_mailLienHe);
+
+var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./app/lib/basemail/sendMail.js");
+
+var _sendMail2 = _interopRequireDefault(_sendMail);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhieuTraPhong = _mongoose2.default.model('PhieuTraPhong');
@@ -5817,6 +5856,8 @@ const PhieuTraPhong = _mongoose2.default.model('PhieuTraPhong');
 const KhachThue = _mongoose2.default.model('KhachThue');
 
 const Phong = _mongoose2.default.model('Phong');
+
+const LienHe = _mongoose2.default.model('LienHe');
 
 const save = async (request, h) => {
   try {
@@ -5886,7 +5927,33 @@ const save = async (request, h) => {
     await item.save();
     let phieu = await PhieuTraPhong.findById({
       _id: item._id
-    }).populate('khachThueID');
+    }).populate('khachThueID'); // check phòng này có ai để lại liên hệ hay không thì gởi mail liên hệ
+
+    let lienHePhong = await LienHe.find({
+      phongID: phieu.phongID
+    }).populate('phongID');
+    console.log('lien', lienHePhong);
+
+    if (lienHePhong && lienHePhong.length > 0) {
+      let emailKhach = lienHePhong.map(v => {
+        return v.email;
+      });
+      let stringEmail = "";
+
+      for (let str of emailKhach) {
+        stringEmail += str + ', ';
+      }
+
+      let options = {
+        content: _mailLienHe2.default.mailLienHe(lienHePhong[0]),
+        subject: 'Thông báo phòng trống',
+        text: 'Thông báo phòng trống'
+      };
+      console.log('email', stringEmail);
+
+      _sendMail2.default.SenMail(options, stringEmail);
+    }
+
     return phieu;
   } catch (err) {
     return _boom2.default.forbidden(err);
