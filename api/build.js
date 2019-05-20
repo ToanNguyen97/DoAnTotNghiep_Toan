@@ -1290,16 +1290,13 @@ const schema = {
     max: 20
   },
   anhDaiDien: {
-    type: String,
-    required: true
+    type: String
   },
   ngaySinh: {
-    type: Date,
-    required: true
+    type: Date
   },
   gioiTinh: {
     type: Boolean,
-    required: true,
     default: false
   },
   soCMND: {
@@ -2464,7 +2461,17 @@ const Phong = _mongoose2.default.model('Phong');
 
 const get = async (request, h) => {
   try {
-    return Booking.find();
+    return Booking.find().populate([{
+      path: 'phongID',
+      populate: [{
+        path: 'loaiPhongID'
+      }, {
+        path: 'khuPhongID',
+        populate: ['dsPhong']
+      }, {
+        path: 'tinhTrangPhongID'
+      }]
+    }]).lean();
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -2594,11 +2601,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = [{
   method: 'GET',
-  path: '/booking',
+  path: '/list-khach-dat-phong',
   handler: _index2.default.get,
   config: {
     tags: ['api'],
-    auth: false,
     description: 'lay danh sach cac khoan thu',
     plugins: {
       'hapi-swagger': {
@@ -3726,6 +3732,17 @@ const put = async (request, h) => {
   }
 };
 
+const themTuBook = async (request, h) => {
+  try {
+    let data = request.payload;
+    data.tinhTrangKhachThue = 'Chưa thuê';
+    data.anhDaiDien = 'avatar.png';
+    return await KhachThue.create(data);
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   save,
   getAll,
@@ -3733,7 +3750,8 @@ exports.default = {
   search,
   getByDT,
   put,
-  getByID
+  getByID,
+  themTuBook
 };
 
 /***/ }),
@@ -3850,6 +3868,25 @@ exports.default = [{
     description: 'them va sua khach thue',
     tags: ['api'],
     validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/khachthue-them-book',
+  handler: _index2.default.themTuBook,
+  config: {
+    description: 'them từ đặt phòng',
+    tags: ['api'],
+    validate: _index4.default.themTuBook,
     plugins: {
       'hapi-swagger': {
         responses: {
@@ -4014,6 +4051,16 @@ const khachThueVal = {
   getByDT: {
     params: {
       sdt: Joi.string().required()
+    }
+  },
+  themTuBook: {
+    payload: {
+      hoKhachThue: Joi.string().required().max(30),
+      tenKhachThue: Joi.string().required().max(20),
+      email: Joi.string().email(),
+      soDienThoai: Joi.string().required().max(11),
+      soCMND: Joi.string().required().max(11),
+      diaChi: Joi.string().required().max(80)
     }
   }
 };

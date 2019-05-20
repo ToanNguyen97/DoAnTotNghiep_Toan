@@ -67,6 +67,13 @@ export default {
       }
       return false
     },
+    showBooking () {
+      if(this.permission && this.permission.roles.some(item => item._id === '5ce2a46ada8c8860dc9308a4'))
+      {
+        return true
+      }
+      return false
+    },
     showCustomer () {
       if(this.permission && this.permission.roles.some(item => item._id === '5cc560ee21fd1c0d185cbd82'))
       {

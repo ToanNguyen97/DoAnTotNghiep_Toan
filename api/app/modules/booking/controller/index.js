@@ -6,7 +6,7 @@ const Booking = Mongoose.model('Booking')
 const Phong   = Mongoose.model('Phong')
 const get = async (request, h) => {
   try {
-    return Booking.find()
+    return Booking.find().populate([{path:'phongID', populate:[{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}]}]).lean()
   } catch (err) {
     return Boom.forbidden(err)
   }

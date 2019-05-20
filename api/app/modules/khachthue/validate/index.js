@@ -78,6 +78,16 @@ const khachThueVal = {
     params: {
       sdt: Joi.string().required()
     }
+  },
+  themTuBook: {
+    payload : {
+      hoKhachThue: Joi.string().required().max(30),
+      tenKhachThue: Joi.string().required().max(20),
+      email:  Joi.string().email(),
+      soDienThoai: Joi.string().required().max(11),
+      soCMND: Joi.string().required().max(11),
+      diaChi: Joi.string().required().max(80)
+    }
   }
 }
 

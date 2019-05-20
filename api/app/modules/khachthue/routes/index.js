@@ -69,6 +69,22 @@ export default [
   },
   {
     method: 'POST',
+    path: '/khachthue-them-book',
+    handler: KhachThueController.themTuBook,
+    config: {
+      description: 'them từ đặt phòng',
+      tags: ['api'],
+      validate: KhachThueVal.themTuBook,
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
     path: '/khachthuetimkiem/chinhxac={isReal}',
     handler: KhachThueController.search,
     config: {

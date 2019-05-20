@@ -4,11 +4,10 @@ import bookingVal from '../validate/index.js'
 export default [
   {
     method: 'GET',
-    path:'/booking',
+    path:'/list-khach-dat-phong',
     handler: bookingController.get,
     config: {
       tags: ['api'],
-      auth:false,
       description: 'lay danh sach cac khoan thu',
       plugins: {
         'hapi-swagger': {

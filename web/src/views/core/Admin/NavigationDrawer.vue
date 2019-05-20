@@ -43,6 +43,14 @@
             <v-list-tile-title class="fonttext">Tra Cứu Phòng</v-list-tile-title>
           </v-list-tile-content>        
         </v-list-tile>      
+        <v-list-tile v-if="showBooking()" :to="'/danh-sach-dat-phong.html'" >
+           <v-list-tile-action>
+            <v-icon>fas fa-blog</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="fonttext">Quản Lý Đặt Online</v-list-tile-title>
+          </v-list-tile-content>        
+        </v-list-tile>      
         <v-list-tile v-if="showRoom()" :to="'/danh-sach-phong.html'" >
            <v-list-tile-action>
             <v-icon>account_balance</v-icon>

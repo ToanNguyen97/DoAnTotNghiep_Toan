@@ -13,6 +13,9 @@ export default {
     phongSelect: {
       type: Object
     },
+    soDT: {
+      type: String
+    },
     value: {
       type: Boolean,
       default: false
@@ -126,6 +129,9 @@ export default {
           this.khuPhongID = this.phong.khuPhongID._id
           this.dsPhong = this.phong.khuPhongID.dsPhong
           this.phongID = this.phong._id
+        }
+        if(this.soDT) {
+          this.soDienThoai = this.soDT
         }
       }
       if (v && this.isThem === false) {

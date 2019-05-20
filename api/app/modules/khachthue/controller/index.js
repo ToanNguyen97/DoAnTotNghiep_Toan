@@ -106,6 +106,17 @@ const put = async (request, h) => {
   }
 }
 
+const themTuBook = async (request, h) => {
+  try {
+    let data = request.payload
+    data.tinhTrangKhachThue = 'Chưa thuê'
+    data.anhDaiDien = 'avatar.png'
+    return await KhachThue.create(data)
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
 export default {
   save,
   getAll,
@@ -113,5 +124,6 @@ export default {
   search,
   getByDT,
   put,
-  getByID
+  getByID,
+  themTuBook
 }
