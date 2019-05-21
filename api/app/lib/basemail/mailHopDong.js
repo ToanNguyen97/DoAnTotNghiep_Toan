@@ -19,6 +19,7 @@ const mailHopDong = function (data) {
   content = content.replace('{{ngayThue}}', `${moment(data.ngayLap).format('DD/MM/YYYY')} `)
   content = content.replace('{{ngayTra}}', `${moment(data.ngayKetThuc).format('DD/MM/YYYY')}`)
   content = content.replace('{{ngayKy}}', `${moment(Date.now()).format(`DD/MM/YYYY`)}`)
+  content = content.replace('{{maKhachThue}}', `${data.khachThueID._id}`)
  
 return content
 }

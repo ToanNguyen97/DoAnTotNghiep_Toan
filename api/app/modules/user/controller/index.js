@@ -191,6 +191,17 @@ const editUser = async (request, h) => {
   }
 }
 
+// kích hoạt tài khoản
+const active = async (request, h) => {
+  try {
+    let account = await User.findOne({khachThueID: request.params.id}).populate('khachThueID')
+    await account.save()
+    return account
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+
 // sao luu tesst sao luu
 const backup = async (request, h) => {
   try {
@@ -216,6 +227,7 @@ export default {
   login,
   getUser,
   editUser,
+  active,
   createAccountNV,
   createAccountKT,
   backup,

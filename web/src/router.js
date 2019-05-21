@@ -20,6 +20,7 @@ import TrangChu from './views/core/Client/TrangChu.vue'
 import danhSachPhong from './views/core/Client/DanhSachPhong.vue'
 import bookPhong from './views/core/Client/BookPhong.vue'
 import ActiveBooking from './views/core/Client/ActiveBooking.vue'
+import ActiveAccount from './views/core/Admin/ActiveAccount.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -46,6 +47,11 @@ export default new Router({
       path: '/kich-hoat-don-dat-phong-:id.html',
       name: 'ActiveBooking',
       component: ActiveBooking
+    },
+    {
+      path: '/kich-hoat-tai-khoan-:id.html',
+      name: 'ActiveAccount',
+      component: ActiveAccount
     },
     {
       path: '/admin',

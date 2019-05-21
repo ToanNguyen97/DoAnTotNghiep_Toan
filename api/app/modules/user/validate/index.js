@@ -37,6 +37,11 @@ const userVal = {
     options: {
       allowUnknown: true
     }
+  },
+  active : {
+    params: {
+      id: Joi.ObjectId()
+    }
   }
 }
 

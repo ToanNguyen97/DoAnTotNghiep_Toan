@@ -425,6 +425,7 @@ const mailHopDong = function (data) {
   content = content.replace('{{ngayThue}}', `${moment(data.ngayLap).format('DD/MM/YYYY')} `);
   content = content.replace('{{ngayTra}}', `${moment(data.ngayKetThuc).format('DD/MM/YYYY')}`);
   content = content.replace('{{ngayKy}}', `${moment(Date.now()).format(`DD/MM/YYYY`)}`);
+  content = content.replace('{{maKhachThue}}', `${data.khachThueID._id}`);
   return content;
 };
 
@@ -7943,6 +7944,19 @@ const editUser = async (request, h) => {
   } catch (err) {
     return err;
   }
+}; // kích hoạt tài khoản
+
+
+const active = async (request, h) => {
+  try {
+    let account = await User.findOne({
+      khachThueID: request.params.id
+    }).populate('khachThueID');
+    await account.save();
+    return account;
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
 }; // sao luu tesst sao luu
 
 
@@ -7971,6 +7985,7 @@ exports.default = {
   login,
   getUser,
   editUser,
+  active,
   createAccountNV,
   createAccountKT,
   backup,
@@ -8054,6 +8069,26 @@ exports.default = [{
   config: {
     description: 'lay thong tin user',
     validate: _index4.default.getuser,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/kich-hoat-tai-khoan-{id}',
+  handler: _index2.default.active,
+  config: {
+    description: 'active tài khoản khách thuê',
+    validate: _index4.default.active,
+    auth: false,
     tags: ['api'],
     plugins: {
       'hapi-swagger': {
@@ -8200,6 +8235,11 @@ const userVal = {
     },
     options: {
       allowUnknown: true
+    }
+  },
+  active: {
+    params: {
+      id: Joi.ObjectId()
     }
   }
 };

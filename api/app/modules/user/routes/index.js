@@ -36,6 +36,23 @@ export default [
     }
   },
   {
+    method: 'GET',
+    path: '/kich-hoat-tai-khoan-{id}',
+    handler: UserController.active,
+    config: {
+      description: 'active tài khoản khách thuê',
+      validate: UserVal.active,
+      auth: false,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'POST',
     path: '/sigin',
     handler: UserController.signin,
