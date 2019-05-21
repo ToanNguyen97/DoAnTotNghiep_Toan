@@ -142,9 +142,9 @@
                 <td class="text-xs-left">
                   <v-tooltip top>
                     <template v-slot:activator="{ on }">
-                      <v-btn color="cyan" v-on="on" @click="TraPhong(props.item)" icon outline flat fab small depressed ><v-icon>fas fa-info-circle</v-icon></v-btn> 
+                      <v-btn color="cyan" v-on="on"  icon outline flat fab small depressed ><v-icon>fas fa-info-circle</v-icon></v-btn> 
                     </template>
-                    <span>Trả Phòng</span>
+                    <span>Thông Tin Khách</span>
                   </v-tooltip>
                 </td>
               </template>

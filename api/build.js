@@ -456,7 +456,7 @@ const mailLienHe = function (data) {
   let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'teamplateLienHe.html'));
   content = String(content);
   content = content.replace('{{matenPhong}}', `${data.phongID.tenPhong}`);
-  content = content.replace('{{maBooking}}', `${data.phongID._id}`);
+  content = content.replace('{{maPhong}}', `${data.phongID._id}`);
   return content;
 };
 
@@ -7655,6 +7655,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const PhieuThu = _mongoose2.default.model('PhieuThuTien');
 
+const Booking = _mongoose2.default.model('Booking');
+
 const Bcrypt = __webpack_require__(/*! bcrypt */ "bcrypt");
 
 const Boom = __webpack_require__(/*! boom */ "boom");
@@ -7815,6 +7817,20 @@ const login = async (request, h) => {
         if (dsPTQuaHan && dsPTQuaHan.length > 0) {
           for (let item of dsPTQuaHan) {
             item.tinhTrangPhieuThu = 'quá hạn';
+            await item.save();
+          }
+        } // chèn thêm cập nhật booking quá hạn, book không nhận phòng
+
+
+        let dsBookingHetHan = await Booking.find({
+          ngayNhanPhong: {
+            $lt: Date.now()
+          }
+        });
+
+        if (dsBookingHetHan && dsBookingHetHan.length > 0) {
+          for (let item of dsBookingHetHan) {
+            item.status = false;
             await item.save();
           }
         }

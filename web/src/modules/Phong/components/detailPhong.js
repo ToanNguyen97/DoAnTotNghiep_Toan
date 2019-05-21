@@ -164,6 +164,44 @@ export default {
       return this.$store.state.phieutraphong.dsPhieuTraPhong
     }
   },
+  watch: {
+    openHD () {
+      if(!this.openHD) {
+        this.$store.dispatch('phong/getPhongById',this.$route.params.id).then( res => {  
+          this.phong = res
+          this.urlComment = "http://localhost:8080/thong-tin-chi-tiet-phong-"+ this.$route.params.id +".html"
+          if(this.phong && this.phong.dsHopDong && this.phong.dsHopDong.length > 0) {
+            // lấy ra những hợp đồng có khách thuê của phòng này và lấy khách thuê đó
+            this.dsKhachThue = this.phong.dsHopDong.filter(item => {
+              return item.khachThueID.phongs.includes(item.phongID)
+            }).map(item => { return item.khachThueID})
+            // còn phải check 1 khách ở phòng này chuyển đi r lại chuyển lại sẽ bị trùng id nên lặp lại, cho nên chỉ check1 lần duy nhất
+            this.dsKhachThue = Array.from(new Set(this.dsKhachThue.map(s => s._id)))
+            .map(
+              _id => {
+                return {
+                  _id: _id,
+                  hoKhachThue: this.dsKhachThue.find(s => s._id === _id).hoKhachThue,
+                  tenKhachThue: this.dsKhachThue.find(s => s._id === _id).tenKhachThue,
+                  anhDaiDien: this.dsKhachThue.find(s => s._id === _id).anhDaiDien,
+                  ngaySinh: this.dsKhachThue.find(s => s._id === _id).ngaySinh,
+                  gioiTinh: this.dsKhachThue.find(s => s._id === _id).gioiTinh,
+                  soCMND: this.dsKhachThue.find(s => s._id === _id).soCMND,
+                  soDienThoai: this.dsKhachThue.find(s => s._id === _id).soDienThoai,
+                  hoTenNguoiThan: this.dsKhachThue.find(s => s._id === _id).hoTenNguoiThan,
+                  diaChi: this.dsKhachThue.find(s => s._id === _id).diaChi,
+                  loaiKhachThueID: this.dsKhachThue.find(s => s._id === _id).loaiKhachThueID,
+                  tinhTrangKhachThue: this.dsKhachThue.find(s => s._id === _id).tinhTrangKhachThue,
+                  phongs: this.dsKhachThue.find(s => s._id === _id).phongs,
+                  email: this.dsKhachThue.find(s => s._id === _id).email,
+                }
+              }
+            )  
+           }
+         })
+      } 
+    }
+  },
   filters: {
     formatDate (ngay) {
       return moment(ngay).format('DD/MM/YYYY')

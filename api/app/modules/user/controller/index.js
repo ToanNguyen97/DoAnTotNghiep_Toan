@@ -1,5 +1,6 @@
 import Mongoose, {Schema} from 'mongoose'
 const PhieuThu = Mongoose.model('PhieuThuTien')
+const Booking = Mongoose.model('Booking')
 const Bcrypt = require('bcrypt')
 const Boom = require('boom')
 const User = Mongoose.model('User')
@@ -96,6 +97,14 @@ const login = async (request, h) => {
           for(let item of dsPTQuaHan) {
               item.tinhTrangPhieuThu = 'quá hạn'
               await item.save()
+          }
+        }
+        // chèn thêm cập nhật booking quá hạn, book không nhận phòng
+        let dsBookingHetHan = await Booking.find({ngayNhanPhong: {$lt: Date.now()}})
+        if(dsBookingHetHan && dsBookingHetHan.length > 0) {
+          for(let item of dsBookingHetHan) {
+            item.status = false
+            await item.save()
           }
         }
         request.server.redis.set(session.id, JSON.stringify(session))
