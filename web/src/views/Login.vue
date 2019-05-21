@@ -51,7 +51,11 @@
             khách thì vào khách,
             còn các nhóm còn lại thì chuyển sang route admin (route admin là route mặc định)
           */
-          if(res.isValid === true)
+          if(res.isValid === true && res.credentials.status === false) {
+            toast.Error('Vui lòng vào mail để kích hoạt tài khoản')
+            this.loading = false
+          }
+          else if(res.isValid === true)
           {
             toast.Success(`Xin chào ${res.credentials.rolesGroupID.nameRoleGroup}: ${res.credentials.userInfo.tenNhanVien || res.credentials.userInfo.tenKhachThue}`)
             if(res.credentials.rolesGroupID._id === '5cc565ac9f49904f20b6211e') {

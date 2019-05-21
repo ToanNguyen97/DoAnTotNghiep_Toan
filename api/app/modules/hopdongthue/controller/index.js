@@ -36,12 +36,12 @@ const save = async (request, h) => {
       // check xem khách này là có tài khoản hay chưa
       let checkHasUser = await User.findOne({khachThueID: khachThue._id})
       if(!checkHasUser) {
-        // tạo tài khoản sử dụng cho khách và tạm thời kích hoạt tài khoản, sau này check mail mới kích hoạt
+        // tạo tài khoản sử dụng cho khách và check mail mới kích hoạt tài khoản
         let user = {
           userName: formatCharacter(`${khachThue.hoKhachThue}${khachThue.tenKhachThue}${khachThue.soDienThoai}`),
           passWord: khachThue.soDienThoai,
           email: khachThue.email,
-          status: true,
+          status: false,
           rolesGroupID: '5cc565b39f49904f20b6211f',
           khachThueID: khachThue._id
         }

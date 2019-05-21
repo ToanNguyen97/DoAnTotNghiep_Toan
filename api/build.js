@@ -3231,12 +3231,12 @@ const save = async (request, h) => {
       });
 
       if (!checkHasUser) {
-        // tạo tài khoản sử dụng cho khách và tạm thời kích hoạt tài khoản, sau này check mail mới kích hoạt
+        // tạo tài khoản sử dụng cho khách và check mail mới kích hoạt tài khoản
         let user = {
           userName: (0, _translateCharacter2.default)(`${khachThue.hoKhachThue}${khachThue.tenKhachThue}${khachThue.soDienThoai}`),
           passWord: khachThue.soDienThoai,
           email: khachThue.email,
-          status: true,
+          status: false,
           rolesGroupID: '5cc565b39f49904f20b6211f',
           khachThueID: khachThue._id
         };
@@ -7779,7 +7779,7 @@ const login = async (request, h) => {
         _id: data._id
       }).populate(['khachThueID', {
         path: 'rolesGroupID',
-        populate: 'roles'
+        populate: ['roles']
       }]);
       userInfo = data.khachThueID;
     }

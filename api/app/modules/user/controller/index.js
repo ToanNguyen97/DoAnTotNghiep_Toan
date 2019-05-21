@@ -75,7 +75,7 @@ const login = async (request, h) => {
       userInfo = data.nhanVienID
     }
     if(data && data.khachThueID) {
-      data = await User.findById({_id:data._id}).populate(['khachThueID',{path:'rolesGroupID', populate:'roles'}])
+      data = await User.findById({_id:data._id}).populate(['khachThueID',{path:'rolesGroupID', populate:['roles']}])
       userInfo= data.khachThueID
     }
     if(data === null) {
