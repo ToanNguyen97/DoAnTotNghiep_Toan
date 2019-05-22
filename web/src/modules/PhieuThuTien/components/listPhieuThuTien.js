@@ -2,13 +2,16 @@
 
 //import toast from '../../../plugins/toast.js'
 import popupPhieuThuTien from '../core/popupPhieuThuTien.vue'
+import popupKhoanThu from '../core/popupGiaKhoanThu.vue'
 import moment from 'moment'
 export default {
   components: {
-    popupPhieuThuTien
+    popupPhieuThuTien,
+    popupKhoanThu
   },
   data() {
     return {
+      openKhoanThu: false,
       dsPhong: [],
       idKhuPhong: null,
       combo: "",

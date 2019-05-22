@@ -13,7 +13,8 @@
         item-text= "tenKhuPhong"
         item-value= "_id"
         style="max-width:150px; margin-left:10px;"
-      ></v-combobox>     
+      ></v-combobox>    
+      <v-btn depressed @click="openKhoanThu= true"  color="cyan" dark class="mt-3 hidden-xs-only">Khoản Thu</v-btn> 
     </v-layout>
     <v-layout >
     </v-layout>
@@ -80,6 +81,7 @@
       <v-pagination v-model="pagination.page" :length="pages"></v-pagination>
     </div>  
     <popupPhieuThuTien v-model="edit"  :isThem="isThem" :phieuThuTienSelect="phieuThuTienSelect || {}"/>
+    <popupKhoanThu v-model="openKhoanThu"  />
   </div>
 </template>
 <script src="./listPhieuThuTien.js">

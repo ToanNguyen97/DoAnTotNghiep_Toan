@@ -48,6 +48,15 @@ export default {
       return this.formData.ngayLap ? moment(this.formData.ngayLap).format('DD/MM/YYYY') : moment(Date.now()).format('DD/MM/YYYY')
     },
     formatngayKetThuc () {
+      this.soHD = ''
+      if(this.phong && this.phong._id) {
+        let soPhong = this.phong.tenPhong.split(' ')
+        let soKhuPhong = this.phong.khuPhongID.tenKhuPhong.split(' ')
+        if(this.khachThue && this.khachThue.soCMND) {
+          this.soHD = 'HD' + moment(this.formData.ngayLap).format('DDMMYYYY') + this.khachThue.soCMND + soPhong[1] + soKhuPhong[2]
+        }
+      }
+      // lưu ý số hợp đồng cần thêm tên phòng vì khách có thể thuê nhiều phòng
       return this.formData.ngayKetThuc ? moment(this.formData.ngayKetThuc).format('DD/MM/YYYY') : ''
     }
   },

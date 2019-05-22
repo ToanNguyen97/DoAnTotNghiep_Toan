@@ -20,7 +20,6 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    console.log('vao ady')
     return await CacKhoanThu.find() 
   } catch (err) {
     return Boom.forbidden(err)

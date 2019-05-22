@@ -11,14 +11,19 @@
             <v-flex xs12 sm6 md6>
               <v-text-field v-model="formData.tenPhong"  :rules="tenPhongRules" :counter="20" label="Tên Phòng Trọ"></v-text-field>
             </v-flex>   
-            <v-flex xs12 sm6 md6>
-              <v-select
-                v-model="formData.khuPhongID"
-                :items="dsKhuPhong"
-                label="Khu Phòng"
-                item-text="tenKhuPhong"
-                item-value="_id"
-              ></v-select>
+            <v-flex xs12 sm6 md6 style="display: inline-flex;">
+              <div style="width:80%;">
+                <v-select
+                  v-model="formData.khuPhongID"
+                  :items="dsKhuPhong"
+                  label="Khu Phòng"
+                  item-text="tenKhuPhong"
+                  item-value="_id"
+                ></v-select>
+              </div>
+              <div style="width:20%">
+                <v-btn @click="openKhuPhong=true"  style="width:100%; margin-top:20px;"  flat  color="blue"><v-icon left>add</v-icon></v-btn>
+              </div>
             </v-flex>   
             <v-flex xs12 sm6 md6>
               <v-select
@@ -29,14 +34,20 @@
                 item-value="_id"
               ></v-select>
             </v-flex>   
-            <v-flex xs12 sm6 md6>
-              <v-select
-                v-model="formData.loaiPhongID"
-                :items="dsLoaiPhong"
-                label="Loại Phòng"
-                item-text="tenLoaiPhong"
-                item-value="_id"
-              ></v-select>
+            <v-flex xs12 sm6 md6 style="display: inline-flex;">
+               <div style="width:80%;">
+                  <v-select
+                    v-model="formData.loaiPhongID"
+                    :items="dsLoaiPhong"
+                    label="Loại Phòng"
+                    item-text="tenLoaiPhong"
+                    item-value="_id"
+                  ></v-select>
+              </div>
+              <div style="width:20%">
+                <v-btn @click="openLoaiPhong=true"  style="width:100%; margin-top:20px;"  flat  color="blue"><v-icon left>add</v-icon></v-btn>
+              </div>
+            
             </v-flex>   
           </v-layout>
           <v-layout row wrap justify-space-between>   
@@ -161,6 +172,8 @@
       </v-container>
     </v-card-text>          
   </v-card>
+  <khuPhong v-model="openKhuPhong"/>
+  <loaiPhong v-model="openLoaiPhong"/>
 </v-dialog>
 </template>
 

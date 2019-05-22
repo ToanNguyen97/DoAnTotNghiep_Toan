@@ -1,6 +1,12 @@
 import _ from 'lodash'
 import toast from '../../../plugins/toast'
+import khuPhong from './popupKhuPhong.vue'
+import loaiPhong from './popupLoaiPhong.vue'
 export default {
+  components: {
+    khuPhong,
+    loaiPhong
+  },
   props:{
     phongSelect: {
       type: Object
@@ -16,6 +22,8 @@ export default {
   },
   data () {
     return {
+      openKhuPhong: false,
+      openLoaiPhong: false,
       valid: true,
       changeAnh: false,
       changeAnhMulti: false,
@@ -186,6 +194,16 @@ export default {
     }
   },
   watch: {
+    openKhuPhong () {
+      if(this.openKhuPhong === false) {
+        this.$store.dispatch('phong/getKhuPhongs')
+      }
+    },
+    openLoaiPhong () {
+      if(this.openLoaiPhong === false) {
+        this.$store.dispatch('phong/getLoaiPhongs')
+      }
+    },
     value (v) {
       if(v) {
         this.$store.dispatch('phong/getKhuPhongs')
