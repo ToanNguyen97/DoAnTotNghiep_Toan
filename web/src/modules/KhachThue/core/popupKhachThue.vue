@@ -16,6 +16,8 @@
             </v-flex>   
             <v-flex xs12 sm6 md3>
               <v-select
+                :rules="loaiKhachThueRules"
+                required
                 v-model="formData.loaiKhachThueID"
                 :items="dsLoaiKhachThue"
                 label="Loại Khách Thuê"
@@ -25,6 +27,8 @@
             </v-flex>     
             <v-flex xs12 sm6 md3>
               <v-select
+                :rules="tinhTrangKhachThueRules"
+                required
                 v-model="formData.tinhTrangKhachThue"
                 :items="dsTinhTrang"
                 label="Tình Trạng"
@@ -53,6 +57,8 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     :value="computedDateFormattedMomentjs"
+                    :rules="ngaySinhRules"
+                    required
                     clearable
                     label="Ngày Sinh"
                     readonly
@@ -67,7 +73,7 @@
               </v-menu>           
             </v-flex>
             <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.soCMND" type="number"  label="Số chứng minh"></v-text-field>
+              <v-text-field v-model="formData.soCMND" :counter="10" :rules="soCMNDRules" required type="number"  label="Số chứng minh"></v-text-field>
             </v-flex>
             <v-flex  xs12 sm6 md3>
               <v-card flat style="padding-left:30px;">
@@ -85,13 +91,13 @@
           </v-layout>
           <v-layout row wrap>
             <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.soDienThoai" type="number"  label="Số điện thoại"></v-text-field>
+              <v-text-field v-model="formData.soDienThoai" :counter="13" :rules="soDienThoaiRules"  type="number"  label="Số điện thoại"></v-text-field>
             </v-flex>
             <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.diaChi"  label="Địa Chỉ"></v-text-field>
+              <v-text-field v-model="formData.diaChi" :rules="diaChiRules" required  label="Địa Chỉ"></v-text-field>
             </v-flex>
             <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.email" type="email"  label="E-mail"></v-text-field>
+              <v-text-field v-model="formData.email" type="email" :rules="emailRules" required   label="E-mail"></v-text-field>
             </v-flex>            
             <v-flex  xs12 sm6 md3>
               <v-text-field v-model="formData.hoTenNguoiThan"   label="Họ tên người thân"></v-text-field>

@@ -36,10 +36,10 @@ export default {
     background: rgba(0,0, 0,.8);
     height: 80px;
     padding-top:10px;
-    position: fixed;
-    top:0px;
+    /* position: fixed; */
+    /* top:0px; */
     width: 100%;
-    z-index: 99 !important;
+    /* z-index: 99 !important; */
   }
 
   .buttonMenu {

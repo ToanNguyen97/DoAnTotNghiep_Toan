@@ -1,5 +1,8 @@
 <template>
   <v-dialog :value="value" max-width="1000px" persistent >
+    <form >
+      
+    </form>
   <v-card>         
     <v-card-text>
       <v-container fluid grid-list-md>
@@ -16,6 +19,8 @@
                 <v-select
                   v-model="formData.khuPhongID"
                   :items="dsKhuPhong"
+                  :rules="khuPhongRules"
+                  required
                   label="Khu Phòng"
                   item-text="tenKhuPhong"
                   item-value="_id"
@@ -30,6 +35,8 @@
                 v-model="formData.tinhTrangPhongID"
                 :items="dsTinhTrangPhong"
                 label="Tình Trạng Phòng"
+                :rules="tinhTrangPhongRules"
+                required
                 item-text="tenTinhTrangPhong"
                 item-value="_id"
               ></v-select>
@@ -39,6 +46,8 @@
                   <v-select
                     v-model="formData.loaiPhongID"
                     :items="dsLoaiPhong"
+                    :rules="loaiPhongRules"
+                    required
                     label="Loại Phòng"
                     item-text="tenLoaiPhong"
                     item-value="_id"
@@ -53,11 +62,11 @@
           <v-layout row wrap justify-space-between>   
             <v-flex shrink  size="10px">
               <div>
-                <input hidden type="file" style="display: none" ref="file" accept="image/*"  @change="choosedFile">
+                <input hidden type="file"   style="display: none" ref="file" accept="image/*"  @change="choosedFile">
                 <v-btn  color="success"  @click="chooseFIle">Ảnh Chính</v-btn>
               </div>
               <div v-if="isThem">
-                  <img :src="anhChinh" height="144">
+                  <img :src="anhChinh"  height="144">
               </div>
               <div v-else> 
                 <div v-if="srcAnhChinh">
@@ -88,9 +97,10 @@
               <v-textarea
                 height="70"
                 outline
-                hide-details
+                :rules="moTaRules"
                 label="mô tả phòng trọ"
                 v-model="formData.moTa"
+                required
               ></v-textarea>
             </v-flex>                                                                                     
             <v-flex xs6 sm6 md2>
@@ -165,7 +175,7 @@
         </v-form>                                                       
         <v-layout row wrap mt-2>
             <v-flex xs12 sm12 md12 style="display: flex !important;justify-content: center !important;">                   
-              <v-btn color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
+              <v-btn color="blue darken-1"  dark @click="XacNhan" >Xác nhận</v-btn>
               <v-btn color="yellow darken-1" dark @click="Huy" >Hủy</v-btn>
             </v-flex>
         </v-layout>  

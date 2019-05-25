@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import toast from '../../../plugins/toast'
 import moment from 'moment'
+import validate from '../../../plugins/validation.js'
 export default {
   props:{
     khachThueSelect: {
@@ -31,12 +32,35 @@ export default {
       anhDaiDien: '',
       image: '',
       hoKhachThueRules: [
-        v => !!v || 'Không được để trống',
-        v => (v && v.length <= 30) || 'Tên tối đa 30 ký tự'
+        validate.required,
+        validate.max30
       ],
       tenKhachThueRules: [
-        v => !!v || 'Không được để trống',
-        v => (v && v.length <= 20) || 'Tên tối đa 20 ký tự'
+        validate.required,
+        validate.max20
+      ],
+      loaiKhachThueRules: [
+        validate.required
+      ],
+      tinhTrangKhachThueRules: [
+        validate.required
+      ],
+      ngaySinhRules: [
+        validate.required
+      ],
+      soCMNDRules: [
+        validate.required,
+        validate.max10
+      ],
+      soDienThoaiRules: [
+        validate.max13
+      ],
+      diaChiRules: [
+        validate.required
+      ],
+      emailRules: [
+        validate.required,
+        validate.email
       ],
       uploadingPhoto: false,
       srcAnhDaiDien: null
@@ -82,25 +106,27 @@ export default {
       this.$refs['file'].click()
     },
     XacNhan () {
-      if(this.image != "")
-      {
-        let anhDaiDien = {name: this.image, file64: this.anhDaiDien}
-        this.formData.anhDaiDien = anhDaiDien
+      if (this.$refs.form.validate()) {
+        if(this.image != "")
+        {
+          let anhDaiDien = {name: this.image, file64: this.anhDaiDien}
+          this.formData.anhDaiDien = anhDaiDien
+        }
+        else
+        {
+          this.formData.anhDaiDien = {name: "", file64: ""}
+        }    
+        if(this.formData.loaiKhachThueID._id)
+        {
+          this.formData.loaiKhachThueID = this.formData.loaiKhachThueID._id
+        }
+        this.$store.dispatch('save', this.formData).then(() => {
+          toast.Success('Thành Công!')
+          this.Huy()
+        }).catch( () => {
+          toast.Error('Lỗi!')  
+        })
       }
-      else
-      {
-        this.formData.anhDaiDien = {name: "", file64: ""}
-      }    
-      if(this.formData.loaiKhachThueID._id)
-      {
-        this.formData.loaiKhachThueID = this.formData.loaiKhachThueID._id
-      }
-      this.$store.dispatch('save', this.formData).then(() => {
-        toast.Success('Thành Công!')
-        this.Huy()
-      }).catch( () => {
-        toast.Error('Lỗi!')  
-      })
     },
     getSrcAnhDaiDien () {
       if(this.value && !this.isThem)

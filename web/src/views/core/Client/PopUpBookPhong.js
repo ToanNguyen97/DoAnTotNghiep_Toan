@@ -1,6 +1,7 @@
 import DatePicker from 'vue2-datepicker'
 import BookPhongServices from './BookPhongServices.js'
 import toast from '../../../plugins/toast.js'
+import validate from '../../../plugins/validation.js'
 export default {
   components: { 
     DatePicker
@@ -16,6 +17,35 @@ export default {
   },
   data() {
     return {
+      valid: true,
+      hoNguoiBookRules : [
+        validate.required,
+        validate.max20
+      ],
+      tenNguoiBookRules: [
+        validate.required,
+        validate.max13
+      ],
+      emailRules: [
+        validate.required,
+        validate.email
+      ],
+      soCMNDRules: [
+        validate.required,
+        validate.max20
+      ],
+      soDienThoaiRules: [
+        validate.required,
+        validate.max13
+      ],
+      diaChiRules: [
+        validate.required,
+        validate.max30
+      ],
+      ngayNhanPhongRules: [
+        validate.required,
+        v => (console.log('value',v))
+      ],
       formData: {},
       loadingBook: false,
       lang: {
@@ -28,17 +58,20 @@ export default {
       }
     }
   },
-  methods: {
+  methods: {   
     Book () {
-      this.loadingBook = true
-      BookPhongServices.bookPhong(this.formData).then(() => {
-        this.loadingBook = false
-        toast.Success('Vui lòng check mail để kích hoạt')
-      }).catch(err => {
-        toast.Error('Lỗi',err)
-      })
+      if (this.$refs.form.validate() && this.formData.ngayNhanPhong) {
+        this.loadingBook = true
+        BookPhongServices.bookPhong(this.formData).then(() => {
+          this.loadingBook = false
+          toast.Success('Vui lòng check mail để kích hoạt')
+        }).catch(err => {
+          toast.Error('Lỗi',err)
+        })
+    }
     },
     Reset () {
+      this.$refs.form.reset()
       this.formData = {}
       this.formData.phongID = this.phongSelected._id
       this.formData.ngayBookPhong = new Date()

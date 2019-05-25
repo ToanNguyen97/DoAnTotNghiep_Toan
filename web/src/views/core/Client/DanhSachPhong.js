@@ -30,6 +30,7 @@ export default {
       this.dsTinhTrangPhong = res.data
     })
     if(!_.isEmpty(this.$route.query)) {
+      console.log('query', this.$route.query)
       if(this.$route.query.tinhTrangPhongSelect && !Array.isArray(this.$route.query.tinhTrangPhongSelect))
       {
         this.$route.query.tinhTrangPhongSelect = [this.$route.query.tinhTrangPhongSelect]

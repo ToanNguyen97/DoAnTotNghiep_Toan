@@ -2,7 +2,9 @@ import _ from 'lodash'
 import toast from '../../../plugins/toast'
 import khuPhong from './popupKhuPhong.vue'
 import loaiPhong from './popupLoaiPhong.vue'
+import validate from '../../../plugins/validation.js'
 export default {
+ 
   components: {
     khuPhong,
     loaiPhong
@@ -22,6 +24,7 @@ export default {
   },
   data () {
     return {
+      email: '',
       openKhuPhong: false,
       openLoaiPhong: false,
       valid: true,
@@ -36,13 +39,29 @@ export default {
         hotFlag: false,
         status: false
       },
+
       anhChinh: '',
       anhChiTiet: [],
       anhChiTietName:[],
       image: '',
       tenPhongRules: [
-        v => !!v || 'Không được để trống',
-        v => (v && v.length <= 20) || 'Tên tối đa 20 ký tự'
+        validate.required,
+        validate.max20
+      ],
+      khuPhongRules: [
+        validate.required,
+      ],
+      tinhTrangPhongRules: [
+        validate.required,
+      ],
+      loaiPhongRules: [
+        validate.required,
+      ],
+      moTaRules: [
+        validate.required,
+      ],
+      anhChinhRules: [
+        validate.required,
       ],
       uploadingPhoto: false,
       srcAnhChinh: null,
@@ -50,7 +69,7 @@ export default {
     }
   },
   created() {
-  
+    
   },
   computed: {
     dsKhuPhong () {
@@ -129,38 +148,41 @@ export default {
        }
     },
     XacNhan () {
-      if(this.image != "")
-      {
-        let anhChinh = {name: this.image, file64: this.anhChinh}
-        this.formData.anhChinh = anhChinh
+      if (this.$refs.form.validate()) {
+          if(this.image != "")
+        {
+          let anhChinh = {name: this.image, file64: this.anhChinh}
+          this.formData.anhChinh = anhChinh
+        }
+        else
+        {
+          this.formData.anhChinh = {name: "", file64: ""}
+        }
+        if(this.anhChiTietName != "")
+        {
+          let anhChiTiet = {name: this.anhChiTietName, file64: this.anhChiTiet}      
+          this.formData.anhChiTiet = anhChiTiet
+        }
+        else
+        {
+          this.formData.anhChiTiet = {name: [], file64: []}
+        }
+        if(this.formData.khuPhongID._id)
+        {
+          this.formData.khuPhongID = this.formData.khuPhongID._id
+        }
+        if(this.formData.loaiPhongID._id)
+        {
+          this.formData.loaiPhongID = this.formData.loaiPhongID._id
+        }
+        this.$store.dispatch('phong/XacNhan', this.formData).then(() => {
+          toast.Success('Thành Công!')
+          this.Huy()
+        }).catch( () => {
+          toast.Error('Lỗi!')  
+        })
       }
-      else
-      {
-        this.formData.anhChinh = {name: "", file64: ""}
-      }
-      if(this.anhChiTietName != "")
-      {
-        let anhChiTiet = {name: this.anhChiTietName, file64: this.anhChiTiet}      
-        this.formData.anhChiTiet = anhChiTiet
-      }
-      else
-      {
-        this.formData.anhChiTiet = {name: [], file64: []}
-      }
-      if(this.formData.khuPhongID._id)
-      {
-        this.formData.khuPhongID = this.formData.khuPhongID._id
-      }
-      if(this.formData.loaiPhongID._id)
-      {
-        this.formData.loaiPhongID = this.formData.loaiPhongID._id
-      }
-      this.$store.dispatch('phong/XacNhan', this.formData).then(() => {
-        toast.Success('Thành Công!')
-        this.Huy()
-      }).catch( () => {
-        toast.Error('Lỗi!')  
-      })
+     
     },
     getSrcAnhChinh () {
       if(this.value && !this.isThem)

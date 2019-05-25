@@ -2,6 +2,7 @@ import _ from 'lodash'
 import toast from '../../../plugins/toast'
 import popupKhach from '../../KhachThue/core/popupKhachThue.vue'
 import moment from 'moment'
+import validate from '../../../plugins/validation.js'
 export default {
   components: {
     popupKhach
@@ -37,7 +38,18 @@ export default {
       khuPhongID: null,
       phongID: null,
       dsPhong: null,
-      openKhach: false
+      openKhach: false,
+      valid: true,
+      ngayKetThucRules: [
+        validate.required
+      ],
+      soDienThoaiRules: [
+        validate.required,
+        validate.max13
+      ],
+      khuPhongIDRules: [
+        validate.required
+      ],
     }
   },
   computed: {
@@ -71,16 +83,18 @@ export default {
       this.$emit('input', false)
     },
     XacNhan () {
-      this.formData._id = this.soHD
-      this.formData.khachThueID = this.khachThue._id
-      this.formData.phongID = this.phong._id
-      // chỗ này bị xung đột hàm nếu dispatch đến hàm save sẽ phân vân save của khach hay của hợp đồng nên phai đổi tên hàm
-      this.$store.dispatch('saveHopDong', this.formData).then(res => {       
-        toast.Success(`Hợp đồng ${res._id} đã được lập`)
-        this.Huy()
-      }).catch( () => {
-        toast.Error('Lỗi!')  
-      })
+      if (this.$refs.form.validate()) {
+        this.formData._id = this.soHD
+        this.formData.khachThueID = this.khachThue._id
+        this.formData.phongID = this.phong._id
+        // chỗ này bị xung đột hàm nếu dispatch đến hàm save sẽ phân vân save của khach hay của hợp đồng nên phai đổi tên hàm
+        this.$store.dispatch('saveHopDong', this.formData).then(res => {       
+          toast.Success(`Hợp đồng ${res._id} đã được lập`)
+          this.Huy()
+        }).catch( () => {
+          toast.Error('Lỗi!')  
+        })
+      }
     },
     infoKhachThue () {
       if(this.soDienThoai === null || this.soDienThoai === '' || this.soDienThoai === undefined)

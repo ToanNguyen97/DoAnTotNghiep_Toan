@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import toast from '../../../plugins/toast'
+import validate from '../../../plugins/validation.js'
 // import translateCharacter from '../../../plugins/translateCharacter.js'
 // import moment from 'moment'
 export default {
@@ -18,7 +19,16 @@ export default {
   },
   data () {
     return {
-      formData: {},    
+      formData: {},
+      valid: true,
+      soDienMoiRules: [
+        validate.required,
+        v => (v && v > this.formData.soDien) || 'Giá trị điện phải lớn hơn số cũ'
+      ],
+      soNuocMoiRules: [
+        validate.required,
+        v => (v && v > this.formData.soDien) || 'Giá trị nước phải lớn hơn số cũ'
+      ],
     }
   },
   computed: {
@@ -28,15 +38,17 @@ export default {
       this.$emit('input', false)
     },
     XacNhan () {
-      this.formData.ngayLap = Date.now()
-      this.formData.ngayHetHan = Date.now()
-      this.$store.dispatch('addPhieuThuTien', this.formData).then( res => {
-        this.$store.dispatch('phong/getKhuPhongs')
-        this.Huy()
-        toast.Success('Phiếu thu: '+res._id + ' đã được lập')
-      }).catch( res => {
-        toast.Error('Lỗi: '+ res)
-      })
+      if (this.$refs.form.validate()) {
+        this.formData.ngayLap = Date.now()
+        this.formData.ngayHetHan = Date.now()
+        this.$store.dispatch('addPhieuThuTien', this.formData).then( res => {
+          this.$store.dispatch('phong/getKhuPhongs')
+          this.Huy()
+          toast.Success('Phiếu thu: '+res._id + ' đã được lập')
+        }).catch( res => {
+          toast.Error('Lỗi: '+ res)
+        })
+      }
     },
   },
   watch: {   

@@ -1,6 +1,6 @@
 <template>
   <div>
-     <Carousel id="trangchu" />
+     <Slider id="trangchu" />
       <section id="gioithieu" >
       <v-container>
         <h1 style="text-align:center;" class="display-2 font-weight-medium font-italic">Chào mừng đến với khu trọ của chúng tôi</h1>
@@ -36,12 +36,13 @@
         </v-layout>
       </v-container>
     </section>
-    <section id="phongtro1" >
-      <v-container>
-        <h1 class="display-2 pb-4 font-weight-thin">Một số loại phòng trọ</h1>
-        <v-layout v-if="dsLoaiPhong && dsLoaiPhong.length > 0" row wrap pt-5 justify-center>   
-          <v-flex v-for="item of dsLoaiPhong" :key="item._id"  md4 ml-5>
-            <div class="boxPhongTro">
+    <section id="phongtro1" style="height: auto;" >
+      <div>
+        <h1 class="display-2 pt-3  pb-4 font-weight-thin text-xs-center">Một số loại phòng trọ</h1>
+        <v-layout row style="height: 100%; width: 100%;" justify-center>
+          <carousel v-if="dsLoaiPhong && dsLoaiPhong.length > 0" :per-page="3" :loop="true" :autoplay="true" :mouse-drag="true">
+            <slide v-for="item of dsLoaiPhong" :key="item._id" >
+              <div class="boxPhongTro">
               <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
               <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
               <span class="black--text pl-2 font-weight-bold title">Loại phòng: {{item.tenLoaiPhong}}</span>
@@ -49,15 +50,16 @@
               <span class="black--text pl-2 font-weight-bold title">Giá phòng: {{item.giaPhong | formatCurrency}}</span>
               </div>
               <div style="text-align:center;">
-                <v-btn color="cyan" target="_blank" :to="{path:'/danh-sach-phong-tro.html', query: {loaiPhong: item._id}}"  class="white--text mt-3">Xem chi tiết</v-btn>
+                <v-btn color="cyan" target="_blank" @click="XemChiTiet(item._id)"   class="white--text mt-3">Xem chi tiết</v-btn>
               </div>
             </div>
-          </v-flex>
+            </slide>
+            </carousel>
         </v-layout>
-        <div style="text-align:center; position:unset; margin-top:50px;">
+        <div style="text-align:center; position:unset; padding-top:20px; padding-bottom: 50px;">
           <v-btn target="_blank"  class="btnXemTatCa" :to="{name:'danhSachPhong'}" outline>Xem tất cả</v-btn>
         </div>
-      </v-container>
+      </div>
     </section>
     <section id="dichvu" >
       <v-container>
@@ -78,14 +80,18 @@
   </div>
 </template>
 <script>
-import Carousel from './Carousel.vue'
+import Slider from './Carousel.vue'
+import { Carousel, Slide } from 'vue-carousel';
 export default {
   components: {
-     Carousel
+     Slider,
+    Carousel,
+    Slide
   },
   data() {
     return {
-      loaiPhong: []
+      loaiPhong: [],
+      formLoaiPhong: {tinhTrangPhongSelect: []}
     }
   },
   created() {
@@ -99,6 +105,11 @@ export default {
   methods: {
     goToTC () {
       this.$vuetify.goTo("#trangchu",{duration:1000,offset:100,easing:'easeInQuint'})
+    },
+    XemChiTiet(id) {
+      this.formLoaiPhong.loaiPhong = id
+      let link =  this.$router.resolve({path:'/danh-sach-phong-tro.html', query: this.formLoaiPhong})
+      window.open(link.href, '_blank');
     }
   },
   filters: {
