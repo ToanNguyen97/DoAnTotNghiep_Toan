@@ -28,9 +28,9 @@ const userVal = {
     payload: {
       userName: Joi.string().required().max(30),
       email: Joi.string().email().required(),
-      oldPass: Joi.string().required(),
-      newPass: Joi.string().required(),
-      xacNhan: Joi.string().required(),
+      oldPass: Joi.string(),
+      newPass: Joi.string(),
+      xacNhan: Joi.string(),
       khachThueID: Joi.string(),
       nhanVienID: Joi.string()
     },

@@ -25,7 +25,7 @@ export default {
         { text: 'Giới Tính', value: 'gioiTinh' },
         { text: 'Số Chứng Minh', value: 'soCMND' },
         { text: 'Số Điện Thoại', value: 'soDienThoai' },
-        { text: 'Địa Chỉ', value: 'diaChi' },
+        { text: 'Địa Chỉ', value: 'diaChi', width: 247 },
         { text: 'Tình Trạng Khách', value: 'tinhTrangKhachThue' },
         { text: 'Thao Tác', value: '' }
       ],

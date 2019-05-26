@@ -13,7 +13,7 @@ export default {
       disabled: true,
       isThem: false,
       phongSelect: {},
-      pagination: {rowsPerPage:4},
+      pagination: {rowsPerPage:8},
       selected: [],
       headers: [
         {
@@ -24,10 +24,10 @@ export default {
         { text: 'Số Điện (kwh)', value: 'soDien' },
         { text: 'Số Nước (khối)', value: 'soNuoc' },
         { text: 'Giá Phòng (VNĐ)', value: 'giaPhong' },
-        { text: 'Khu Phòng', value: 'khuPhongID' },
+        { text: 'Khu Phòng', value: 'anhChinh'   },
         { text: 'Loại Phòng', value: 'loaiPhongID' },
         { text: 'Tình Trạng', value: 'tinhTrangPhongID' },
-        { text: 'Thao Tác', value: '' }
+        { text: 'Thao Tác', value: '', sortable: false}
       ],
       loading: true,
       snackbar: false,

@@ -3602,11 +3602,16 @@ const save = async (request, h) => {
     let item = {};
 
     if (!data._id) {
-      let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
-      fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
-        return err;
-      });
-      data.anhDaiDien = data.anhDaiDien.name;
+      if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
+        data.anhDaiDien = "avatar.png";
+      } else {
+        let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "");
+        fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+          return err;
+        });
+        data.anhDaiDien = data.anhDaiDien.name;
+      }
+
       item = new KhachThue(data);
     } else {
       if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
@@ -3986,7 +3991,7 @@ const khachThueVal = {
       ngaySinh: Joi.date().required(),
       gioiTinh: Joi.boolean().required(),
       soCMND: Joi.string().required().max(11),
-      soDienThoai: Joi.string().required().max(11),
+      soDienThoai: Joi.string().required().max(13),
       hoTenNguoiThan: Joi.string().required().max(50),
       diaChi: Joi.string().required().max(80),
       loaiKhachThueID: Joi.ObjectId(),
@@ -7908,32 +7913,45 @@ const editUser = async (request, h) => {
   try {
     // chưa check trùng tài khoản
     let data = request.payload;
+    console.log('data', data);
     let user = {}; // nếu tài khoản cập nhật là khách
 
     if (data.khachThueID) {
       user = await User.findOne({
         khachThueID: data.khachThueID
-      });
-      let isPassword = await Bcrypt.compare(data.oldPass, user.passWord);
-      let newpass = Bcrypt.hashSync(data.newPass, SALT_LENGTH);
+      }); // nếu cập nhật mật khẩu
 
-      if (isPassword === true) {
-        let newUser = {
-          _id: user._id,
-          userName: data.userName,
-          passWord: newpass,
-          email: data.email,
-          status: user.status,
-          rolesGroupID: user.rolesGroupID,
-          khachThueID: data.khachThueID
-        };
-        user = Object.assign(user, newUser);
-        await user.save();
-        return {
-          user,
-          isPassword
-        };
+      if (data.oldPass) {
+        let isPassword = await Bcrypt.compare(data.oldPass, user.passWord);
+        let newpass = Bcrypt.hashSync(data.newPass, SALT_LENGTH);
+
+        if (isPassword === true) {
+          let newUser = {
+            _id: user._id,
+            userName: data.userName,
+            passWord: newpass,
+            email: data.email,
+            status: user.status,
+            rolesGroupID: user.rolesGroupID,
+            khachThueID: data.khachThueID
+          };
+          user = Object.assign(user, newUser);
+          await user.save();
+          return {
+            user,
+            isPassword
+          };
+        } else {
+          return {
+            user,
+            isPassword
+          };
+        }
       } else {
+        // nếu cập nhật tài khoản
+        let isPassword = true;
+        user.userName = data.userName;
+        await user.save();
         return {
           user,
           isPassword
@@ -7945,27 +7963,39 @@ const editUser = async (request, h) => {
     if (data.nhanVienID) {
       user = await User.findOne({
         nhanVienID: data.nhanVienID
-      });
-      let isPassword = await Bcrypt.compare(data.oldPass, user.passWord);
-      let newpass = Bcrypt.hashSync(data.newPass, SALT_LENGTH);
+      }); // nếu cập nhật mật khẩu
 
-      if (isPassword === true) {
-        let newUser = {
-          _id: user._id,
-          userName: data.userName,
-          passWord: newpass,
-          email: data.email,
-          status: user.status,
-          rolesGroupID: user.rolesGroupID,
-          nhanVienID: data.nhanVienID
-        };
-        user = Object.assign(user, newUser);
-        await user.save();
-        return {
-          user,
-          isPassword
-        };
+      if (data.oldPass) {
+        let isPassword = await Bcrypt.compare(data.oldPass, user.passWord);
+        let newpass = Bcrypt.hashSync(data.newPass, SALT_LENGTH);
+
+        if (isPassword === true) {
+          let newUser = {
+            _id: user._id,
+            userName: data.userName,
+            passWord: newpass,
+            email: data.email,
+            status: user.status,
+            rolesGroupID: user.rolesGroupID,
+            nhanVienID: data.nhanVienID
+          };
+          user = Object.assign(user, newUser);
+          await user.save();
+          return {
+            user,
+            isPassword
+          };
+        } else {
+          return {
+            user,
+            isPassword
+          };
+        }
       } else {
+        // nếu cập nhật tài khoản
+        let isPassword = true;
+        user.userName = data.userName;
+        await user.save();
         return {
           user,
           isPassword
@@ -7985,6 +8015,11 @@ const active = async (request, h) => {
     let account = await User.findOne({
       khachThueID: request.params.id
     }).populate('khachThueID');
+
+    if (account.status === false) {
+      account.status = true;
+    }
+
     await account.save();
     return account;
   } catch (err) {
@@ -8260,9 +8295,9 @@ const userVal = {
     payload: {
       userName: Joi.string().required().max(30),
       email: Joi.string().email().required(),
-      oldPass: Joi.string().required(),
-      newPass: Joi.string().required(),
-      xacNhan: Joi.string().required(),
+      oldPass: Joi.string(),
+      newPass: Joi.string(),
+      xacNhan: Joi.string(),
       khachThueID: Joi.string(),
       nhanVienID: Joi.string()
     },

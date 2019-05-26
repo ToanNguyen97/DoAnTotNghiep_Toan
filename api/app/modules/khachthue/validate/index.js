@@ -12,7 +12,7 @@ const khachThueVal = {
       ngaySinh: Joi.date().required(),
       gioiTinh: Joi.boolean().required(),
       soCMND: Joi.string().required().max(11),
-      soDienThoai: Joi.string().required().max(11),
+      soDienThoai: Joi.string().required().max(13),
       hoTenNguoiThan: Joi.string().required().max(50),
       diaChi: Joi.string().required().max(80),
       loaiKhachThueID: Joi.ObjectId(),

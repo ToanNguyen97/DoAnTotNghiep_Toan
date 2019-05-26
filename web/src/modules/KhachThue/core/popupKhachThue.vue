@@ -8,43 +8,13 @@
         </v-layout>     
         <v-form  ref="form" v-model="valid" lazy-validation>
           <v-layout row wrap justify-space-between>
-            <v-flex xs12 sm6 md3>
-              <v-text-field v-model="formData.hoKhachThue"  :rules="hoKhachThueRules" :counter="30" label="Họ Khách Thuê"></v-text-field>
-            </v-flex>   
-            <v-flex xs12 sm6 md3>
-              <v-text-field v-model="formData.tenKhachThue"  :rules="tenKhachThueRules" :counter="20" label="Tên Khách Thuê"></v-text-field>
-            </v-flex>   
-            <v-flex xs12 sm6 md3>
-              <v-select
-                :rules="loaiKhachThueRules"
-                required
-                v-model="formData.loaiKhachThueID"
-                :items="dsLoaiKhachThue"
-                label="Loại Khách Thuê"
-                item-text="tenLoaiKhachThue"
-                item-value="_id"
-              ></v-select>
-            </v-flex>     
-            <v-flex xs12 sm6 md3>
-              <v-select
-                :rules="tinhTrangKhachThueRules"
-                required
-                v-model="formData.tinhTrangKhachThue"
-                :items="dsTinhTrang"
-                label="Tình Trạng"
-                item-text="ten"
-                item-value="ten"
-              ></v-select>
-            </v-flex>   
-          </v-layout>
-          <v-layout row wrap>   
             <v-flex   xs12 sm6 md3 size="10px">
               <div>
                 <input hidden type="file" style="display: none" ref="file" accept="image/*"  @change="choosedFile">
                 <v-btn depressed  color="success"  @click="chooseFIle">Ảnh Đại Diện</v-btn>
               </div>
               <div v-if="isThem">
-                  <img :src="anhDaiDien" height="144">
+                <img :src="anhDaiDien" height="144">
               </div>
               <div v-else> 
                 <div v-if="srcAnhDaiDien">
@@ -52,57 +22,97 @@
                 </div>                            
               </div>
             </v-flex>
-            <v-flex style="justify-content: center;display: flex;" xs12 sm6 md3>
-              <v-menu v-model="menu"  :close-on-content-click="false"  full-width  max-width="290"  >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    :value="computedDateFormattedMomentjs"
-                    :rules="ngaySinhRules"
+            <v-flex xs12 sm6 md9>
+              <v-layout row wrap>
+                <v-flex xs12 sm6 md6>
+                  <v-text-field v-model="formData.hoKhachThue"  :rules="hoKhachThueRules" :counter="30" label="Họ Khách Thuê"></v-text-field>
+                </v-flex>   
+                <v-flex xs12 sm6 md6>
+                  <v-text-field v-model="formData.tenKhachThue"  :rules="tenKhachThueRules" :counter="20" label="Tên Khách Thuê"></v-text-field>
+                </v-flex> 
+              </v-layout>
+              <v-layout row wrap>
+                <v-flex xs12 sm6 md6>
+                  <v-select
+                    :rules="loaiKhachThueRules"
                     required
-                    clearable
-                    label="Ngày Sinh"
-                    readonly
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  locale=vi
-                  v-model="formData.ngaySinh"
-                  @change="menu = false"
-                ></v-date-picker>
-              </v-menu>           
+                    v-model="formData.loaiKhachThueID"
+                    :items="dsLoaiKhachThue"
+                    label="Loại Khách Thuê"
+                    item-text="tenLoaiKhachThue"
+                    item-value="_id"
+                  ></v-select>
+                </v-flex>     
+                <v-flex xs12 sm6 md6>
+                  <v-select
+                    :rules="tinhTrangKhachThueRules"
+                    required
+                    v-model="formData.tinhTrangKhachThue"
+                    :items="dsTinhTrang"
+                    label="Tình Trạng"
+                    item-text="ten"
+                    item-value="ten"
+                  ></v-select>
+                </v-flex> 
+              </v-layout>     
+              <v-layout row wrap>   
+                <v-flex style="justify-content: center;display: flex;" xs12 sm6 md6>
+                  <v-menu v-model="menu"  :close-on-content-click="false"  full-width  max-width="290"  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        :value="computedDateFormattedMomentjs"
+                        :rules="ngaySinhRules"
+                        required
+                        clearable
+                        label="Ngày Sinh"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      locale=vi
+                      v-model="formData.ngaySinh"
+                      @change="menu = false"
+                    ></v-date-picker>
+                  </v-menu>           
+                </v-flex>
+                <v-flex  xs12 sm6 md6>
+                  <v-text-field v-model="formData.soCMND" :counter="10" :rules="soCMNDRules" required type="number"  label="Số chứng minh"></v-text-field>
+                </v-flex>          
+              </v-layout>
+              <v-layout row wrap>
+                <v-flex  xs12 sm6 md6>
+                  <v-text-field v-model="formData.soDienThoai" :counter="13" :rules="soDienThoaiRules"  type="number"  label="Số điện thoại"></v-text-field>
+                </v-flex>
+                <v-flex  xs12 sm6 md6>
+                  <v-text-field v-model="formData.email" type="email" :rules="emailRules" required   label="E-mail"></v-text-field>
+                </v-flex>                                                       
+              </v-layout>
+              <v-layout row wrap>
+                <v-flex  xs12 sm6 md6>
+                  <v-card flat style="padding-left:30px;">
+                    <v-card-title class="pa-0">
+                      Giới tính
+                    </v-card-title>
+                    <v-card-text class="pa-0">
+                      <v-radio-group class="pa-0" row v-model="formData.gioiTinh" :mandatory="true">
+                        <v-radio label="Nam"  :value="true"></v-radio>
+                        <v-radio label="Nữ" :value="false"></v-radio>
+                      </v-radio-group>
+                    </v-card-text>
+                  </v-card>
+                </v-flex> 
+                <v-flex  xs12 sm6 md6>
+                  <v-text-field v-model="formData.hoTenNguoiThan"   label="Họ tên người thân"></v-text-field>
+                </v-flex>
+              </v-layout>
+              <v-layout row wrap>
+                <v-flex  xs12 sm12 md12>
+                  <v-text-field v-model="formData.diaChi" :rules="diaChiRules" required  label="Địa Chỉ"></v-text-field>
+                </v-flex>  
+              </v-layout>                                                     
             </v-flex>
-            <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.soCMND" :counter="10" :rules="soCMNDRules" required type="number"  label="Số chứng minh"></v-text-field>
-            </v-flex>
-            <v-flex  xs12 sm6 md3>
-              <v-card flat style="padding-left:30px;">
-                <v-card-title class="pa-0">
-                  Giới tính
-                </v-card-title>
-                <v-card-text class="pa-0">
-                  <v-radio-group class="pa-0" row v-model="formData.gioiTinh" :mandatory="true">
-                    <v-radio label="Nam"  :value="true"></v-radio>
-                    <v-radio label="Nữ" :value="false"></v-radio>
-                  </v-radio-group>
-                </v-card-text>
-              </v-card>
-            </v-flex>            
           </v-layout>
-          <v-layout row wrap>
-            <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.soDienThoai" :counter="13" :rules="soDienThoaiRules"  type="number"  label="Số điện thoại"></v-text-field>
-            </v-flex>
-            <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.diaChi" :rules="diaChiRules" required  label="Địa Chỉ"></v-text-field>
-            </v-flex>
-            <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.email" type="email" :rules="emailRules" required   label="E-mail"></v-text-field>
-            </v-flex>            
-            <v-flex  xs12 sm6 md3>
-              <v-text-field v-model="formData.hoTenNguoiThan"   label="Họ tên người thân"></v-text-field>
-            </v-flex>                                                                
-          </v-layout>                                                                  
         </v-form>                                                       
         <v-layout row wrap mt-2>
             <v-flex xs12 sm12 md12 style="display: flex !important;justify-content: center !important;">                   

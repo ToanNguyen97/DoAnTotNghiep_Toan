@@ -138,52 +138,73 @@ const editUser = async (request, h) => {
   try {
     // chưa check trùng tài khoản
     let data = request.payload
+    console.log('data',data)
     let user = {}
     // nếu tài khoản cập nhật là khách
     if(data.khachThueID) {
       user = await User.findOne({khachThueID: data.khachThueID})
-      let isPassword = await Bcrypt.compare(data.oldPass, user.passWord)
-      let newpass = Bcrypt.hashSync(data.newPass,SALT_LENGTH)
-      if(isPassword === true) {
-        let newUser = {
-          _id: user._id,
-          userName: data.userName,
-          passWord: newpass,
-          email: data.email,
-          status: user.status,
-          rolesGroupID: user.rolesGroupID,
-          khachThueID: data.khachThueID
+      // nếu cập nhật mật khẩu
+      if(data.oldPass) {
+        let isPassword = await Bcrypt.compare(data.oldPass, user.passWord)
+        let newpass = Bcrypt.hashSync(data.newPass,SALT_LENGTH)
+        if(isPassword === true) {
+          let newUser = {
+            _id: user._id,
+            userName: data.userName,
+            passWord: newpass,
+            email: data.email,
+            status: user.status,
+            rolesGroupID: user.rolesGroupID,
+            khachThueID: data.khachThueID
+          }
+          user = Object.assign(user,newUser)
+          await user.save()
+          return {user,isPassword}
         }
-        user = Object.assign(user,newUser)
-        await user.save()
-        return {user,isPassword}
-      }
+        else {
+          return {user,isPassword}
+        }
+      } 
       else {
+        // nếu cập nhật tài khoản
+        let isPassword = true
+        user.userName = data.userName
+        await user.save()
         return {user,isPassword}
       }
     }
     // nếu tài khoản cập nhật là nhân viên
     if(data.nhanVienID) {
       user = await User.findOne({nhanVienID: data.nhanVienID})
-      let isPassword = await Bcrypt.compare(data.oldPass, user.passWord)
-      let newpass = Bcrypt.hashSync(data.newPass,SALT_LENGTH)
-      if(isPassword === true) {
-        let newUser = {
-          _id: user._id,
-          userName: data.userName,
-          passWord: newpass,
-          email: data.email,
-          status: user.status,
-          rolesGroupID: user.rolesGroupID,
-          nhanVienID: data.nhanVienID
-        } 
-        user = Object.assign(user,newUser)
+       // nếu cập nhật mật khẩu
+       if(data.oldPass) {
+        let isPassword = await Bcrypt.compare(data.oldPass, user.passWord)
+        let newpass = Bcrypt.hashSync(data.newPass,SALT_LENGTH)
+        if(isPassword === true) {
+          let newUser = {
+            _id: user._id,
+            userName: data.userName,
+            passWord: newpass,
+            email: data.email,
+            status: user.status,
+            rolesGroupID: user.rolesGroupID,
+            nhanVienID: data.nhanVienID
+          } 
+          user = Object.assign(user,newUser)
+          await user.save()
+          return {user,isPassword}
+        }
+        else {
+          return {user,isPassword}
+        }
+      }  
+      else {
+        // nếu cập nhật tài khoản
+        let isPassword = true
+        user.userName = data.userName
         await user.save()
         return {user,isPassword}
-      }
-      else {
-        return {user,isPassword}
-      }
+      } 
     }
     return false
   } catch (err) {
@@ -195,6 +216,9 @@ const editUser = async (request, h) => {
 const active = async (request, h) => {
   try {
     let account = await User.findOne({khachThueID: request.params.id}).populate('khachThueID')
+    if(account.status === false) {
+      account.status = true
+    }
     await account.save()
     return account
   } catch (err) {

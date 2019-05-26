@@ -27,7 +27,7 @@ export default {
     Luu () {
       // sẽ cập nhật tài khoản theo roles
       let user = this.$store.state.auth.user
-      if(user.roles === 'khách thuê') {
+      if(user.rolesGroupID._id === '5cc565b39f49904f20b6211f') {
         this.formData.khachThueID = user.userInfo._id
       }
       else {

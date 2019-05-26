@@ -7,7 +7,7 @@ const max10 = v =>  {
  return  (v && v.length <= 10) ||  ` tối đa 10 ký tự`
 }
 const max13 = v =>  {
- return  (v && v.length <= 10) ||  ` tối đa 13 ký tự`
+ return  (v && v.length <= 13) ||  ` tối đa 13 ký tự`
 }
 const max30 = v =>  {
  return  (v && v.length <= 30) ||  ` tối đa 30 ký tự`

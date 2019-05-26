@@ -28,6 +28,8 @@ export default {
   },
   data () {
     return {
+      loaKhach: false,
+      loadPhong: false,
       menu: false,
       menu1: false,
       formData: {},
@@ -74,6 +76,7 @@ export default {
   },
   methods: {
     Huy () {
+      this.$refs.form.reset()
       this.soHD = null
       this.khuPhongID = null
       this.phongID = null
@@ -103,8 +106,10 @@ export default {
       }
       else
       {
+        this.loaKhach = true
         this.$store.dispatch('getKhachBySDT', this.soDienThoai).then( res => {
-        this.khachThue = res[0]      
+        this.khachThue = res[0]
+        this.loaKhach = false
         })
       }
     },
@@ -129,7 +134,9 @@ export default {
       }
       else
       {
+        this.loadPhong = true
         this.$store.dispatch('phong/getPhongById', this.phongID).then( res => {
+          this.loadPhong = false
           this.phong = res
           this.soHD = ''
           let soPhong = this.phong.tenPhong.split(' ')

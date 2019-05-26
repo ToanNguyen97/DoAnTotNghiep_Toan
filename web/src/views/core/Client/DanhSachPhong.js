@@ -38,7 +38,6 @@ export default {
       // else {
       //   this.$route.query.tinhTrangPhongSelect = []
       // }
-      console.log('route',this.$route.query)
       this.formData = this.$route.query
       this.pagination.page = this.page
       this.progress = true
@@ -109,7 +108,7 @@ export default {
     TimKiem () {
       this.progress = true
       this.loading = true
-      this.pagination.page = this.page
+      this.pagination.page = 1
       this.formData.pagination = this.pagination
       PhongServices.traCuu(this.formData).then( res => {
         if(res && res.docs.length > 0) {
@@ -122,6 +121,8 @@ export default {
         } else {
           toast.Error('Không có kết quả theo tìm kiếm')
           this.loading = false
+          this.page = 1
+          this.total = 0
           this.progress = false
           this.dsPhong = []
         }

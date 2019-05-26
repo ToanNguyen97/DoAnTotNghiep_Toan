@@ -29,7 +29,7 @@ export default {
       formData: {
         gioiTinh: true
       },
-      anhDaiDien: '',
+      anhDaiDien: `//localhost:3003/image/avatar.png`,
       image: '',
       hoKhachThueRules: [
         validate.required,
@@ -80,7 +80,7 @@ export default {
   methods: {
     Huy () {    
       this.$refs.form.reset()
-      this.anhDaiDien = null
+      this.anhDaiDien = `//localhost:3003/image/avatar.png`
       this.image = null
       this.changeAnh = false
       this.$emit('input', false)

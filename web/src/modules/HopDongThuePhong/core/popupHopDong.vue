@@ -31,9 +31,9 @@
                         <img height="144" :src='`//localhost:3003/image/${khachThue.anhDaiDien}`' >
                       </v-avatar>
                       <v-avatar size="100" tile  v-else  >                     
-                        <img height="144" alt="ảnh đại diện">
+                        <img height="144" src='//localhost:3003/image/avatar.png' alt="ảnh đại diện">
                       </v-avatar>
-                      <v-btn depressed class="ml-1" @click="infoKhachThue" color="info">Xem</v-btn>
+                      <v-btn depressed class="ml-1" :loading="loaKhach" @click="infoKhachThue" color="info">Xem</v-btn>
                     </v-flex>
                     <v-flex xs12 sm6 md9 v-if="khachThue">
                       <v-text-field style="padding-bottom:4px" :value="`${khachThue.hoKhachThue.trim()} ${khachThue.tenKhachThue}`" readonly  hide-details label="Họ tên" append-icon="fas fa-user"></v-text-field>
@@ -88,9 +88,9 @@
                         <img height="144" :src='`//localhost:3003/image/${phong.anhChinh}`' >
                       </v-avatar>
                       <v-avatar size="100" tile  v-else  >                     
-                        <img height="144" alt="ảnh phòng">
+                        <img height="144" src='//localhost:3003/image/homebg.png' alt="ảnh phòng">
                       </v-avatar>
-                      <v-btn depressed class="ml-1" @click="infoPhong" color="info">Xem</v-btn>
+                      <v-btn depressed class="ml-1" :loading="loadPhong" @click="infoPhong" color="info">Xem</v-btn>
                     </v-flex>
                     <v-flex xs12 sm6 md9 v-if="phong">
                       <v-text-field style="padding-bottom:4px" readonly :value="phong.loaiPhongID.tenLoaiPhong"  hide-details label="Loại phòng" append-icon="fas fa-home"></v-text-field>

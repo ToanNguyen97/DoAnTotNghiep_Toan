@@ -10,11 +10,16 @@ const save = async (request, h) => {
    let item = {}
    if(!data._id)
    {
-     let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "")
-     fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
-       return err
-     })
-     data.anhDaiDien = data.anhDaiDien.name
+     if(data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
+      data.anhDaiDien = "avatar.png"
+     }
+     else {
+      let anhDaiDien64 = data.anhDaiDien.file64.replace(/^data(.*?)base64,/, "")
+      fs.writeFile(`app/lib/images/${data.anhDaiDien.name}`, anhDaiDien64, 'base64', function (err) {
+        return err
+      })
+      data.anhDaiDien = data.anhDaiDien.name
+     }
      item  = new KhachThue(data)
    }
    else
