@@ -24,18 +24,22 @@ export default {
     TimKiem () {
       this.loading = true
       PhongServices.traCuuAdmin(this.formData).then( res => {
+        console.log('res',res)
         if(res && res.length > 0) {
           this.dsPhong = res
           this.ketqua = res.length
           toast.Info(`Có ${res.length} phòng được tìm thấy`)
           this.loading = false
         } else {
-          toast.Show('Không có kết quả theo tìm kiếm')
+          toast.Error('Không có kết quả theo tìm kiếm')
           this.loading = false
           this.ketqua = 0 
           this.dsPhong = []
         }
       })
+    },
+    Reset () {
+      this.formData ={tinhTrangPhongSelect: []}
     }
   },
 }

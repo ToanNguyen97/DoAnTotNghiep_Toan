@@ -8,6 +8,7 @@ export default {
   },
   data() {
     return {
+      progress: true,
       dsLoaiPhong: [],
       phongSelected: {},
       openBooked: false,
@@ -30,7 +31,6 @@ export default {
       this.dsTinhTrangPhong = res.data
     })
     if(!_.isEmpty(this.$route.query)) {
-      console.log('query', this.$route.query)
       if(this.$route.query.tinhTrangPhongSelect && !Array.isArray(this.$route.query.tinhTrangPhongSelect))
       {
         this.$route.query.tinhTrangPhongSelect = [this.$route.query.tinhTrangPhongSelect]
@@ -38,10 +38,13 @@ export default {
       // else {
       //   this.$route.query.tinhTrangPhongSelect = []
       // }
+      console.log('route',this.$route.query)
       this.formData = this.$route.query
       this.pagination.page = this.page
+      this.progress = true
       this.formData.pagination = this.pagination
       PhongServices.traCuu(this.formData).then( res => {
+        this.progress = false
         this.dsPhong = []
         if(res && res.docs.length > 0) {
           this.dsPhong = res.docs
@@ -59,7 +62,9 @@ export default {
       })
     } else {
         this.pagination.page = this.page
+        this.progress = true
         PhongServices.getPhongsClient(this.pagination).then(res => {
+          this.progress = false
           let data = res.data
           this.dsPhong = data.docs
           this.page = data.page
@@ -102,12 +107,14 @@ export default {
       this.openBooked = true
     },
     TimKiem () {
+      this.progress = true
       this.loading = true
       this.pagination.page = this.page
       this.formData.pagination = this.pagination
       PhongServices.traCuu(this.formData).then( res => {
         if(res && res.docs.length > 0) {
           this.dsPhong = res.docs
+          this.progress = false
           this.page = res.page
           this.total = res.pages
           toast.Info(`Có ${res.total} phòng được tìm thấy`)
@@ -115,9 +122,18 @@ export default {
         } else {
           toast.Error('Không có kết quả theo tìm kiếm')
           this.loading = false
+          this.progress = false
           this.dsPhong = []
         }
       })
     }
   },
+  filters: {
+    formatCurrency (money) {
+      if(money) {
+        return money.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+      }
+      return 0
+    }
+  }
 }

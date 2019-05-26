@@ -91,7 +91,7 @@ export default {
   data() {
     return {
       loaiPhong: [],
-      formLoaiPhong: {tinhTrangPhongSelect: []}
+      formLoaiPhong: {}
     }
   },
   created() {
@@ -108,8 +108,8 @@ export default {
     },
     XemChiTiet(id) {
       this.formLoaiPhong.loaiPhong = id
-      let link =  this.$router.resolve({path:'/danh-sach-phong-tro.html', query: this.formLoaiPhong})
-      window.open(link.href, '_blank');
+      this.formLoaiPhong.tinhTrangPhongSelect = []
+      this.$router.push({path:'/danh-sach-phong-tro.html', query: this.formLoaiPhong})
     }
   },
   filters: {

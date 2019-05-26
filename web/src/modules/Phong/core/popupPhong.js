@@ -194,6 +194,14 @@ export default {
         }
       }
     },
+    getPhongInput (v) {
+      let getGia =  this.dsLoaiPhong.filter(item => {
+        return item._id === v
+      })
+      if(getGia && getGia.length > 0) {
+        this.formData.giaPhong = getGia[0].giaPhong
+      }
+    },
     getSrcAnhChiTiet () {
       if(this.value && !this.isThem)
       {

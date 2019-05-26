@@ -66,7 +66,7 @@ module.exports = function (schema, options) {
       queryString.loaiPhongID = { $in: arrayLoaiPhong }
     }
     if(payload.tinhTrangPhongSelect && payload.tinhTrangPhongSelect.length > 0) {
-      // lọc ra phòng có tình trạn theo yêu cầu
+      // lọc ra phòng có tình trạng theo yêu cầu
       queryString.tinhTrangPhongID = {$in: payload.tinhTrangPhongSelect}
     }
     let data = await Model.find(queryString).populate([{path:'loaiPhongID'},{path:'khuPhongID',populate:['dsPhong']},{path:'tinhTrangPhongID'}]).lean()

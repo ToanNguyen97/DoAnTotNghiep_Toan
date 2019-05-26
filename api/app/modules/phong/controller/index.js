@@ -112,7 +112,29 @@ const getAllClient = async (request, h) => {
       limit:request.payload.rowsPerPage,
       page: request.payload.page
     }
-    return await Phong.paginate({}, options)
+    let items = await Phong.paginate({}, options)
+    for(let item of items.docs) {
+      if(String(item.tinhTrangPhongID._id) !== '5c8866adfcd238559ca25d14') 
+      {
+        let dsKhach = await Phong.findById({_id: item._id}).populate([{path: 'dsHopDong', populate: ['khachThueID']}])
+        let dsKhachThue = dsKhach.dsHopDong.map(item1 => {
+          return item1.khachThueID
+        })
+        let countKhach = dsKhachThue.filter((item2) => {
+          for(let key of item2.phongs) {
+            if(String(key) === String(item._id)) {
+              return item2
+            }
+          }
+        })
+        let dsBooking = await Booking.find({phongID: item._id, status: true})
+        // check số lượng khách đang ở là bao nhiêu && số lượng đang book dc active la bao nhiêu
+        if(countKhach && dsBooking && (dsBooking.length + countKhach.length) < 4 ) {
+          item.ok = true
+        } 
+      } 
+    }
+    return items
   } catch (err) {
     return Boom.forbidden(err)
   }
@@ -187,23 +209,28 @@ const searchMultiple = async (request, h) => {
 
 const tracuuphong = async (request, h) => {
   try {
+    // chỗ này đã phân trang
     let items = await Phong.tracuuphong(request.payload)
+    // kiểm tra số người đang ở tại phòng đó và cần thêm tình trạng phòng đó khác đã thuê
     for(let item of items.docs) {
-      let dsKhach = await Phong.findById({_id: item._id}).populate([{path: 'dsHopDong', populate: ['khachThueID']}])
-      let dsKhachThue = dsKhach.dsHopDong.map(item1 => {
-        return item1.khachThueID
-      })
-      let countKhach = dsKhachThue.filter((item2) => {
-        for(let key of item2.phongs) {
-          if(String(key) === String(item._id)) {
-            return item2
+      if(String(item.tinhTrangPhongID._id) !== '5c8866adfcd238559ca25d14') 
+      {
+        let dsKhach = await Phong.findById({_id: item._id}).populate([{path: 'dsHopDong', populate: ['khachThueID']}])
+        let dsKhachThue = dsKhach.dsHopDong.map(item1 => {
+          return item1.khachThueID
+        })
+        let countKhach = dsKhachThue.filter((item2) => {
+          for(let key of item2.phongs) {
+            if(String(key) === String(item._id)) {
+              return item2
+            }
           }
-        }
-      })
-      let dsBooking = await Booking.find({phongID: item._id, status: true})
-      // check số lượng khách đang ở là bao nhiêu && số lượng đang book dc active la bao nhiêu
-      if(countKhach && dsBooking && (dsBooking.length + countKhach.length) < 4 ) {
-        item.ok = true
+        })
+        let dsBooking = await Booking.find({phongID: item._id, status: true})
+        // check số lượng khách đang ở là bao nhiêu && số lượng đang book dc active la bao nhiêu
+        if(countKhach && dsBooking && (dsBooking.length + countKhach.length) < 4 ) {
+          item.ok = true
+        } 
       } 
     }
     return items

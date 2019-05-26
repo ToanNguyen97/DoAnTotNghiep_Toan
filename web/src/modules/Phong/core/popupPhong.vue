@@ -48,6 +48,7 @@
                     :items="dsLoaiPhong"
                     :rules="loaiPhongRules"
                     required
+                    @change="getPhongInput"
                     label="Loại Phòng"
                     item-text="tenLoaiPhong"
                     item-value="_id"
@@ -56,7 +57,6 @@
               <div style="width:20%">
                 <v-btn @click="openLoaiPhong=true"  style="width:100%; margin-top:20px;"  flat  color="blue"><v-icon left>add</v-icon></v-btn>
               </div>
-            
             </v-flex>   
           </v-layout>
           <v-layout row wrap justify-space-between>   

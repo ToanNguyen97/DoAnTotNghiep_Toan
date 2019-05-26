@@ -31,7 +31,18 @@ const Info = (message) => {
   Vue.toasted.info(message,optionsI)
 }
 const Error = (message) => {
-  Vue.toasted.error(message,options)
+  
+  let optionsE = {
+    theme: "outline",
+    position: 'top-center',
+    duration: 5000,
+    icon: {
+      name: 'clear',
+      after: false
+    },
+    className: 'colorText'
+  }
+  Vue.toasted.error(message,optionsE)
 }
 const Show = (message) => {
   Vue.toasted.show(message,options)

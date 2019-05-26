@@ -14,46 +14,56 @@
         <v-icon>more_vert</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-layout v-if="dsPhong" ma-2 row wrap>
-      <v-flex md9>
-        <v-card flat>
-          <v-layout row wrap>
-            <div v-for="item of dsPhong" :key="item._id" class="boxPhongTro ma-1">
-              <img class="imagePhongTro pa-1" :src="`//localhost:3003/image/${item.anhChinh}`" />
-              <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-              <span class="black--text pl-2 font-weight-bold title">{{item.loaiPhongID.tenLoaiPhong}}</span>
-              <div class="mt-2">
-              <span class="black--text pl-2 font-weight-bold title">Giá phòng: {{item.loaiPhongID.giaPhong}}</span>
+    <div v-if="progress" style="text-align: center;margin-top: 100px; margin-right: 300px;">
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        color="purple"
+        indeterminate
+      ></v-progress-circular>
+    </div>
+    <div v-else>
+      <v-layout v-if="dsPhong && dsPhong.length === 0" ma-2 row wrap>
+        <v-flex md9>
+          <v-card flat>
+            <v-layout row wrap>
+            <v-alert
+                :value="true"
+                type="info"
+              >
+                Không có kết quả cần tìm
+              </v-alert>
+            </v-layout>
+          </v-card>
+        </v-flex>
+      </v-layout>
+      <v-layout v-if="dsPhong" ma-2 row wrap>
+        <v-flex md9>
+          <v-card flat>
+            <v-layout row wrap>
+              <div v-for="item of dsPhong" :key="item._id" class="boxPhongTro ma-1">
+                <img class="imagePhongTro pa-1" :src="`//localhost:3003/image/${item.anhChinh}`" />
+                <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
+                <span class="black--text pl-2 font-weight-bold title">{{item.loaiPhongID.tenLoaiPhong}}: {{item.tenPhong}}</span>
+                <div class="mt-2">
+                <span class="black--text pl-2 font-weight-bold title">Giá phòng: {{item.giaPhong | formatCurrency}}</span>
+                </div>
+                <div style="text-align:center;">
+                  <v-btn @click="openBook(item)" v-if="item.ok"  depressed dark color="green accent-3" class="white--text mt-3">đặt ngay</v-btn>
+                  <v-btn color="cyan" target="_blank" depressed :to="{path:`/chi-tiet-phong-${item._id}.html`}" class="white--text mt-3">Xem chi tiết</v-btn>
+                </div>
               </div>
-              <div style="text-align:center;">
-                <v-btn @click="openBook(item)" v-if="item.ok"  depressed dark color="green accent-3" class="white--text mt-3">đặt ngay</v-btn>
-                <v-btn color="cyan" target="_blank" depressed :to="{path:`/chi-tiet-phong-${item._id}.html`}" class="white--text mt-3">Xem chi tiết</v-btn>
-              </div>
+            </v-layout>
+            <div class="text-xs-center">
+              <v-pagination
+                v-model="page"
+                :length="pages"
+              ></v-pagination>
             </div>
-          </v-layout>
-          <div class="text-xs-center">
-            <v-pagination
-              v-model="page"
-              :length="pages"
-            ></v-pagination>
-          </div>
-        </v-card>
-      </v-flex>
-    </v-layout>
-    <v-layout v-if="dsPhong && dsPhong.length === 0" ma-2 row wrap>
-      <v-flex md9>
-        <v-card flat>
-          <v-layout row wrap>
-           <v-alert
-              :value="true"
-              type="info"
-            >
-              Không có kết quả cần tìm
-            </v-alert>
-          </v-layout>
-        </v-card>
-      </v-flex>
-    </v-layout>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </div>
     <div class="boxPhongTro fixed">
         <v-select label="Chọn loại phòng"  v-model="formData.loaiPhong" :items="dsLoaiPhong" item-text="tenLoaiPhong" item-value="_id" outline class="pa-2 labelSelect" hide-details></v-select>
         <v-select label="Chọn giá phòng"  v-model="formData.giaPhong" :items="dsLoaiPhong" item-text="giaPhong" item-value="_id" outline class="px-2" hide-details></v-select>

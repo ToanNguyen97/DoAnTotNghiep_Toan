@@ -22,7 +22,6 @@
         <v-icon large>account_circle</v-icon>
       </v-btn>
       </template>
-
       <v-card>
         <v-list>
           <v-list-tile avatar>

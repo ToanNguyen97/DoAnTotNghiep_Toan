@@ -1,5 +1,10 @@
 <template>
-  <v-app id="inspire" class="loginForm">
+  <v-img id="inspire"  style="height:100vh;" :lazy-src="require('@/assets/loginLazy.jpg')" :src="require('@/assets/login.jpg')"  class="grey lighten-2 loginForm">
+   <template v-slot:placeholder>
+      <v-layout fill-height align-center justify-center ma-0 >
+        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+      </v-layout>
+    </template>
     <div class="loginbox">
       <h1 style="text-align:center">Phòng Trọ Cô Mai</h1>
       <hr>
@@ -27,7 +32,7 @@
         </div>
       </v-flex>
     </div>
-  </v-app>
+  </v-img>
 </template>
 
 <script>
@@ -72,9 +77,11 @@
           else if (res.credentials === null)
           {
             toast.Error(`Tài khoản ${this.username} không tồn tại`)
+             this.loading = false
           }
           else {
-            toast.Info(`Mật khẩu không đúng!`)
+            toast.Error(`Mật khẩu không đúng!`)
+            this.loading = false
           }
         }).catch (error => {
           alert(error + ' Lỗi')
@@ -84,12 +91,6 @@
   }
 </script>
 <style scoped>
-  #inspire {
-    background: url(../assets/login.jpg) no-repeat;
-    background-size: cover;
-    background-position: bottom;
-
-  }
   .loginbox {
     position: absolute;
     width: 589px;
