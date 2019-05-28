@@ -65,8 +65,7 @@
       </v-card>
     </v-menu>
   </div>
-    </div>
-    
+  </div>
   </v-toolbar>
   <NavigationDrawer @input="input" v-if="user" :permission="user && user.rolesGroupID" :User="user && user.userInfo" :mini="mini" :check="check" />
   <popupUser v-model="openPopUser"/>

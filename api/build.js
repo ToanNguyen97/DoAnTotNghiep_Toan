@@ -5984,7 +5984,6 @@ const save = async (request, h) => {
     let lienHePhong = await LienHe.find({
       phongID: phieu.phongID
     }).populate('phongID');
-    console.log('lien', lienHePhong);
 
     if (lienHePhong && lienHePhong.length > 0) {
       let emailKhach = lienHePhong.map(v => {
