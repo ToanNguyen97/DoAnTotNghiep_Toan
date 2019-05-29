@@ -6,7 +6,9 @@ import store from './store'
 import './plugins/toast'
 import VueCarousel from 'vue-carousel'
 import VeeValidate from 'vee-validate'
- 
+import SequentialEntrance from 'vue-sequential-entrance'
+import 'vue-sequential-entrance/vue-sequential-entrance.css'
+Vue.use(SequentialEntrance);
 Vue.use(VeeValidate);
 Vue.use(VueCarousel);
 

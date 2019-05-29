@@ -5,6 +5,7 @@ import Admin from './views/Admin.vue'
 import Page404 from './views/core/Admin/page404.vue'
 import PageSuccess from './views/core/Admin/Success.vue'
 import Login from './views/Login.vue'
+import Loading from './views/loading.vue'
 //import LoginRoutes from './modules/User/index.js'
 import PhongRoutes from './modules/Phong/index.js'
 import KhachThueRoutes from './modules/KhachThue/index.js'
@@ -31,6 +32,12 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login,
+      beforeEnter: Authenticated.notAuthenticate
+    },
+    {
+      path: '/welcome.html',
+      name: 'loading',
+      component: Loading,
       beforeEnter: Authenticated.notAuthenticate
     },
     { 

@@ -19,7 +19,7 @@ export default {
       total:0,
       page:1,
       pagination: {
-        rowsPerPage: 4,
+        rowsPerPage: 8,
       }
     }
   },
@@ -31,13 +31,16 @@ export default {
       this.dsTinhTrangPhong = res.data
     })
     if(!_.isEmpty(this.$route.query)) {
-      if(this.$route.query.tinhTrangPhongSelect && !Array.isArray(this.$route.query.tinhTrangPhongSelect))
+      if(this.$route.query.tinhTrangPhongSelect )
       {
-        this.$route.query.tinhTrangPhongSelect = [this.$route.query.tinhTrangPhongSelect]
+        if(!Array.isArray(this.$route.query.tinhTrangPhongSelect))
+        {
+          this.$route.query.tinhTrangPhongSelect = [this.$route.query.tinhTrangPhongSelect]
+        }
       }
-      // else {
-      //   this.$route.query.tinhTrangPhongSelect = []
-      // }
+      else {
+        this.$route.query.tinhTrangPhongSelect = []
+      }
       this.formData = this.$route.query
       this.pagination.page = this.page
       this.progress = true

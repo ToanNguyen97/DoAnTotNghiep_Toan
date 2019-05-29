@@ -19,7 +19,7 @@ export default {
   },
   created() {
     if(this.$route.path === "/") {
-      this.$router.push({path:'/index.html'})
+      this.$router.push({path:'/welcome.html'})
     }
   },
   methods: {
