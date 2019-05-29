@@ -3,8 +3,13 @@
     <v-img  style="height:100vh;" :src="require('@/assets/banner2.jpg')"
       :lazy-src="require('@/assets/banner-lazy.jpg')"
       gradient="to right top,rgba(17, 17, 17, 0.95), rgba(244, 249, 250, 0)"
-      class="mb-2"
+      class="yellow mb-2"
       >
+      <template v-slot:placeholder>
+        <v-layout fill-height align-center justify-center ma-0 >
+          <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+        </v-layout>
+      </template>
       <MenuTop/>
       <v-layout row  style="height:400px; padding-top:150px;" >
         <v-flex md7 class="mt-5 align-center justify-center" >
