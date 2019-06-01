@@ -563,7 +563,7 @@ const SenMail = async (options, email) => {
       user: 'toan210597ntu@gmail.com',
       clientId: '111021480568-u7nd27a29i23hfgalgl54vcna1g5l94r.apps.googleusercontent.com',
       clientSecret: 'lVDO6CQihwxxY1PgbqSXcjDE',
-      refreshToken: '1/J8ieB6OAqGzcTvVhOC9QrGg-2r2kOUIewO2fxC-_se8'
+      refreshToken: '1/QVtnf24Ad8HxbIFi5vZJiwvLNSKOWkdwRzpsIiY3c22kSf2JBSbNXFq5cui2oS_k'
     }
   });
   let mailOptions = {

@@ -1,12 +1,14 @@
 import phongServices from '../../../modules/Phong/Phongservices'
 import popupBook from './PopUpBookPhong.vue'
 import popupLienHe from './LienHe.vue'
+import Skeleton from './Skeleton.vue'
 import axios from 'axios'
 import toast from '../../../plugins/toast.js'
 export default {
   components: {
     popupBook,
-    popupLienHe
+    popupLienHe,
+    Skeleton
   },
   data() {
     return {

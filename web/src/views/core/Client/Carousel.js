@@ -1,8 +1,10 @@
 import MenuTop from './MenuTop.vue'
 import PhongServices from '../../../modules/Phong/Phongservices.js'
+import loading from '../../../views/loading.vue'
 export default {
   components: {
-    MenuTop
+    MenuTop,
+    loading
   },
   data () {
     return {

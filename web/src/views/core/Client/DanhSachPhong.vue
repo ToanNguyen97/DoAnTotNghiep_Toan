@@ -40,9 +40,10 @@
       <v-layout v-if="dsPhong" ma-2 row wrap>
         <v-flex md9>
           <v-card flat>
-            <sequential-entrance>
+           
               <v-layout row wrap>
                 <div v-for="item of dsPhong" :key="item._id" class="boxPhongTro ma-1">
+                   <sequential-entrance>
                   <img class="imagePhongTro pa-1" :src="`//localhost:3003/image/${item.anhChinh}`" />
                   <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
                   <span class="black--text pl-2 font-weight-bold title">{{item.loaiPhongID.tenLoaiPhong}}: {{item.tenPhong}}</span>
@@ -53,9 +54,10 @@
                     <v-btn @click="openBook(item)" v-if="item.ok"  depressed dark color="green accent-3" class="white--text mt-3">đặt ngay</v-btn>
                     <v-btn color="cyan" target="_blank" depressed :to="{path:`/chi-tiet-phong-${item._id}.html`}" class="white--text mt-3">Xem chi tiết</v-btn>
                   </div>
+                   </sequential-entrance>
                 </div>
               </v-layout>
-            </sequential-entrance>
+           
             <div class="text-xs-center">
               <v-pagination
                 v-model="page"

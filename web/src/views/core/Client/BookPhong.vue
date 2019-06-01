@@ -15,7 +15,7 @@
       </v-btn>
     </v-toolbar>
     <v-layout row wrap justify-space-between >
-      <v-flex md7 mt-3 ml-3>
+      <v-flex v-if="phongDetail && phongDetail.anhChiTiet && phongDetail.anhChiTiet.length > 0" md7 mt-3 ml-3>
         <v-carousel  v-if="phongDetail && phongDetail.anhChiTiet && phongDetail.anhChiTiet.length > 0">
           <v-carousel-item
             v-for="(anh,index) in phongDetail.anhChiTiet"
@@ -23,6 +23,9 @@
             :src="`//localhost:3003/image/${anh}`"
           ></v-carousel-item>
         </v-carousel>
+      </v-flex>
+      <v-flex v-else md7 mt-3 ml-3>
+          <Skeleton  :width="'100%'" :height="'500px'" :max-width="800"></Skeleton>
       </v-flex>
       <v-flex xs12 mt-3 sm6 md3 mr-3>
         <v-card flat  style="border:1px dashed black;margin-left: 13px; margin-bottom:10px;">
