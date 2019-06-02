@@ -12,7 +12,8 @@
         <v-spacer></v-spacer>
        <div style="display:flex;flex-direction: column;">
         <div style="text-align:center;">
-          <img :src="require('@/assets/dadangky.png')" style="width: 109px;" alt="đã đăng ký">
+          <img :src="require('@/assets/dadangky.png')" style="vertical-align: top; padding-top: 23px; width: 109px;" alt="đã đăng ký">
+          <img :src="require('@/assets/white.png')" class="ml-3" style="width: 80px;" alt="đã đăng ký">
         </div>
         <div>
           <v-btn class="buttonFb" fab large flat  color="blue"><v-icon color="white" x-large>fab fa-facebook-square</v-icon></v-btn>

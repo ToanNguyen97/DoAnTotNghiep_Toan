@@ -3,7 +3,7 @@
   <v-toolbar flat app style="padding-left: 0px;" >
     <v-icon @click="changeMini">{{icon}}</v-icon>
     <v-toolbar-title>  
-        <img :src="require('@/assets/logoAdmin.png')" alt="avatar">
+        <img style="height: 80px; padding-top: 13px;" :src="require('@/assets/logoAdmin3.png')" alt="avatar">
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <div style="display: flex;">

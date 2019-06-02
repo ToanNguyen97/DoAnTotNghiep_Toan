@@ -83,6 +83,7 @@ export default {
       this.soDienThoai = null
       this.phong = null
       this.khachThue = null
+      this.formData = {}
       this.$emit('input', false)
     },
     XacNhan () {
@@ -151,6 +152,7 @@ export default {
   },
   watch: {   
     value (v) {
+      this.formData.ngayLap = new Date().toISOString().substr(0, 10)
       if (v) {
         this.$store.dispatch('phong/getKhuPhongs')
         this.$store.dispatch('getLoaiKhachs')
@@ -159,6 +161,7 @@ export default {
           this.khuPhongID = this.phong.khuPhongID._id
           this.dsPhong = this.phong.khuPhongID.dsPhong
           this.phongID = this.phong._id
+          
         }
         if(this.soDT) {
           this.soDienThoai = this.soDT

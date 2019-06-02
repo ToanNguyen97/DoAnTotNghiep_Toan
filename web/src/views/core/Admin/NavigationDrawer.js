@@ -19,8 +19,8 @@ export default {
     return {
       itemsTK: [
         { title: 'Thống kê hợp đồng', icon: 'account_balance', link: '/thong-ke-hop-dong.html' },
+        { title: 'Thống kê phiếu thu', icon: 'monetization_on', link: '/thong-ke-phieu-thu.html' },
         { title: 'Thống kê khách thuê', icon: 'people_outline', link: '/thong-ke-phieu-thu1.html' },
-        { title: 'Thống kê phiếu thu', icon: 'monetization_on', link: '/thong-ke-phieu-thu2.html' },
         { title: 'Thống kê phiếu trả phòng', icon: 'signal_cellular_no_sim', link: '/thong-ke-phieu-thu3.html' },
       ],
       drawer: true,
