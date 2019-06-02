@@ -5693,7 +5693,7 @@ const hoanTatPayPal = async (request, h) => {
 
 const BaoHetHanPT = async (request, h) => {
   try {
-    for (let item of request.dsPT) {
+    for (let item of request.payload.dsPT) {
       let phieuthuMail = await PhieuThuTien.findById({
         _id: item._id
       }).populate(['phongID', 'dsCTPT']);
@@ -5704,7 +5704,11 @@ const BaoHetHanPT = async (request, h) => {
       };
       let stringEmail = await GetEmailOfKhach(phieuthuMail.phongID);
 
-      _sendMail2.default.SenMail(options, stringEmail);
+      if (stringEmail && stringEmail != null) {
+        _sendMail2.default.SenMail(options, stringEmail);
+      } else {
+        console.log('phòng không có khách');
+      }
     }
 
     return true;
