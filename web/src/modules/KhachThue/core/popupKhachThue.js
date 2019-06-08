@@ -62,6 +62,9 @@ export default {
         validate.required,
         validate.email
       ],
+      gioiTinhRules: [
+        validate.required
+      ],
       uploadingPhoto: false,
       srcAnhDaiDien: null
     }
@@ -143,6 +146,7 @@ export default {
     value (v) {
       if(v) {
         this.$store.dispatch('getLoaiKhachs')
+        this.formData.gioiTinh = true
       }
       if (v && this.isThem === false) {
         if (this.khachThueSelect && this.khachThueSelect._id) {
@@ -154,7 +158,7 @@ export default {
       }
       else
       {
-        this.formData = {}
+        this.formData = {gioiTinh:true}
       }
     },
     'formData':'getSrcAnhDaiDien',

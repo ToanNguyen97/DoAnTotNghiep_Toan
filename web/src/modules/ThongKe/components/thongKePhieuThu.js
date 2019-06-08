@@ -80,7 +80,7 @@ export default {
       try {
         let res = await ThongKeServices.BaoHetHanPT(this.dsPT)
         if(res) {
-          toast.Success('Đã gởi mail báo hết hạn hợp đồng!')
+          toast.Success('Đã gởi mail báo hết hạn phiếu thu!')
         }
       } catch (err) {
         toast.Error(err)
