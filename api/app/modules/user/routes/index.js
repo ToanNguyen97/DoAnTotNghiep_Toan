@@ -20,6 +20,39 @@ export default [
     }
   },
   {
+    method: 'POST',
+    path: '/get-password',
+    handler: UserController.forgetpass,
+    config: {
+      auth: false,
+      description: 'check login',
+      validate: UserVal.forgetpass,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/get-user-reset-password-{id}',
+    handler: UserController.resetpass,
+    config: {
+      auth: false,
+      description: 'check login',
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'GET',
     path: '/get-current-user',
     handler: UserController.getUser,
@@ -76,6 +109,23 @@ export default [
     config: {
       description: 'cập nhật tài khoản',
       validate: UserVal.edit,
+      tags: ['api'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400':{'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
+    path: '/doi-mat-khau',
+    handler: UserController.changePass,
+    config: {
+      description: 'cập nhật tài khoản',
+      validate: UserVal.changePass,
+      auth: false,
       tags: ['api'],
       plugins: {
         'hapi-swagger': {

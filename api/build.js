@@ -537,6 +537,45 @@ exports.default = {
 
 /***/ }),
 
+/***/ "./app/lib/basemail/mailRestPass.js":
+/*!******************************************!*\
+  !*** ./app/lib/basemail/mailRestPass.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+const fs = __webpack_require__(/*! fs */ "fs");
+
+const path = __webpack_require__(/*! path */ "path");
+
+const mailDoiPass = function (data) {
+  let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'teamplateResetPass.html'));
+  content = String(content);
+  console.log('vao day', data);
+
+  if (data.khachThueID) {
+    content = content.replace('{{hoTenKhachThue}}', `${data.khachThueID.hoKhachThue} ${data.khachThueID.tenKhachThue}`);
+  } else {
+    content = content.replace('{{hoTenKhachThue}}', `${data.nhanVienID.hoNhanVien} ${data.nhanVienID.tenNhanVien}`);
+  }
+
+  content = content.replace('{{maAccount}}', `${data.session.id}`);
+  return content;
+};
+
+exports.default = {
+  mailDoiPass
+};
+
+/***/ }),
+
 /***/ "./app/lib/basemail/sendMail.js":
 /*!**************************************!*\
   !*** ./app/lib/basemail/sendMail.js ***!
@@ -7833,6 +7872,16 @@ var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
+var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./app/lib/basemail/sendMail.js");
+
+var _sendMail2 = _interopRequireDefault(_sendMail);
+
+var _mailRestPass = __webpack_require__(/*! ../../../lib/basemail/mailRestPass.js */ "./app/lib/basemail/mailRestPass.js");
+
+var _mailRestPass2 = _interopRequireDefault(_mailRestPass);
+
+var _https = __webpack_require__(/*! https */ "https");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhieuThu = _mongoose2.default.model('PhieuThuTien');
@@ -8056,7 +8105,6 @@ const editUser = async (request, h) => {
   try {
     // chưa check trùng tài khoản
     let data = request.payload;
-    console.log('data', data);
     let user = {}; // nếu tài khoản cập nhật là khách
 
     if (data.khachThueID) {
@@ -8150,6 +8198,118 @@ const editUser = async (request, h) => {
   } catch (err) {
     return err;
   }
+}; // quên mật khẩu
+
+
+const forgetpass = async (request, h) => {
+  try {
+    let getUser = await User.findOne({
+      email: request.payload.email
+    });
+
+    if (getUser) {
+      if (getUser.khachThueID) {
+        getUser = await User.findOne({
+          khachThueID: getUser.khachThueID
+        }).populate('khachThueID');
+        const credentials = {
+          userName: getUser.userName,
+          email: getUser.email,
+          rolesGroupID: getUser.rolesGroupID,
+          status: getUser.status,
+          userInfo: getUser.khachThueID
+        };
+        let session = {
+          valid: true,
+          id: Aguid(),
+          expires: new Date().getTime() + 30 * 60 * 1000,
+          credentials
+        };
+        getUser.session = session;
+        let options = {
+          content: _mailRestPass2.default.mailDoiPass(getUser),
+          subject: 'Phòng Trọ Cô Mai Đổi Mật Khẩu',
+          text: 'Phòng Trọ Cô Mai Đổi Mật Khẩu'
+        };
+
+        _sendMail2.default.SenMail(options, getUser.email);
+
+        request.server.redis.set(session.id, JSON.stringify(session));
+      } else if (getUser.nhanVienID) {
+        getUser = await User.findOne({
+          nhanVienID: getUser.nhanVienID
+        }).populate('nhanVienID');
+        const credentials = {
+          userName: getUser.userName,
+          email: getUser.email,
+          rolesGroupID: getUser.rolesGroupID,
+          status: getUser.status,
+          userInfo: getUser.nhanVienID
+        };
+        let session = {
+          valid: true,
+          id: Aguid(),
+          expires: new Date().getTime() + 30 * 60 * 1000,
+          credentials
+        };
+        getUser.session = session;
+        let options = {
+          content: _mailRestPass2.default.mailDoiPass(getUser),
+          subject: 'Phòng Trọ Cô Mai Đổi Mật Khẩu',
+          text: 'Phòng Trọ Cô Mai Đổi Mật Khẩu'
+        };
+
+        _sendMail2.default.SenMail(options, getUser.email);
+
+        request.server.redis.set(session.id, JSON.stringify(session));
+      } else {
+        return false;
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+}; // active reset
+
+
+const resetpass = async (request, h) => {
+  try {
+    if (request.server.redis.get(request.params.id)) {
+      let session = await request.server.redis.getAsync(request.params.id);
+      console.log('session', session);
+      session = JSON.parse(session);
+      return session.credentials;
+    }
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
+}; // đổi mật khẩu
+
+
+const changePass = async (request, h) => {
+  try {
+    let data = request.payload.account;
+    let user = await User.findOne({
+      userName: data.userName
+    });
+    console.log('user', user); // nếu cập nhật mật khẩu
+
+    if (user) {
+      let newpass = Bcrypt.hashSync(data.newPass, SALT_LENGTH);
+      user.passWord = newpass;
+      console.log('vaoo dayxem pass', user);
+      await user.save();
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    return Boom.forbidden(err);
+  }
 }; // kích hoạt tài khoản
 
 
@@ -8200,7 +8360,10 @@ exports.default = {
   createAccountNV,
   createAccountKT,
   backup,
-  restore
+  restore,
+  forgetpass,
+  resetpass,
+  changePass
 };
 
 /***/ }),
@@ -8261,6 +8424,45 @@ exports.default = [{
     auth: false,
     description: 'check login',
     validate: _index4.default.login,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/get-password',
+  handler: _index2.default.forgetpass,
+  config: {
+    auth: false,
+    description: 'check login',
+    validate: _index4.default.forgetpass,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/get-user-reset-password-{id}',
+  handler: _index2.default.resetpass,
+  config: {
+    auth: false,
+    description: 'check login',
     tags: ['api'],
     plugins: {
       'hapi-swagger': {
@@ -8339,6 +8541,26 @@ exports.default = [{
   config: {
     description: 'cập nhật tài khoản',
     validate: _index4.default.edit,
+    tags: ['api'],
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'POST',
+  path: '/doi-mat-khau',
+  handler: _index2.default.changePass,
+  config: {
+    description: 'cập nhật tài khoản',
+    validate: _index4.default.changePass,
+    auth: false,
     tags: ['api'],
     plugins: {
       'hapi-swagger': {
@@ -8451,6 +8673,16 @@ const userVal = {
   active: {
     params: {
       id: Joi.ObjectId()
+    }
+  },
+  forgetpass: {
+    payload: {
+      email: Joi.string().email().required()
+    }
+  },
+  changePass: {
+    payload: {
+      account: Joi.object().required()
     }
   }
 };

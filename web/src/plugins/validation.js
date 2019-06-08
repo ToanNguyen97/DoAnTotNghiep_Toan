@@ -1,5 +1,6 @@
 const required = v => !!v || 'Không được để trống'
 const email = v => /.+@.+/.test(v) || 'Không đúng định dạng mail'
+
 const max20 = v =>  {
  return  (v && v.length <= 20) ||  ` tối đa 20 ký tự`
 }
@@ -24,5 +25,5 @@ export default {
   max20,
   max13,
   max30,
-  max40
+  max40,
 }

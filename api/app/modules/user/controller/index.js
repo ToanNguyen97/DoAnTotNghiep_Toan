@@ -8,6 +8,10 @@ const Jwt = require('jsonwebtoken')
 const Aguid = require('aguid')
 const cmd = require('node-cmd')
 const moment = require('moment')
+import Mail from '../../../lib/basemail/sendMail.js'
+import MailQuenMatKhau from '../../../lib/basemail/mailRestPass.js'
+import mailRestPass from '../../../lib/basemail/mailRestPass.js';
+import { request } from 'https';
 const SALT_LENGTH= 10
 const signin = async (request, h) => {
   try {
@@ -133,12 +137,10 @@ const getUser = async (request, h) => {
 }
 
 // cập nhật tài khoản
-
 const editUser = async (request, h) => {
   try {
     // chưa check trùng tài khoản
     let data = request.payload
-    console.log('data',data)
     let user = {}
     // nếu tài khoản cập nhật là khách
     if(data.khachThueID) {
@@ -212,6 +214,91 @@ const editUser = async (request, h) => {
   }
 }
 
+// quên mật khẩu
+const forgetpass = async (request, h) => {
+  try {
+    let getUser = await User.findOne({email:request.payload.email})
+    if(getUser) {
+      if(getUser.khachThueID) {
+        getUser = await User.findOne({khachThueID: getUser.khachThueID}).populate('khachThueID')
+        const credentials = {userName: getUser.userName, email: getUser.email, rolesGroupID: getUser.rolesGroupID, status: getUser.status, userInfo: getUser.khachThueID}
+        let session = {
+          valid: true,
+          id: Aguid(),
+          expires: new Date().getTime() + 30 * 60 * 1000,
+          credentials
+        }
+        getUser.session = session
+        let options = {
+          content: mailRestPass.mailDoiPass(getUser),
+          subject: 'Phòng Trọ Cô Mai Đổi Mật Khẩu',
+          text: 'Phòng Trọ Cô Mai Đổi Mật Khẩu'
+        }
+        Mail.SenMail(options, getUser.email)
+      
+        request.server.redis.set(session.id, JSON.stringify(session))
+      } else if (getUser.nhanVienID) {
+        getUser = await User.findOne({nhanVienID: getUser.nhanVienID}).populate('nhanVienID')
+        const credentials = {userName: getUser.userName, email: getUser.email, rolesGroupID: getUser.rolesGroupID, status: getUser.status, userInfo: getUser.nhanVienID}
+
+        let session = {
+          valid: true,
+          id: Aguid(),
+          expires: new Date().getTime() + 30 * 60 * 1000,
+          credentials
+        }
+        getUser.session = session
+        let options = {
+          content: mailRestPass.mailDoiPass(getUser),
+          subject: 'Phòng Trọ Cô Mai Đổi Mật Khẩu',
+          text: 'Phòng Trọ Cô Mai Đổi Mật Khẩu'
+        }
+        Mail.SenMail(options, getUser.email)
+        request.server.redis.set(session.id, JSON.stringify(session))
+      } else {
+        return false
+      }
+      return true
+    } else {
+      return false
+    }
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+// active reset
+const resetpass = async (request, h) => {
+  try {
+    if(request.server.redis.get(request.params.id)) {
+     let session =  await request.server.redis.getAsync(request.params.id)
+     console.log('session',session)
+     session = JSON.parse(session)
+     return session.credentials
+    }
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
+// đổi mật khẩu
+const changePass = async(request, h) => {
+  try {
+      let data = request.payload.account
+      let user = await User.findOne({userName: data.userName})
+      console.log('user', user)
+      // nếu cập nhật mật khẩu
+      if(user) {
+      let newpass = Bcrypt.hashSync(data.newPass,SALT_LENGTH)
+      user.passWord = newpass
+      console.log('vaoo dayxem pass', user)
+      await user.save()
+      return true
+      } else {
+        return false
+      }
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
 // kích hoạt tài khoản
 const active = async (request, h) => {
   try {
@@ -246,6 +333,8 @@ const restore = async (request, h) => {
     return err
   }
 }
+
+
 export default {
   signin,
   login,
@@ -255,5 +344,9 @@ export default {
   createAccountNV,
   createAccountKT,
   backup,
-  restore
+  restore,
+  forgetpass,
+  resetpass,
+  changePass
+
 }

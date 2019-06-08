@@ -42,6 +42,16 @@ const userVal = {
     params: {
       id: Joi.ObjectId()
     }
+  },
+  forgetpass: {
+    payload: {
+      email: Joi.string().email().required()
+    }
+  },
+  changePass: {
+    payload: {
+      account : Joi.object().required()
+    }
   }
 }
 

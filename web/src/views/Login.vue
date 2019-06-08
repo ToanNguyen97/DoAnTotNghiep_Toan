@@ -28,21 +28,27 @@
           <router-link style="text-decoration:none;" class="pt-2 white--text" :to="{path:'/index.html'}">về trang chủ</router-link>
         </div>
         <div class="pt-4" style="width:300px;text-align: center;">
-          <a href="" class="textlink">Quên mật khẩu?</a>        
+          <a href="#" @click="openForget = true" class="textlink">Quên mật khẩu?</a>        
         </div>
       </v-flex>
+      <forgetpassword v-model="openForget" />
     </div>
   </v-img>
 </template>
 
 <script>
   import toast from '../plugins/toast.js'
+  import forgetpassword from '../modules/User/components/ForgetPassword.vue'
   export default {
+    components: {
+      forgetpassword
+    },
     data: () => ({
       drawer: null,
       username: '',
       password: '',
-      loading: false
+      loading: false,
+      openForget: false
     }),
     props: {
       source: String
