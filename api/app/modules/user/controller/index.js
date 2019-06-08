@@ -271,7 +271,6 @@ const resetpass = async (request, h) => {
   try {
     if(request.server.redis.get(request.params.id)) {
      let session =  await request.server.redis.getAsync(request.params.id)
-     console.log('session',session)
      session = JSON.parse(session)
      return session.credentials
     }
@@ -284,12 +283,10 @@ const changePass = async(request, h) => {
   try {
       let data = request.payload.account
       let user = await User.findOne({userName: data.userName})
-      console.log('user', user)
       // nếu cập nhật mật khẩu
       if(user) {
       let newpass = Bcrypt.hashSync(data.newPass,SALT_LENGTH)
       user.passWord = newpass
-      console.log('vaoo dayxem pass', user)
       await user.save()
       return true
       } else {

@@ -4,7 +4,6 @@ const path = require('path')
 const mailDoiPass = function (data) {
   let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'teamplateResetPass.html'))
   content = String(content)
-  console.log('vao day',data)
   if(data.khachThueID) 
   {
     content = content.replace('{{hoTenKhachThue}}', `${data.khachThueID.hoKhachThue} ${data.khachThueID.tenKhachThue}`)

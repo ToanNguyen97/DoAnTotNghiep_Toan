@@ -558,7 +558,6 @@ const path = __webpack_require__(/*! path */ "path");
 const mailDoiPass = function (data) {
   let content = fs.readFileSync(path.join(__dirname, 'app', 'lib', 'basemail', 'teamplateResetPass.html'));
   content = String(content);
-  console.log('vao day', data);
 
   if (data.khachThueID) {
     content = content.replace('{{hoTenKhachThue}}', `${data.khachThueID.hoKhachThue} ${data.khachThueID.tenKhachThue}`);
@@ -3298,7 +3297,6 @@ const Phong = _mongoose2.default.model('Phong'); //import translateCharacter fro
 const save = async (request, h) => {
   try {
     let data = request.payload;
-    console.log('du lieu', data);
     let item = await HopDongThuePhong.findById(data._id);
     let khachThue = {};
 
@@ -8280,7 +8278,6 @@ const resetpass = async (request, h) => {
   try {
     if (request.server.redis.get(request.params.id)) {
       let session = await request.server.redis.getAsync(request.params.id);
-      console.log('session', session);
       session = JSON.parse(session);
       return session.credentials;
     }
@@ -8295,13 +8292,11 @@ const changePass = async (request, h) => {
     let data = request.payload.account;
     let user = await User.findOne({
       userName: data.userName
-    });
-    console.log('user', user); // nếu cập nhật mật khẩu
+    }); // nếu cập nhật mật khẩu
 
     if (user) {
       let newpass = Bcrypt.hashSync(data.newPass, SALT_LENGTH);
       user.passWord = newpass;
-      console.log('vaoo dayxem pass', user);
       await user.save();
       return true;
     } else {
