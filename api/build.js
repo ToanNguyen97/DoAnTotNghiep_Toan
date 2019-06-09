@@ -1864,6 +1864,16 @@ const schema = {
     type: String,
     required: true,
     enum: ['chưa đóng', 'đã đóng', 'quá hạn']
+  },
+  nguoiLap: {
+    type: String,
+    max: 50,
+    required: true
+  },
+  nguoiSua: {
+    type: String,
+    max: 50,
+    required: true
   }
 };
 const options = {
@@ -5469,15 +5479,25 @@ const save = async (request, h) => {
         moTa,
         tinhTrangPhieuThu
       } = data;
-      await phong.save();
-      item = new PhieuThuTien({
+      await phong.save(); // lấy thông tin người lập phiếu thu lưu vào cơ sở dữ liệu\
+
+      let nguoiLap = 'chủ trọ hoặc nhân viên';
+
+      if (request.auth.credentials.credentials.userInfo) {
+        nguoiLap = `${request.auth.credentials.credentials.userInfo.hoNhanVien} ${request.auth.credentials.credentials.userInfo.tenNhanVien}`;
+      }
+
+      let newPhieuThu = {
         _id,
         phongID,
         ngayLap,
         ngayHetHan,
         moTa,
         tinhTrangPhieuThu
-      }); //tiếp theo sẽ tạo chi tiết phiếu thu và thêm vào DB
+      };
+      newPhieuThu.nguoiLap = nguoiLap;
+      newPhieuThu.nguoiSua = nguoiLap;
+      newPhieuThu.nguoiLap = item = new PhieuThuTien(newPhieuThu); //tiếp theo sẽ tạo chi tiết phiếu thu và thêm vào DB
 
       let tienDien = await CacKhoanThu.findById({
         _id: '5c983b7d28aebc66041a45aa'
@@ -5522,6 +5542,13 @@ const save = async (request, h) => {
         _id: data._id
       });
       item = Object.assign(item, data);
+      let nguoiSua = 'chủ trọ hoặc nhân viên';
+
+      if (request.auth.credentials.credentials.userInfo) {
+        nguoiSua = `${request.auth.credentials.credentials.userInfo.hoNhanVien} ${request.auth.credentials.credentials.userInfo.tenNhanVien}`;
+      }
+
+      item.nguoiSua = nguoiSua;
     }
 
     let phieuthu = await item.save();
@@ -8642,7 +8669,7 @@ const userVal = {
   },
   login: {
     payload: {
-      userName: Joi.string().required().max(30),
+      userName: Joi.string().required().max(100),
       passWord: Joi.string().required()
     }
   },

@@ -27,7 +27,7 @@ export default {
       ],
       soNuocMoiRules: [
         validate.required,
-        v => (v && v > this.formData.soDien) || 'Giá trị nước phải lớn hơn số cũ'
+        v => (v && v > this.formData.soNuoc) || 'Giá trị nước phải lớn hơn số cũ'
       ],
     }
   },

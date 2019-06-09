@@ -43,7 +43,16 @@ const save = async (request, h) => {
       phong.soNuoc = data.soNuocMoi
       let {_id, phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu} = data
       await phong.save()
-      item = new PhieuThuTien({_id, phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu})
+      // lấy thông tin người lập phiếu thu lưu vào cơ sở dữ liệu\
+      let nguoiLap = 'chủ trọ hoặc nhân viên'
+      if(request.auth.credentials.credentials.userInfo) {
+        nguoiLap =`${request.auth.credentials.credentials.userInfo.hoNhanVien} ${request.auth.credentials.credentials.userInfo.tenNhanVien}`  
+      }
+      let newPhieuThu = {_id, phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu}
+      newPhieuThu.nguoiLap = nguoiLap
+      newPhieuThu.nguoiSua = nguoiLap
+      newPhieuThu.nguoiLap = 
+      item = new PhieuThuTien(newPhieuThu)
       //tiếp theo sẽ tạo chi tiết phiếu thu và thêm vào DB
       let tienDien = await CacKhoanThu.findById({_id:'5c983b7d28aebc66041a45aa'})
       let tienNuoc = await CacKhoanThu.findById({_id:'5c983b9b28aebc66041a45ab'})
@@ -83,6 +92,11 @@ const save = async (request, h) => {
     } else {
       item = await PhieuThuTien.findById({_id: data._id})
       item = Object.assign(item, data)
+      let nguoiSua = 'chủ trọ hoặc nhân viên'
+      if(request.auth.credentials.credentials.userInfo) {
+        nguoiSua =`${request.auth.credentials.credentials.userInfo.hoNhanVien} ${request.auth.credentials.credentials.userInfo.tenNhanVien}`  
+      }
+      item.nguoiSua = nguoiSua
     }
     let phieuthu =  await item.save()
     let phieuthuMail = await PhieuThuTien.findById({_id: phieuthu._id}).populate(['phongID','dsCTPT'])

@@ -15,7 +15,7 @@ const userVal = {
   },
   login: {
     payload: {
-      userName: Joi.string().required().max(30),
+      userName: Joi.string().required().max(100),
       passWord: Joi.string().required()
     }
   },

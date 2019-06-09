@@ -28,6 +28,16 @@ const schema = {
     type: String,
     required: true,
     enum: ['chưa đóng', 'đã đóng', 'quá hạn']
+  },
+  nguoiLap: {
+    type: String,
+    max: 50,
+    required: true
+  },
+  nguoiSua: {
+    type: String,
+    max: 50,
+    required: true
   }
 }
 
