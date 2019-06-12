@@ -4,7 +4,7 @@ import {Schema} from 'mongoose'
 const schema = {
   hoKhachThue: {type: String, required: true, max: 30},
   tenKhachThue: {type: String, required: true, max: 20},
-  anhDaiDien: {type: String},
+  anhDaiDien: {type: String, max: 50},
   ngaySinh: {type: Date},
   gioiTinh: {type: Boolean, default: false},
   soCMND: {type: String, required: true, max: 11},

@@ -7,6 +7,10 @@ const schema = {
   giaPhong: {
     type: Number,
     required: true
+  },
+  anhLoaiPhong: {
+    type: String,
+    max: 50
   }
 }
 

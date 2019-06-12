@@ -881,16 +881,17 @@ const schema = {
   hoNguoiBook: {
     type: String,
     required: true,
-    max: 20
+    max: 30
   },
   tenNguoiBook: {
     type: String,
     required: true,
-    max: 10
+    max: 20
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    max: 50
   },
   soDienThoai: {
     type: String,
@@ -1334,7 +1335,8 @@ const schema = {
     max: 20
   },
   anhDaiDien: {
-    type: String
+    type: String,
+    max: 50
   },
   ngaySinh: {
     type: Date
@@ -1625,6 +1627,10 @@ const schema = {
   giaPhong: {
     type: Number,
     required: true
+  },
+  anhLoaiPhong: {
+    type: String,
+    max: 50
   }
 };
 const options = {
@@ -1692,7 +1698,8 @@ const schema = {
   },
   anhDaiDien: {
     type: String,
-    required: true
+    required: true,
+    max: 50
   },
   ngaySinh: {
     type: Date,
@@ -2489,7 +2496,8 @@ var _mongoose = __webpack_require__(/*! mongoose */ "mongoose");
 const schema = {
   userName: {
     type: String,
-    required: true
+    required: true,
+    max: 100
   },
   passWord: {
     type: String,
@@ -2497,7 +2505,8 @@ const schema = {
   },
   email: {
     type: String,
-    default: ''
+    required: true,
+    max: 100
   },
   status: {
     type: Boolean,
@@ -8659,9 +8668,9 @@ Joi.ObjectId = __webpack_require__(/*! joi-objectid */ "joi-objectid")(Joi);
 const userVal = {
   signin: {
     payload: {
-      userName: Joi.string().required().max(30),
+      userName: Joi.string().required().max(100),
       passWord: Joi.string().required(),
-      email: Joi.string().email(),
+      email: Joi.string().email().max(100),
       status: Joi.boolean().default(true),
       rolesGroupID: Joi.ObjectId(),
       nhanVienID: Joi.ObjectId()

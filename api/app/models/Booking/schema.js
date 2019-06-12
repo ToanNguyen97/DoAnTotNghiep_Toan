@@ -4,16 +4,17 @@ const schema = {
   hoNguoiBook : {
     type: String,
     required: true,
-    max: 20
+    max: 30
   },
   tenNguoiBook : {
     type: String,
     required: true,
-    max: 10
+    max: 20
   },
   email: {
     type: String, 
-    required: true
+    required: true,
+    max: 50
   },
   soDienThoai: {
     type: String,

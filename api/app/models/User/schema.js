@@ -4,7 +4,8 @@ import {Schema} from 'mongoose'
 const schema = {
   userName: {
     type: String,
-    required: true
+    required: true,
+    max: 100
   },
   passWord: {
     type: String,
@@ -12,7 +13,8 @@ const schema = {
   },
   email: {
     type: String,
-    default: ''
+    required: true,
+    max: 100
   },
   status: {
     type: Boolean,

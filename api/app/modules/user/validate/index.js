@@ -5,9 +5,9 @@ Joi.ObjectId = require('joi-objectid') (Joi)
 const userVal = {
   signin: {
     payload: {
-      userName: Joi.string().required().max(30),
+      userName: Joi.string().required().max(100),
       passWord: Joi.string().required(),
-      email: Joi.string().email(),
+      email: Joi.string().email().max(100),
       status: Joi.boolean().default(true),
       rolesGroupID: Joi.ObjectId(),
       nhanVienID: Joi.ObjectId()
