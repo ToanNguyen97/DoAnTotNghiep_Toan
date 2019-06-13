@@ -20,6 +20,10 @@ const schema = {
   },
   ngayKetThuc: {
     type: Date
+  },
+  nguoiLapID: {
+    type: Schema.Types.ObjectId,
+    ref: 'NhanVien'
   }
 }
 

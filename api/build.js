@@ -1184,6 +1184,10 @@ const schema = {
   },
   ngayKetThuc: {
     type: Date
+  },
+  nguoiLapID: {
+    type: _mongoose.Schema.Types.ObjectId,
+    ref: 'NhanVien'
   }
 };
 const options = {
@@ -3323,6 +3327,10 @@ const save = async (request, h) => {
       item = Object.assign(item, data);
       await item.save();
     } else {
+      if (request.auth.credentials.credentials.userInfo) {
+        data.nguoiLapID = request.auth.credentials.credentials.userInfo._id;
+      }
+
       item = new HopDongThuePhong(data);
       await item.save(); // sau khi lập hợp đồng thì thêm phòng đó vào khách thuê và sửa tình trạng khách từ chưa thuê sang đã thuê
 
@@ -3412,6 +3420,8 @@ const save = async (request, h) => {
 const getAll = async (request, h) => {
   try {
     return await HopDongThuePhong.find().populate([{
+      path: 'nguoiLapID'
+    }, {
       path: 'khachThueID'
     }, {
       path: 'phongID',
@@ -3426,7 +3436,7 @@ const getById = async (request, h) => {
   try {
     return (await HopDongThuePhong.find({
       _id: request.params.id
-    }).populate('khachThueID').populate('phongID')) || _boom2.default.notFound();
+    }).populate('nguoiLapID').populate('khachThueID').populate('phongID')) || _boom2.default.notFound();
   } catch (err) {
     return _boom2.default.forbidden(err);
   }

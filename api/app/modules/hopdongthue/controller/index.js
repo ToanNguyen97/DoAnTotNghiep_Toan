@@ -23,6 +23,9 @@ const save = async (request, h) => {
       await item.save()
     }
     else {
+      if(request.auth.credentials.credentials.userInfo) {
+        data.nguoiLapID = request.auth.credentials.credentials.userInfo._id  
+      }
       item = new HopDongThuePhong(data)
       await item.save()
       // sau khi lập hợp đồng thì thêm phòng đó vào khách thuê và sửa tình trạng khách từ chưa thuê sang đã thuê
@@ -93,7 +96,7 @@ const save = async (request, h) => {
 
 const getAll = async (request, h) => {
   try {
-    return await HopDongThuePhong.find().populate([{path:'khachThueID'},{path:'phongID', populate:['loaiPhongID','tinhTrangPhongID','khuPhongID']}])
+    return await HopDongThuePhong.find().populate([{path: 'nguoiLapID'},{path:'khachThueID'},{path:'phongID', populate:['loaiPhongID','tinhTrangPhongID','khuPhongID']}])
   } catch (err) {
     return Boom.forbidden(err)
   }
@@ -101,7 +104,7 @@ const getAll = async (request, h) => {
 
 const getById = async (request, h) => {
   try {
-    return await HopDongThuePhong.find({_id: request.params.id}).populate('khachThueID').populate('phongID') || Boom.notFound()
+    return await HopDongThuePhong.find({_id: request.params.id}).populate('nguoiLapID').populate('khachThueID').populate('phongID') || Boom.notFound()
   } catch (err) {
     return Boom.forbidden(err)
   }
