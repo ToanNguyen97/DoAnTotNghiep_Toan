@@ -21,7 +21,7 @@ export default {
   },
   async created() {
     let {data} = await axios.get(`${window.window.urlApi}api/get-user-reset-password-${this.$route.params.id}`)
-    this.account = data
+    this.account = data.credentials
   },
   methods: {
     DoiMatKhau () {

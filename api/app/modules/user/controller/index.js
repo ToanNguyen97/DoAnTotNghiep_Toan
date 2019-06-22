@@ -11,7 +11,6 @@ const moment = require('moment')
 import Mail from '../../../lib/basemail/sendMail.js'
 import MailQuenMatKhau from '../../../lib/basemail/mailRestPass.js'
 import mailRestPass from '../../../lib/basemail/mailRestPass.js';
-import { request } from 'https';
 const SALT_LENGTH= 10
 const signin = async (request, h) => {
   try {
@@ -225,8 +224,8 @@ const forgetpass = async (request, h) => {
         let session = {
           valid: true,
           id: Aguid(),
-          expires: new Date().getTime() + 30 * 60 * 1000,
-          credentials
+          expires: new Date().getTime(), //+ 30 * 60 * 1000, // 30 phút
+          credentials,
         }
         getUser.session = session
         let options = {
@@ -244,7 +243,7 @@ const forgetpass = async (request, h) => {
         let session = {
           valid: true,
           id: Aguid(),
-          expires: new Date().getTime() + 30 * 60 * 1000,
+          expires: new Date().getTime(), //+ 30 * 60 * 1000,
           credentials
         }
         getUser.session = session
@@ -272,7 +271,13 @@ const resetpass = async (request, h) => {
     if(request.server.redis.get(request.params.id)) {
      let session =  await request.server.redis.getAsync(request.params.id)
      session = JSON.parse(session)
-     return session.credentials
+     if(new Date().getTime() > session.expires) {
+       return {valid: false}
+     }
+     else {
+
+       return {credentials:session.credentials, valid: true}
+    }
     }
   } catch (err) {
     return Boom.forbidden(err)

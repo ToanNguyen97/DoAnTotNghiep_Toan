@@ -4,6 +4,8 @@ import moment from 'moment'
 import MailPhieuThuTien from '../../../lib/basemail/mailPhieuThuTien.js'
 import Mail from '../../../lib/basemail/sendMail.js'
 const paypal = require('paypal-rest-sdk')
+import convertJson from 'xml-js'
+import axios from 'axios'
 paypal.configure({
   'mode': 'sandbox', //sandbox or live
   'client_id': global.CONFIG.get('web.paypal.clientId'),
@@ -175,7 +177,9 @@ const thanhToanPayPal = async (request, h) => {
       }
       return tongTien
     },0)
-    let convertUSD = (tongTien/23000).toFixed(2) // tạm thời quy ước 1 đô 22000
+ 
+    let convertUSD = (tongTien/ await ConvertUSD()).toFixed(2) // tạm thời quy ước 1 đô 22000
+    console.log('Ty gia do ne', convertUSD)
     TotalCTPT = convertUSD
     var create_payment_json = {
       "intent": "sale",
@@ -327,6 +331,18 @@ const GetEmailOfKhach = async (phongID) => {
     stringEmail += str + ', '
   }
   return stringEmail
+}
+
+// hàm lấy api vietcombank để boc tách
+const ConvertUSD = async () => {
+  let {data} = await axios.get('https://www.vietcombank.com.vn/exchangerates/ExrateXML.aspx?fbclid=IwAR1bBqLr-s6FcbQSLB9GCGUGJIlymejy86DAwbXPTiBUNajAxH5gI2nHnSw');
+  let tyGia = JSON.parse(convertJson.xml2json(data,{compact: false, spaces: 4}))
+  let getGiaDo = tyGia.elements[1].elements.filter(item => {
+    if(item.attributes && item.attributes.CurrencyCode === 'USD')
+      return item
+  })
+  let USD = getGiaDo[0]
+  return parseFloat(USD.attributes.Buy)
 }
 
 export default {

@@ -5436,6 +5436,14 @@ var _sendMail = __webpack_require__(/*! ../../../lib/basemail/sendMail.js */ "./
 
 var _sendMail2 = _interopRequireDefault(_sendMail);
 
+var _xmlJs = __webpack_require__(/*! xml-js */ "xml-js");
+
+var _xmlJs2 = _interopRequireDefault(_xmlJs);
+
+var _axios = __webpack_require__(/*! axios */ "axios");
+
+var _axios2 = _interopRequireDefault(_axios);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const paypal = __webpack_require__(/*! paypal-rest-sdk */ "paypal-rest-sdk");
@@ -5660,8 +5668,9 @@ const thanhToanPayPal = async (request, h) => {
 
       return tongTien;
     }, 0);
-    let convertUSD = (tongTien / 23000).toFixed(2); // tạm thời quy ước 1 đô 22000
+    let convertUSD = (tongTien / (await ConvertUSD())).toFixed(2); // tạm thời quy ước 1 đô 22000
 
+    console.log('Ty gia do ne', convertUSD);
     TotalCTPT = convertUSD;
     var create_payment_json = {
       "intent": "sale",
@@ -5842,6 +5851,22 @@ const GetEmailOfKhach = async phongID => {
   }
 
   return stringEmail;
+}; // hàm lấy api vietcombank để boc tách
+
+
+const ConvertUSD = async () => {
+  let {
+    data
+  } = await _axios2.default.get('https://www.vietcombank.com.vn/exchangerates/ExrateXML.aspx?fbclid=IwAR1bBqLr-s6FcbQSLB9GCGUGJIlymejy86DAwbXPTiBUNajAxH5gI2nHnSw');
+  let tyGia = JSON.parse(_xmlJs2.default.xml2json(data, {
+    compact: false,
+    spaces: 4
+  }));
+  let getGiaDo = tyGia.elements[1].elements.filter(item => {
+    if (item.attributes && item.attributes.CurrencyCode === 'USD') return item;
+  });
+  let USD = getGiaDo[0];
+  return parseFloat(USD.attributes.Buy);
 };
 
 exports.default = {
@@ -7924,8 +7949,6 @@ var _mailRestPass = __webpack_require__(/*! ../../../lib/basemail/mailRestPass.j
 
 var _mailRestPass2 = _interopRequireDefault(_mailRestPass);
 
-var _https = __webpack_require__(/*! https */ "https");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const PhieuThu = _mongoose2.default.model('PhieuThuTien');
@@ -8266,7 +8289,8 @@ const forgetpass = async (request, h) => {
         let session = {
           valid: true,
           id: Aguid(),
-          expires: new Date().getTime() + 30 * 60 * 1000,
+          expires: new Date().getTime(),
+          //+ 30 * 60 * 1000, // 30 phút
           credentials
         };
         getUser.session = session;
@@ -8293,7 +8317,8 @@ const forgetpass = async (request, h) => {
         let session = {
           valid: true,
           id: Aguid(),
-          expires: new Date().getTime() + 30 * 60 * 1000,
+          expires: new Date().getTime(),
+          //+ 30 * 60 * 1000,
           credentials
         };
         getUser.session = session;
@@ -8325,7 +8350,17 @@ const resetpass = async (request, h) => {
     if (request.server.redis.get(request.params.id)) {
       let session = await request.server.redis.getAsync(request.params.id);
       session = JSON.parse(session);
-      return session.credentials;
+
+      if (new Date().getTime() > session.expires) {
+        return {
+          valid: false
+        };
+      } else {
+        return {
+          credentials: session.credentials,
+          valid: true
+        };
+      }
     }
   } catch (err) {
     return Boom.forbidden(err);
@@ -8739,7 +8774,7 @@ exports.default = { ...userVal
 /*! exports provided: name, version, description, main, scripts, author, license, dependencies, devDependencies, default */
 /***/ (function(module) {
 
-module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongodb-backup":"^1.6.9","mongodb-restore":"^1.6.2","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","node-cmd":"^3.0.0","node-excel-export":"^1.4.4","nodemailer":"^5.1.1","paypal-rest-sdk":"^1.8.1","redis":"^2.8.0","vision":"^5.4.4","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
+module.exports = {"name":"quanlyphongtro","version":"1.0.0","description":"Đồ án tốt nghiệp ","main":"app.js","scripts":{"start":"npm run build:server:once && npm-run-all --parallel nodemon:prod watch:server","build:server:once":"cross-env NODE_ENV=development webpack --config webpack.config.js","watch:server":"cross-env NODE_ENV=development webpack --inline --progress --config webpack.config.js --watch","nodemon:prod":"cross-env NODE_ENV=development nodemon --inspect build.js"},"author":"Nguyễn Văn Toàn","license":"ISC","dependencies":{"aguid":"^2.0.0","axios":"^0.19.0","bcrypt":"^3.0.5","bluebird":"^3.5.3","boom":"^7.3.0","config":"^3.0.1","hapi":"^17.5.3","hapi-auth-jwt2":"^8.3.0","hapi-cors":"^1.0.3","hapi-swagger":"^9.4.2","inert":"^5.1.2","joi":"^14.3.1","joi-objectid":"^2.0.0","jsonwebtoken":"^8.5.1","lodash":"^4.17.11","moment":"^2.24.0","mongodb-backup":"^1.6.9","mongodb-restore":"^1.6.2","mongoose":"^5.4.17","mongoose-paginate":"^5.0.3","node-cmd":"^3.0.0","node-excel-export":"^1.4.4","nodemailer":"^5.1.1","paypal-rest-sdk":"^1.8.1","redis":"^2.8.0","vision":"^5.4.4","xml-js":"^1.6.11","xoauth2":"^1.2.0"},"devDependencies":{"@babel/core":"^7.3.4","babel-loader":"^8.0.5","babel-preset-env":"^1.7.0","cross-env":"^5.2.0","npm-run-all":"^4.1.5","webpack":"^4.29.6","webpack-cli":"^3.2.3","nodemon":"^1.18.10","webpack-node-externals":"^1.7.2"}};
 
 /***/ }),
 
@@ -8763,6 +8798,17 @@ module.exports = __webpack_require__(/*! F:\DoAnTotNghiep\DoAnTotNghiep_Toan\api
 /***/ (function(module, exports) {
 
 module.exports = require("aguid");
+
+/***/ }),
+
+/***/ "axios":
+/*!************************!*\
+  !*** external "axios" ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("axios");
 
 /***/ }),
 
@@ -9027,6 +9073,17 @@ module.exports = require("redis");
 /***/ (function(module, exports) {
 
 module.exports = require("vision");
+
+/***/ }),
+
+/***/ "xml-js":
+/*!*************************!*\
+  !*** external "xml-js" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("xml-js");
 
 /***/ })
 

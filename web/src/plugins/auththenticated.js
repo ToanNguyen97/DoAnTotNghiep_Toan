@@ -1,5 +1,6 @@
 import authStore from '../modules/User/store/index'
 import store from '../store.js'
+import axios from 'axios'
 // check route khi gởi request, một số route không cần auth
 const notAuthenticate = (to, from, next) => {
   let isAuthenticated = !!authStore.token
@@ -42,8 +43,23 @@ const isRoles = (to, from, next) => {
   }
 }
 
+const checkTimeOut = (to, from, next) => {
+  try {
+    axios.get(`${window.window.urlApi}api/get-user-reset-password-${to.params.id}`).then(res=> {
+      if(res.valid === true) {
+        next()
+      } else {
+        next('/error.html')
+      }
+    })
+  } catch (err) {
+    return err
+  }
+}
+
 export default {
   notAuthenticate,
   Authenticated,
-  isRoles
+  isRoles,
+  checkTimeOut
 }
