@@ -23,6 +23,9 @@ const phieuThuTienVal = {
   thanhtoan: {
     payload: {
       phieuthuInfo: Joi.object().required()
+    },
+    options: {
+      allowUnknown: true
     }
   },
   thongKePT: {

@@ -9,6 +9,7 @@ const setKhach = (state,data) => {
 const getPhongOfKhach = (state, data) => {
   state.dsPhong = data
 }
+
 export default {
   getDetailKhach,
   setKhach,

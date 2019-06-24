@@ -16,6 +16,7 @@ const Phong = Mongoose.model('Phong')
 const CTPhieuThuTien = Mongoose.model('CTPhieuThuTien')
 const CacKhoanThu = Mongoose.model('CacKhoanThu')
 const HopDongThue = Mongoose.model('HopDongThuePhong')
+let idKhachPayPalGlobal = ''
 let TotalCTPT = 0
 const getAll = async (request, h) => {
   try {
@@ -167,6 +168,9 @@ const sendMail = async (request, h) => {
 const thanhToanPayPal = async (request, h) => {
   try {
     let phieuthu = request.payload.phieuthuInfo
+    if(request.payload.idKhachThue) {
+      idKhachPayPalGlobal = request.paypal.idKhachThue
+    }
     let name = `Phiếu thu tiền ${moment(phieuthu.ngayLap).format('DD/MM/YYYY')}`
     let namePhong = phieuthu._id.substring(2,9)
     let tongTien = phieuthu.dsCTPT.reduce((tongTien, x) => {
@@ -179,7 +183,6 @@ const thanhToanPayPal = async (request, h) => {
     },0)
  
     let convertUSD = (tongTien/ await ConvertUSD()).toFixed(2) // tạm thời quy ước 1 đô 22000
-    console.log('Ty gia do ne', convertUSD)
     TotalCTPT = convertUSD
     var create_payment_json = {
       "intent": "sale",
@@ -241,16 +244,16 @@ const hoanTatPayPal = async (request, h) => {
               "total": TotalCTPT
           }
       }]
-    };
+    }
+    let isValid = false
     paypal.payment.execute(paymentId, execute_payment_json, async function (error, payment) {
       if (error) {
-          throw error;
+       throw error
       } 
       else {
-          console.log("Success");
           let phieuthuId = payment.transactions.pop().item_list.items.pop().sku
-          let phieuthu = await PhieuThuTien.findById({_id: phieuthuId}).populate(['phongID','dsCTPT'])
-          if(phieuthu) {
+          let phieuthu = await PhieuThuTien.findById({_id: phieuthuId}).populate(['phongID','dsCTPT']).lean()
+          if(phieuthu._id) {
             phieuthu.tinhTrangPhieuThu = 'đã đóng'
             let {phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu} = phieuthu
             await PhieuThuTien.findByIdAndUpdate({_id:phieuthu._id}, {phongID, ngayLap, ngayHetHan, moTa, tinhTrangPhieuThu})      
@@ -264,8 +267,8 @@ const hoanTatPayPal = async (request, h) => {
           let stringEmail = await GetEmailOfKhach(phieuthu.phongID)
           Mail.SenMail(options, stringEmail)
       }
-    });
-    return true
+    })
+    return idKhachPayPalGlobal
   } catch (err) {
     return Boom.forbidden(err)
   }
@@ -333,7 +336,7 @@ const GetEmailOfKhach = async (phongID) => {
   return stringEmail
 }
 
-// hàm lấy api vietcombank để boc tách
+// hàm lấy api vietcombank để bóc tách
 const ConvertUSD = async () => {
   let {data} = await axios.get('https://www.vietcombank.com.vn/exchangerates/ExrateXML.aspx?fbclid=IwAR1bBqLr-s6FcbQSLB9GCGUGJIlymejy86DAwbXPTiBUNajAxH5gI2nHnSw');
   let tyGia = JSON.parse(convertJson.xml2json(data,{compact: false, spaces: 4}))
@@ -352,5 +355,6 @@ export default {
   thanhToanPayPal,
   hoanTatPayPal,
   thongKePT,
-  BaoHetHanPT
+  BaoHetHanPT,
+  ConvertUSD
 }

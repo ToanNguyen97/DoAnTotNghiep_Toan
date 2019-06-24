@@ -49,6 +49,21 @@ export default [
     }
   },
   {
+    method: 'GET',
+    path: '/lay-ty-gia-ngoai-te',
+    handler: PhieuThuTienController.ConvertUSD,
+    config: {
+      tags: ['api'],
+      description: "lấy tỷ giá đô",
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
+  },
+  {
     method: 'POST',
     path: '/phieuthu-baohethan',
     handler: PhieuThuTienController.BaoHetHanPT,

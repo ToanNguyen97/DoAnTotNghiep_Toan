@@ -30,9 +30,14 @@ const sendMail = async (context, idPT) => {
   return  await axios.get(`http://localhost:3003/api/sendmailphieuthutien/${idPT}`)
 }
 
+const capNhatPhieuThu = async(context, phieuthu) => {
+  context.commit('updatePhieuThu', phieuthu)
+}
+
 export default {
   getPhieuThuTiens,
   addPhieuThuTien,
   thanhToan,
-  sendMail
+  sendMail,
+  capNhatPhieuThu
 }

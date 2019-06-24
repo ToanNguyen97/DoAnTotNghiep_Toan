@@ -67,7 +67,7 @@
         </v-card>
         <v-layout row >
           <v-flex style="padding-top: 10px;">
-            <span class="red--text">(*)</span> Lưu ý thanh toán bằng PayPal quy ra USD: <span class="font-weight-bold">{{(tongTien/23000).toFixed(2)}} $</span> (1 USD ~23.000 đ)
+            <span class="red--text">(*)</span> Lưu ý thanh toán bằng PayPal quy ra USD: <span class="font-weight-bold">{{(tongTien/tiGia).toFixed(2)}} $</span> (1 USD ~ {{tiGia | formatCurrentcy}})
           </v-flex>
           <div class="font-weight-bold" style="justify-content: flex-end; display: flex; padding-top: 10px; padding-right: 43px;">
             Tổng tiền: {{tongTien | formatCurrentcy}}

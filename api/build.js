@@ -5465,6 +5465,7 @@ const CacKhoanThu = _mongoose2.default.model('CacKhoanThu');
 
 const HopDongThue = _mongoose2.default.model('HopDongThuePhong');
 
+let idKhachPayPalGlobal = '';
 let TotalCTPT = 0;
 
 const getAll = async (request, h) => {
@@ -5655,6 +5656,11 @@ const sendMail = async (request, h) => {
 const thanhToanPayPal = async (request, h) => {
   try {
     let phieuthu = request.payload.phieuthuInfo;
+
+    if (request.payload.idKhachThue) {
+      idKhachPayPalGlobal = request.paypal.idKhachThue;
+    }
+
     let name = `Phiếu thu tiền ${(0, _moment2.default)(phieuthu.ngayLap).format('DD/MM/YYYY')}`;
 
     let namePhong = phieuthu._id.substring(2, 9);
@@ -5670,7 +5676,6 @@ const thanhToanPayPal = async (request, h) => {
     }, 0);
     let convertUSD = (tongTien / (await ConvertUSD())).toFixed(2); // tạm thời quy ước 1 đô 22000
 
-    console.log('Ty gia do ne', convertUSD);
     TotalCTPT = convertUSD;
     var create_payment_json = {
       "intent": "sale",
@@ -5735,17 +5740,17 @@ const hoanTatPayPal = async (request, h) => {
         }
       }]
     };
+    let isValid = false;
     paypal.payment.execute(paymentId, execute_payment_json, async function (error, payment) {
       if (error) {
         throw error;
       } else {
-        console.log("Success");
         let phieuthuId = payment.transactions.pop().item_list.items.pop().sku;
         let phieuthu = await PhieuThuTien.findById({
           _id: phieuthuId
-        }).populate(['phongID', 'dsCTPT']);
+        }).populate(['phongID', 'dsCTPT']).lean();
 
-        if (phieuthu) {
+        if (phieuthu._id) {
           phieuthu.tinhTrangPhieuThu = 'đã đóng';
           let {
             phongID,
@@ -5776,7 +5781,7 @@ const hoanTatPayPal = async (request, h) => {
         _sendMail2.default.SenMail(options, stringEmail);
       }
     });
-    return true;
+    return idKhachPayPalGlobal;
   } catch (err) {
     return _boom2.default.forbidden(err);
   }
@@ -5851,7 +5856,7 @@ const GetEmailOfKhach = async phongID => {
   }
 
   return stringEmail;
-}; // hàm lấy api vietcombank để boc tách
+}; // hàm lấy api vietcombank để bóc tách
 
 
 const ConvertUSD = async () => {
@@ -5876,7 +5881,8 @@ exports.default = {
   thanhToanPayPal,
   hoanTatPayPal,
   thongKePT,
-  BaoHetHanPT
+  BaoHetHanPT,
+  ConvertUSD
 };
 
 /***/ }),
@@ -5974,6 +5980,24 @@ exports.default = [{
     tags: ['api'],
     auth: false,
     description: "hoàn tất giao dịch",
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'GET',
+  path: '/lay-ty-gia-ngoai-te',
+  handler: _index2.default.ConvertUSD,
+  config: {
+    tags: ['api'],
+    description: "lấy tỷ giá đô",
     plugins: {
       'hapi-swagger': {
         responses: {
@@ -6104,6 +6128,9 @@ const phieuThuTienVal = {
   thanhtoan: {
     payload: {
       phieuthuInfo: Joi.object().required()
+    },
+    options: {
+      allowUnknown: true
     }
   },
   thongKePT: {

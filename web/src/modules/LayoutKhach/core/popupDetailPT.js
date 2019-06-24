@@ -1,5 +1,6 @@
 import moment from 'moment'
 import _ from 'lodash'
+import axios from 'axios'
 export default {
   props: {
     value: {
@@ -11,7 +12,8 @@ export default {
   data() {
     return {
       tenThang: '',
-      tongTien: 0
+      tongTien: 0,
+      tiGia: 0
     }
   },
   methods: {
@@ -33,6 +35,11 @@ export default {
         this.tongTien = phieuThu.dsCTPT.reduce((tongTien, current) => {
           return (current.chiSoMoi && current.chiSoMoi >0)?tongTien + (current.chiSoMoi - current.chiSoCu) * current.donGia : tongTien + current.donGia
          },0)
+        axios.get(`${window.urlApi}api/lay-ty-gia-ngoai-te`).then(res => {
+          this.tiGia = res.data
+        }).catch(err => {
+          return err
+        })
       }
     }
   },

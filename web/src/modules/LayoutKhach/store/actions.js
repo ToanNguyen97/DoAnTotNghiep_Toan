@@ -17,6 +17,7 @@ const getDetailKhach = async ({commit}, idKhach) => {
 
 const thanhtoan = async (context, phieuthuInfo) => {
   try {
+    console.log('payload', phieuthuInfo)
     let {data} = await axios.post('http://localhost:3003/api/phieuthutien-thanhtoan', {phieuthuInfo})
     console.log(data)
     return data
@@ -24,6 +25,8 @@ const thanhtoan = async (context, phieuthuInfo) => {
     return err
   }
 }
+
+
 
 export default {
   getDetailKhach,
