@@ -3,6 +3,7 @@ import toast from '../../../plugins/toast'
 import khuPhong from './popupKhuPhong.vue'
 import loaiPhong from './popupLoaiPhong.vue'
 import validate from '../../../plugins/validation.js'
+// import formatNum from 'numeral'
 export default {
  
   components: {
@@ -224,6 +225,11 @@ export default {
     }
   },
   watch: {
+    // 'formData.giaPhong' () {
+    //   if(this.formData.giaPhong && this.formData.giaPhong > 0) {
+    //     this.formData.giaPhong = formatNum(this.formData.giaPhong).format('$0,0.')
+    //   }
+    // },
     openKhuPhong () {
       if(this.openKhuPhong === false) {
         this.$store.dispatch('phong/getKhuPhongs')

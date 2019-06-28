@@ -63,7 +63,7 @@ export default {
         validate.email
       ],
       gioiTinhRules: [
-        validate.required
+        v => (v === false || v === true) || 'Không được để trống'
       ],
       uploadingPhoto: false,
       srcAnhDaiDien: null
