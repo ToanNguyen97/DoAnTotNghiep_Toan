@@ -3,7 +3,6 @@ import toast from '../../../plugins/toast'
 import khuPhong from './popupKhuPhong.vue'
 import loaiPhong from './popupLoaiPhong.vue'
 import validate from '../../../plugins/validation.js'
-// import formatNum from 'numeral'
 export default {
  
   components: {
@@ -85,7 +84,7 @@ export default {
   },
   methods: {
     Huy () {    
-      this.$refs.form.reset()
+      this.$refs.form.resetValidation()
       this.anhChinh = null
       this.anhChiTiet = []
       this.image = null
@@ -128,7 +127,6 @@ export default {
         this.changeAnhMulti = true
       }
       this.$refs['multifile'].click()
-      console.log('chon multi file ne')
     },
     choosedFileMulti () {
        const files = this.$refs['multifile'].files
@@ -225,11 +223,6 @@ export default {
     }
   },
   watch: {
-    // 'formData.giaPhong' () {
-    //   if(this.formData.giaPhong && this.formData.giaPhong > 0) {
-    //     this.formData.giaPhong = formatNum(this.formData.giaPhong).format('$0,0.')
-    //   }
-    // },
     openKhuPhong () {
       if(this.openKhuPhong === false) {
         this.$store.dispatch('phong/getKhuPhongs')

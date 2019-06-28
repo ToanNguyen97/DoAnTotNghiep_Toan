@@ -30,6 +30,7 @@ const getKhachBySDT = async (context, sdt) => {
 }
 const save =  async (context, payload) => {
   try {
+    console.log('data', payload)
     let {data} = await axios.post('http://localhost:3003/api/khachthue', payload)
     context.commit('addKhachThue', data)
     return data

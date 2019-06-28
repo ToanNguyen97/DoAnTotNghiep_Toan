@@ -26,8 +26,8 @@
       </v-flex>
       <v-flex v-else md7 mt-3 ml-3>
           <Skeleton  :width="'100%'" :height="'500px'" :max-width="800"></Skeleton>
-      </v-flex>
-      <v-flex xs12 mt-3 sm6 md3 mr-3>
+      </v-flex>     
+      <v-flex v-if="phongDetail && phongDetail.anhChinh" xs12 mt-3 sm6 md3 mr-3>
         <v-card flat  style="border:1px dashed black;margin-left: 13px; margin-bottom:10px;">
           <v-img class="" v-if="phongDetail && phongDetail.anhChinh"
             :src="`//localhost:3003/image/${phongDetail.anhChinh}`"               
@@ -67,6 +67,9 @@
             </v-card-actions>
           </v-card>
       </v-flex>
+      <v-flex v-else mt-3 sm6 md3 mr-3>
+            <Skeleton  :width="'100%'" :height="'500px'" :max-width="800"></Skeleton>
+        </v-flex>
       <v-divider></v-divider>
       <v-flex mt-3>
         <v-card flat style="padding:4px; border: 1px dashed black;" >

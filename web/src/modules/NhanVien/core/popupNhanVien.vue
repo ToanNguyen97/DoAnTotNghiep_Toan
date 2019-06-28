@@ -4,7 +4,7 @@
     <v-card-text>
       <v-container fluid grid-list-md>
         <v-layout justify-center>
-          <h1 class="mb-2 danhsachKT">Thông tin nhanVien</h1>    
+          <h1 class="mb-2 danhsachKT">Thông tin nhân viên</h1>    
         </v-layout>     
         <v-form  ref="form" v-model="valid" lazy-validation>
           <v-layout row wrap justify-space-between>

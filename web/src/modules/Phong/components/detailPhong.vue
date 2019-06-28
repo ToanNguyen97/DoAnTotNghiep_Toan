@@ -4,7 +4,7 @@
       <h1 class="mb-2 detailPT">{{phong && phong.tenPhong}}</h1>    
     </v-layout>
     <v-layout row wrap>
-      <v-flex xs12 sm6 md3>
+      <v-flex v-if="phong && phong._id" xs12 sm6 md3>
          <v-card style="margin-left: 13px; margin-bottom:10px;">
           <v-img v-if="phong && phong.anhChinh"
             :src="`//localhost:3003/image/${phong.anhChinh}`"               
@@ -57,6 +57,9 @@
            
           </v-card-actions>
         </v-card>
+      </v-flex>
+      <v-flex v-else xs12 sm6 md3>
+        <Skeleton  :width="'100%'" :height="'450px'" :max-width="800"></Skeleton>
       </v-flex>
       <v-flex  xs12 sm6 md9 >
         <v-tabs

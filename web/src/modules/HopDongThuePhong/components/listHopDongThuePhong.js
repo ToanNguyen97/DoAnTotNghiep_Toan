@@ -108,9 +108,9 @@ export default {
         // }).catch( res => {
         //   toast.Error('Có lỗi xảy ra: ' + res)
         // })
-        toast.Success('Đã xóa khách thuê')
+        toast.Success('Chức năng này đang phát triển')
       } else {
-        toast.Error('Vui lòng chọn phòng cần xóa!')
+        toast.Error('Vui lòng chọn hợp đồng cần xóa!')
       }
     },
     DeleteMulti () {
@@ -122,9 +122,9 @@ export default {
         //   this.snackbarMulti = false
         //   this.disabled = true
         // })
-        toast.Success('Đã xóa khách thuê')
+        toast.Success('Chức năng này đang phát triển')
       } else {
-        toast.Show('Vui lòng chọn phòng để xóa')
+        toast.Show('Vui lòng chọn hợp đồng để xóa')
       }
     },
     OpenDeleteMulti () {

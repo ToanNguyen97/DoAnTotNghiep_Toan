@@ -95,7 +95,7 @@
                       Giới tính
                     </v-card-title>
                     <v-card-text class="pa-0">
-                      <v-radio-group class="pa-0" :rules="gioiTinhRules" row v-model="formData.gioiTinh" :mandatory="true">
+                      <v-radio-group class="pa-0" :rules="gioiTinhRules" row v-model="formData.gioiTinh" >
                         <v-radio label="Nam"  :value="true"></v-radio>
                         <v-radio label="Nữ" :value="false"></v-radio>
                       </v-radio-group>
@@ -103,7 +103,7 @@
                   </v-card>
                 </v-flex> 
                 <v-flex  xs12 sm6 md6>
-                  <v-text-field v-model="formData.hoTenNguoiThan"   label="Họ tên người thân"></v-text-field>
+                  <v-text-field v-model="formData.hoTenNguoiThan" :rules="nguoiThanRules"   label="Họ tên người thân"></v-text-field>
                 </v-flex>
               </v-layout>
               <v-layout row wrap>

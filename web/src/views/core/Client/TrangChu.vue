@@ -40,19 +40,19 @@
       <div>
         <h1 class="display-2 pt-3  pb-4 font-weight-thin text-xs-center">Một số loại phòng trọ</h1>
         <v-layout row style="height: 100%; width: 100%;" justify-center>
-          <carousel v-if="dsLoaiPhong && dsLoaiPhong.length > 0" :per-page="3" :loop="true" :autoplay="true" :mouse-drag="true">
+          <carousel v-if="dsLoaiPhong && dsLoaiPhong.length > 0" :per-page="3" :loop="true"  :mouse-drag="true">
             <slide v-for="item of dsLoaiPhong" :key="item._id" >
               <div class="boxPhongTro">
-              <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
-              <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
-              <span class="black--text pl-2 font-weight-bold title">Loại phòng: {{item.tenLoaiPhong}}</span>
-              <div class="mt-2">
-              <span class="black--text pl-2 font-weight-bold title">Giá phòng: {{item.giaPhong | formatCurrency}}</span>
+                <img class="imagePhongTro pa-1" :src="require('@/assets/bannerPhongTro.jpg')" />
+                <v-rating length=5 :value=5  background-color="orange lighten-3" color="orange"></v-rating>
+                <span class="black--text pl-2 font-weight-bold title">Loại phòng: {{item.tenLoaiPhong}}</span>
+                <div class="mt-2">
+                <span class="black--text pl-2 font-weight-bold title">Giá phòng: {{item.giaPhong | formatCurrency}}</span>
+                </div>
+                <div style="text-align:center;">
+                  <v-btn color="cyan" target="_blank" @click="XemChiTiet(item._id)"   class="white--text mt-3">Xem chi tiết</v-btn>
+                </div>
               </div>
-              <div style="text-align:center;">
-                <v-btn color="cyan" target="_blank" @click="XemChiTiet(item._id)"   class="white--text mt-3">Xem chi tiết</v-btn>
-              </div>
-            </div>
             </slide>
             </carousel>
         </v-layout>
@@ -87,12 +87,12 @@
 <script>
 import Slider from './Carousel.vue'
 // import GoogleMap from './GoogleMap.vue'
-import { Carousel, Slide } from 'vue-carousel';
+import { Carousel, Slide } from 'vue-carousel'
 export default {
   components: {
      Slider,
     Carousel,
-    Slide,
+    Slide
     // GoogleMap
   },
   data() {

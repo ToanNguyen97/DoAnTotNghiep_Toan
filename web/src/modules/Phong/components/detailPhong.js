@@ -1,9 +1,11 @@
 import moment from 'moment'
 import toast from '../../../plugins/toast.js'
 import LapHopDong from '../../HopDongThuePhong/core/popupHopDong.vue'
+import Skeleton from '../../../views/core/Client/Skeleton.vue'
 export default {
   components: {
-    LapHopDong
+    LapHopDong,
+    Skeleton
   },
   data() {
     return {

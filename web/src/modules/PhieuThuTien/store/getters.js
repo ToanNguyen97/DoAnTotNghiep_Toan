@@ -67,7 +67,19 @@ const countPercentTinhTrang = state => {
   }
 }
 
+// đếm tổng tiền của năm nay
+const countDoanhThuNam = state => {
+  // lọc ra danh sách phiếu thu của năm 
+  let currentYear = new Date().getFullYear()
+  let phieuThuNam  = state.dsPhieuThuTien.filter(item => {
+   let year = moment(item.ngayLap).format('YYYY')
+    return year == currentYear
+  })
+  
+  return phieuThuNam
+}
 export default {
   countMoney,
-  countPercentTinhTrang
+  countPercentTinhTrang,
+  countDoanhThuNam
 }

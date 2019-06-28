@@ -23,7 +23,8 @@ export default {
         countPhong: 'phong/countPhong',
         countHopDong: 'countHopDong',
         countMoney: 'countMoney',
-        countPercentTinhTrang: 'countPercentTinhTrang'
+        countPercentTinhTrang: 'countPercentTinhTrang',
+        countDoanhThuNam: 'countDoanhThuNam'
     })
   },
 }
