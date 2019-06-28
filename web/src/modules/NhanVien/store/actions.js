@@ -15,6 +15,16 @@ const getNhanViens = async (context) => {
     return err
   }
 }
+
+const deleteNhanVien = async ({commit}, idXoa) => {
+  try {
+  let {data} = await axios.delete(`http://localhost:3003/api/nhanvien-delete-${idXoa}`)
+  commit('removeNhanVien', data)
+  return data
+  } catch (err) {
+    return false
+  }
+}
 const save =  async (context, payload) => {
   try {
     let {data} = await axios.post('http://localhost:3003/api/nhanvien', payload)
@@ -30,5 +40,6 @@ const save =  async (context, payload) => {
 }
 export default {
   getNhanViens,
-  save
+  save,
+  deleteNhanVien
 }

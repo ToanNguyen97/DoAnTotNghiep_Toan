@@ -5220,9 +5220,20 @@ const getAll = async (request, h) => {
   }
 };
 
+const deleteNhanvien = async (request, h) => {
+  try {
+    return (await NhanVien.findOneAndRemove({
+      _id: request.params.id
+    }).populate('rolesGroupID')) || _boom2.default.notFound();
+  } catch (err) {
+    return _boom2.default.forbidden(err);
+  }
+};
+
 exports.default = {
   save,
-  getAll
+  getAll,
+  deleteNhanvien
 };
 
 /***/ }),
@@ -5305,6 +5316,25 @@ exports.default = [{
     description: 'them va sua nhan vien',
     tags: ['api'],
     validate: _index4.default.save,
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          '400': {
+            'description': 'Bad Request'
+          }
+        },
+        payloadType: 'json'
+      }
+    }
+  }
+}, {
+  method: 'DELETE',
+  path: '/nhanvien-delete-{id}',
+  handler: _index2.default.deleteNhanvien,
+  config: {
+    description: 'xóa nhân viên',
+    tags: ['api'],
+    validate: _index4.default.delete,
     plugins: {
       'hapi-swagger': {
         responses: {

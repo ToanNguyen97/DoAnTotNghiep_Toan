@@ -87,7 +87,16 @@ const getAll = async (request, h) => {
     return Boom.forbidden(err)
   }
 }
+
+const deleteNhanvien = async (request, h) => {
+  try {
+    return await NhanVien.findOneAndRemove({_id: request.params.id}).populate('rolesGroupID') || Boom.notFound()
+  } catch (err) {
+    return Boom.forbidden(err)
+  }
+}
 export default {
   save,
-  getAll
+  getAll,
+  deleteNhanvien
 }

@@ -108,7 +108,7 @@ export default {
      this.NhanVienSelect = item
     },
     ResetPage () {
-      this.$store.dispatch('getKhachs')
+      this.$store.dispatch('nhanvien/getNhanViens')
     },
     OpenSnackback (khachthue) {
       this.tenNhanVien = khachthue.tenNhanVien
@@ -118,7 +118,7 @@ export default {
     Delete () {
       if(this.idXoa != '')
       {
-        this.$store.dispatch('deleteNhanVien', this.idXoa).then( res => {
+        this.$store.dispatch('nhanvien/deleteNhanVien', this.idXoa).then( res => {
           toast.Success('Đã xóa khách thuê: '+ res.hoNhanVien + ' ' + res.tenNhanVien)
           this.snackbar = false
         }).catch( res => {
@@ -132,7 +132,7 @@ export default {
       if (this.selected && this.selected.length != 0)
       {
         let deleteMultiId = this.selected.map(item => item._id)
-        this.$store.dispatch('deleteMultiNhanVien', deleteMultiId).then(() => {
+        this.$store.dispatch('nhanvien/deleteMultiNhanVien', deleteMultiId).then(() => {
           toast.Success('Xóa thành công!')
           this.snackbarMulti = false
           this.disabled = true

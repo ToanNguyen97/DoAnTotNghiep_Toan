@@ -35,5 +35,21 @@ export default [
         }
       }
     }
+  },
+  {
+    method: 'DELETE',
+    path: '/nhanvien-delete-{id}',
+    handler: NhanVienController.deleteNhanvien,
+    config: {
+      description: 'xóa nhân viên',
+      tags: ['api'],
+      validate: NhanVienVal.delete,
+      plugins: {
+        'hapi-swagger': {
+          responses: {'400': {'description': 'Bad Request'}},
+          payloadType: 'json'
+        }
+      }
+    }
   }
 ]
