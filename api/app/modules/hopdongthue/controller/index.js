@@ -20,6 +20,7 @@ const save = async (request, h) => {
     let khachThue = {}
     if(item) {
       item = Object.assign(item, data)
+      khachThue = await KhachThue.findById({_id: item.khachThueID})
       await item.save()
     }
     else {

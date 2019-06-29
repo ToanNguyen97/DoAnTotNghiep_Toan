@@ -172,7 +172,10 @@ export default {
           this.formData = _.cloneDeep(this.HopDongThuePhongSelect)
           this.soHD = this.formData._id
           this.khachThue = this.formData.khachThueID
+          this.soDienThoai = this.khachThue.soDienThoai
           this.phong = this.formData.phongID
+          this.khuPhongID = this.phong.khuPhongID._id
+          this.phongID = this.phong._id
           if (this.formData && this.formData.ngayLap){
             this.formData.ngayLap = new Date(this.formData.ngayLap).toISOString().substr(0, 10)
           }

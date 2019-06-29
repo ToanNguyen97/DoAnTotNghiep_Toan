@@ -21,7 +21,7 @@
               <v-text-field v-model="formData.email" :rules="emailRules" required  label="Email" prepend-icon="email"></v-text-field>
               <v-text-field v-model="formData.soCMND" type="number" :rules="soCMNDRules" required label="Số chứng minh/Passort" prepend-icon="fas fa-passport"></v-text-field>
               <v-text-field v-model="formData.soDienThoai" type="number"  :rules="soDienThoaiRules" :counter="13" required label="Số điện thoại" prepend-icon="fas fa-mobile-alt"></v-text-field>
-              <v-text-field v-model="formData.diaChi" :rules="diaChiRules" :counter="30" required label="Địa chỉ" prepend-icon="place"></v-text-field>
+              <v-text-field v-model="formData.diaChi" :rules="diaChiRules" :counter="100" required label="Địa chỉ" prepend-icon="place"></v-text-field>
               <v-layout row wrap>
                 <v-flex md6>
                   <v-chip label outline color="green">Ngày nhận phòng</v-chip> <date-picker class="pt-2 px-2" v-model="formData.ngayNhanPhong"  :not-before="new Date()" required  :lang="lang" format="DD-MM-YYYY" confirm pickers ></date-picker>

@@ -38,6 +38,10 @@ const getUser = async ({commit}) => {
   }
 }
 
+const setUserInfo = async ({commit}, data) => {
+  commit('setUserInfo', data)
+}
+
 const editUser = async({commit}, payload) => {
   try {
     let {data} = await axios.post('http://localhost:3003/api/editUser',payload)
@@ -68,5 +72,6 @@ export default {
   getUser,
   editUser,
   backup,
-  restore
+  restore,
+  setUserInfo
 }

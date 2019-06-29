@@ -89,8 +89,8 @@ export default {
     }
   },
   methods: {
-    ResetPage () {
-      this.search = ''
+   async ResetPage () {
+      this.dsKhachDatPhong = await datPhongServices.listKhachDatPhong()
     },
     async BookPhong (item) {
       let formData = {

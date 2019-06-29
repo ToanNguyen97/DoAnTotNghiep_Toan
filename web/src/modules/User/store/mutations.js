@@ -14,12 +14,17 @@ const setUser = (state, data) => {
   state.user = data,
   state.status = "success"
 }
+
+const setUserInfo = (state, data) => {
+  state.user.userInfo = data
+}
 const auth_error = state => state.status = 'error'
 export default {
    auth_request,
    auth_success,
    auth_logout,
    auth_error,
-   setUser
+   setUser,
+   setUserInfo
  }
 

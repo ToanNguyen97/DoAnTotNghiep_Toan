@@ -139,7 +139,7 @@ server.liftOff = async () => {
     await server.start();
 
     const task = _nodeCron2.default.schedule('17 8 * * *', () => {
-      let filename = 'QuanLyPhongTro-Auto1-' + (0, _moment2.default)(new Date()).format('DD-MM-YYYY');
+      let filename = 'QuanLyPhongTro-Auto-' + (0, _moment2.default)(new Date()).format('DD-MM-YYYY');
 
       _nodeCmd2.default.run(`mongodump --out F:/DoAnTotNghiep/Backup/${filename} --db QuanLyPhongTro_57130724`);
 
@@ -623,9 +623,9 @@ const SenMail = async (options, email) => {
     auth: {
       type: 'OAuth2',
       user: 'toan210597ntu@gmail.com',
-      clientId: '111021480568-u7nd27a29i23hfgalgl54vcna1g5l94r.apps.googleusercontent.com',
-      clientSecret: 'lVDO6CQihwxxY1PgbqSXcjDE',
-      refreshToken: '1/QVtnf24Ad8HxbIFi5vZJiwvLNSKOWkdwRzpsIiY3c22kSf2JBSbNXFq5cui2oS_k'
+      clientId: '529369342696-4u88ucm5d6rgudkl84alam67eht2h7rq.apps.googleusercontent.com',
+      clientSecret: '4ko6XsGq6bD4zwkB-yLxOb-w',
+      refreshToken: '1/Y7VVAsAS3RTGHpPbYyFvnjgLANQX5kwbgJxONrqakqo'
     }
   });
   let mailOptions = {
@@ -3349,6 +3349,9 @@ const save = async (request, h) => {
 
     if (item) {
       item = Object.assign(item, data);
+      khachThue = await KhachThue.findById({
+        _id: item.khachThueID
+      });
       await item.save();
     } else {
       if (request.auth.credentials.credentials.userInfo) {
@@ -3745,6 +3748,7 @@ const Phong = _mongoose2.default.model('Phong');
 const save = async (request, h) => {
   try {
     let data = request.payload;
+    console.log('data', data);
     let item = {};
 
     if (!data._id) {
@@ -3760,6 +3764,8 @@ const save = async (request, h) => {
 
       item = new KhachThue(data);
     } else {
+      console.log('vo day ne');
+
       if (data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
         item = await KhachThue.findById({
           _id: data._id
@@ -3780,6 +3786,7 @@ const save = async (request, h) => {
     }
 
     await item.save();
+    console.log('item', item);
 
     let khachThue = (await KhachThue.findById({
       _id: item._id
@@ -8198,12 +8205,15 @@ const login = async (request, h) => {
             item.tinhTrangPhieuThu = 'quá hạn';
             await item.save();
           }
-        } // chèn thêm cập nhật booking quá hạn, book không nhận phòng
+        }
 
+        let currenDay = new Date();
+        let yesterday = new Date(currenDay);
+        yesterday.setDate(currenDay.getDate() - 1); // chèn thêm cập nhật booking quá hạn, book không nhận phòng
 
         let dsBookingHetHan = await Booking.find({
           ngayNhanPhong: {
-            $lt: Date.now()
+            $lt: yesterday
           }
         });
 

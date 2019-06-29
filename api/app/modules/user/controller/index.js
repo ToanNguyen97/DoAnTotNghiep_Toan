@@ -102,8 +102,11 @@ const login = async (request, h) => {
               await item.save()
           }
         }
+        let currenDay = new Date()
+        let yesterday = new Date(currenDay);
+        yesterday.setDate(currenDay.getDate() - 1);
         // chèn thêm cập nhật booking quá hạn, book không nhận phòng
-        let dsBookingHetHan = await Booking.find({ngayNhanPhong: {$lt: Date.now()}})
+        let dsBookingHetHan = await Booking.find({ngayNhanPhong: {$lt: yesterday}})
         if(dsBookingHetHan && dsBookingHetHan.length > 0) {
           for(let item of dsBookingHetHan) {
             item.status = false

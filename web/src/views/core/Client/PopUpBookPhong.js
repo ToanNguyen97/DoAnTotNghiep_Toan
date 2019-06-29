@@ -40,7 +40,7 @@ export default {
       ],
       diaChiRules: [
         validate.required,
-        validate.max30
+        validate.max100
       ],
       ngayNhanPhongRules: [
         validate.required,

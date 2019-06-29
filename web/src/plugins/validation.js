@@ -16,6 +16,9 @@ const max30 = v =>  {
 const max40 = v =>  {
  return  (v && v.length <= 40) ||  ` tối đa 40 ký tự`
 }
+const max100 = v =>  {
+ return  (v && v.length <= 100) ||  ` tối đa 100 ký tự`
+}
 
 
 export default {
@@ -26,4 +29,5 @@ export default {
   max13,
   max30,
   max40,
+  max100
 }

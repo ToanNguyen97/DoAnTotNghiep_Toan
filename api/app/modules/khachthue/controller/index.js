@@ -7,6 +7,7 @@ const Phong = Mongoose.model('Phong')
 const save = async (request, h) => {
   try {
    let data = request.payload
+   console.log('data', data)
    let item = {}
    if(!data._id)
    {
@@ -24,6 +25,7 @@ const save = async (request, h) => {
    }
    else
    {
+    console.log('vo day ne')
      if(data.anhDaiDien.name === null || data.anhDaiDien.name === "" || data.anhDaiDien.name === undefined) {
        item = await KhachThue.findById({_id: data._id})
        data.anhDaiDien = item.anhDaiDien
@@ -38,8 +40,9 @@ const save = async (request, h) => {
        item = await KhachThue.findById({_id: data._id})
        item = Object.assign(item, data)
      }
-    }   
+    }
     await item.save()
+    console.log('item', item)
     let khachThue = await KhachThue.findById({_id: item._id}).populate('loaiKhachThueID') || Boom.notFound()
     return khachThue
   } catch (err) {
