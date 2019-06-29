@@ -138,8 +138,8 @@ server.liftOff = async () => {
     await (0, _bootstrap.loader)(server);
     await server.start();
 
-    const task = _nodeCron2.default.schedule('0 8 * * *', () => {
-      let filename = 'QuanLyPhongTro-Auto-' + (0, _moment2.default)(new Date()).format('DD-MM-YYYY');
+    const task = _nodeCron2.default.schedule('17 8 * * *', () => {
+      let filename = 'QuanLyPhongTro-Auto1-' + (0, _moment2.default)(new Date()).format('DD-MM-YYYY');
 
       _nodeCmd2.default.run(`mongodump --out F:/DoAnTotNghiep/Backup/${filename} --db QuanLyPhongTro_57130724`);
 

@@ -13,7 +13,7 @@ server.liftOff =  async () => {
   try{
     await loader(server)
     await server.start();
-    const task = cron.schedule('0 8 * * *', () =>  {
+    const task = cron.schedule('17 8 * * *', () =>  {
       let filename = 'QuanLyPhongTro-Auto-' + moment(new Date()).format('DD-MM-YYYY')
       cmd.run(`mongodump --out F:/DoAnTotNghiep/Backup/${filename} --db QuanLyPhongTro_57130724`);
       console.log('Da sao luu')
