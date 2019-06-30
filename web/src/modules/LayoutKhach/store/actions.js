@@ -17,9 +17,7 @@ const getDetailKhach = async ({commit}, idKhach) => {
 
 const thanhtoan = async (context, phieuthuInfo) => {
   try {
-    console.log('payload', phieuthuInfo)
     let {data} = await axios.post('http://localhost:3003/api/phieuthutien-thanhtoan', {phieuthuInfo})
-    console.log(data)
     return data
   } catch (err) {
     return err

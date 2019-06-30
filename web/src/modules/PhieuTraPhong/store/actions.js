@@ -3,7 +3,6 @@ import axios from 'axios'
 const save = async (context, payload) => {
   try {
     let {data} = await axios.post('http://localhost:3003/api/phieutraphong', payload)
-    console.log(data)
     context.commit('addPhieuTraPhong', data)
     return data
   } catch (err) {

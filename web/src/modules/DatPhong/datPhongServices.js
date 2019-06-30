@@ -11,7 +11,6 @@ const listKhachDatPhong = async () => {
 const ThemKhach = async (formData) => {
   try {
     let {data} = await axios.post(`${window.urlApi}api/khachthue-them-book`,formData)
-    console.log(data)
     return data
   } catch (err) {
     return err

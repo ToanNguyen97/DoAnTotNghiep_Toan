@@ -87,7 +87,6 @@ export default {
       this.loading = true
       item.idKhachThue = this.userInfo._id
       this.$store.dispatch('layoutkhach/thanhtoan',item).then(res => {
-        console.log('work',res)
         window.open(res, '_blank')
         this.loading = false
       })

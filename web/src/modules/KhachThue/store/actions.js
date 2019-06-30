@@ -30,7 +30,6 @@ const getKhachBySDT = async (context, sdt) => {
 }
 const save =  async (context, payload) => {
   try {
-    console.log('data', payload)
     let {data} = await axios.post('http://localhost:3003/api/khachthue', payload)
     context.commit('addKhachThue', data)
     return data
@@ -51,7 +50,6 @@ const deleteKhachThue = async (context, idxoa) => {
 
 const deleteMultiKhachThue = async (context, idMulti) => {
   try {
-    console.log(idMulti)
     for(let item of idMulti) {
       await axios.delete('http://localhost:3003/api/khachthue/' + item)
     }
@@ -73,7 +71,6 @@ const timKiemKhachThue = async (context, payload) => {
 
 const traPhong = async (context, payload)=> {
   try {
-    console.log(payload)
     let {data} = await axios.put('http://localhost:3003/api/khachthue/'+ payload._id, payload)
     return data
   } catch (err) {

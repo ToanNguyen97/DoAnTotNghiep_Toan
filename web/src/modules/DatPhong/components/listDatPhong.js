@@ -106,7 +106,6 @@ export default {
           this.khachSelect = item
           this.soDT = res.soDienThoai
           item.status = false // chống cháy, sẽ phát triển sau
-          console.log(this.soDT)
           this.phongSelect = item.phongID
           this.openHopDong = true
         } else {

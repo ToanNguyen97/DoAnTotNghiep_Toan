@@ -116,7 +116,6 @@ export default {
         if(this.image != "")
         {
           let anhDaiDien = {name: this.image, file64: this.anhDaiDien}
-          console.log('anh', this.anhDaiDien)
           this.formData.anhDaiDien = anhDaiDien
         }
         else
@@ -158,7 +157,6 @@ export default {
           if (this.formData && this.formData.ngaySinh){
             this.formData.ngaySinh = new Date(this.formData.ngaySinh).toISOString().substr(0, 10)
           }
-          console.log('form', this.formData)
         }
       }
       else
