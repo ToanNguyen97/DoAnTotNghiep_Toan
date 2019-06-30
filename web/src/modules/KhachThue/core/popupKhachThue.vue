@@ -108,7 +108,7 @@
               </v-layout>
               <v-layout row wrap>
                 <v-flex  xs12 sm12 md12>
-                  <v-text-field v-model="formData.diaChi" :rules="diaChiRules" required  label="Địa Chỉ"></v-text-field>
+                  <v-text-field v-model="formData.diaChi" :counter="100" :rules="diaChiRules" required  label="Địa Chỉ"></v-text-field>
                 </v-flex>  
               </v-layout>                                                     
             </v-flex>
