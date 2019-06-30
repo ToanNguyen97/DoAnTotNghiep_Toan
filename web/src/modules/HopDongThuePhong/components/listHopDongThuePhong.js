@@ -16,7 +16,10 @@ export default {
       isThem: false,
       disabled: true,
       HopDongThuePhongSelect: {},
-      pagination: {},
+      pagination: {
+        sortBy: 'ngayLap',
+        'descending': true
+      },
       selected: [],
       headers: [
         { text: 'Mã Số Hợp Đồng',value: '_id' },

@@ -6,7 +6,9 @@ export default {
       phong: {},
       search: '',
       pagination: {
-        rowsPerPage:3
+        rowsPerPage:3,
+        sortBy: 'ngayLap',
+        'descending': true
       },
       rating:4,
       tongTien: 0,
