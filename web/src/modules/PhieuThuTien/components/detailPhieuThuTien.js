@@ -1,6 +1,10 @@
 import moment from 'moment'
 import toast from '../../../plugins/toast.js'
+import Skeleton from '../../../views/core/Client/Skeleton.vue'
 export default {
+  components: {
+    Skeleton
+  },
   data() {
     return {
       phong: {},

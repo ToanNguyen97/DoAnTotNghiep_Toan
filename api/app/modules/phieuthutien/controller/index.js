@@ -35,7 +35,7 @@ const save = async (request, h) => {
       let soKhuPhong = phong.khuPhongID.tenKhuPhong.split(' ')
       let soPhong = phong.tenPhong.split(' ')
       let ngaylap = new Date(data.ngayLap)//'04-28-2019')
-      data.ngayLap = ngaylap    
+      data.ngayLap = ngaylap
       let getThangNam = moment(ngaylap).format('MMYYYY')   
       // ngày hết hạn là ngày 10 của tháng tiếp theo: số 11 ở cuối vì chênh lệch múi giờ sẽ giảm xuống 10
       data.ngayHetHan = new Date(`${ngaylap.getFullYear()}-${ngaylap.getMonth() + 2 > 12? '01':ngaylap.getMonth() + 2}-11`)

@@ -21,6 +21,7 @@ export default {
     return {
       formData: {},
       valid: true,
+      loading: false,
       soDienMoiRules: [
         validate.required,
         v => (v && v > this.formData.soDien) || 'Giá trị điện phải lớn hơn số cũ'
@@ -39,10 +40,12 @@ export default {
     },
     XacNhan () {
       if (this.$refs.form.validate()) {
+        this.loading = true
         this.formData.ngayLap = Date.now()
         this.formData.ngayHetHan = Date.now()
         this.$store.dispatch('addPhieuThuTien', this.formData).then( res => {
           this.$store.dispatch('phong/getKhuPhongs')
+          this.loading = false
           this.Huy()
           toast.Success('Phiếu thu: '+res._id + ' đã được lập')
         }).catch( res => {

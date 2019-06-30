@@ -32,7 +32,7 @@
           </v-layout>                                                          
           <v-layout row wrap mt-2>
               <v-flex xs12 sm12 md12 style="display: flex !important;justify-content: center !important;">                   
-                <v-btn depressed color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
+                <v-btn depressed :loading="loading" color="blue darken-1" dark @click="XacNhan" >Xác nhận</v-btn>
                 <v-btn depressed color="yellow darken-1" dark @click="Huy" >Hủy</v-btn>
               </v-flex>
           </v-layout>  
