@@ -37,7 +37,7 @@
     "node-excel-export": "^1.4.4",
     "nodemailer": "^5.1.1",
     "paypal-rest-sdk": "^1.8.1",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "vision": "^5.4.4",
     "xml-js": "^1.6.11",
     "xoauth2": "^1.2.0"
